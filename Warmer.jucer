@@ -6,6 +6,9 @@
   <MAINGROUP id="i1IZ57" name="Warmer">
     <GROUP id="{96AA9396-9DAD-7D0F-4F64-27DF1BACBC55}" name="Source">
       <FILE id="lnQuLf" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="p7uoyA" name="MenuComponent.cpp" compile="1" resource="0"
+            file="Source/MenuComponent.cpp"/>
+      <FILE id="dW8WA2" name="MenuComponent.h" compile="0" resource="0" file="Source/MenuComponent.h"/>
       <FILE id="tObNhn" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
       <FILE id="k6pM82" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>

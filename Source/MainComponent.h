@@ -1,27 +1,18 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "MenuComponent.h"
 
-//==============================================================================
-/*
-    This component lives inside our window, and this is where you should put all
-    your controls and content.
-*/
-class MainComponent  : public juce::Component
-{
+class MainComponent : public juce::Component {
 public:
-    //==============================================================================
     MainComponent();
-    ~MainComponent() override;
+    ~MainComponent() override {};
 
-    //==============================================================================
-    void paint (juce::Graphics&) override;
+    void paint (juce::Graphics& g) override;
     void resized() override;
 
 private:
-    //==============================================================================
-    // Your private member variables go here...
-
+    std::unique_ptr<MenuComponent> menuBarComponent;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };
