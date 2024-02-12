@@ -5,6 +5,12 @@
               headerPath="~/Downloads/JUCE_/JUCE/modules">
   <MAINGROUP id="i1IZ57" name="Warmer">
     <GROUP id="{96AA9396-9DAD-7D0F-4F64-27DF1BACBC55}" name="Source">
+      <FILE id="nePoUx" name="PresetSwitch.h" compile="0" resource="0" file="Source/PresetSwitch.h"/>
+      <FILE id="Peufm3" name="MasterComponent.cpp" compile="1" resource="0"
+            file="Source/MasterComponent.cpp"/>
+      <FILE id="AVqzU7" name="MasterComponent.h" compile="0" resource="0"
+            file="Source/MasterComponent.h"/>
+      <FILE id="sCChBP" name="ModeSwitch.h" compile="0" resource="0" file="Source/ModeSwitch.h"/>
       <FILE id="lnQuLf" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="p7uoyA" name="MenuComponent.cpp" compile="1" resource="0"
             file="Source/MenuComponent.cpp"/>

@@ -2,6 +2,7 @@
 
 #include <JuceHeader.h>
 #include "MenuComponent.h"
+#include "MasterComponent.h"
 
 class MainComponent : public juce::Component {
 public:
@@ -13,6 +14,7 @@ public:
 
 private:
     std::unique_ptr<MenuComponent> menuBarComponent;
+    std::unique_ptr<MasterComponent> masterComponent;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

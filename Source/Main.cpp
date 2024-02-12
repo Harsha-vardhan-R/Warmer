@@ -20,53 +20,44 @@ public:
         mainWindow.reset (new MainWindow (getApplicationName()));
     }
 
-    void shutdown() override
-    {
+    void shutdown() override {
         // Add your application's shutdown code here..
 
         mainWindow = nullptr; // (deletes our window)
     }
 
     //==============================================================================
-    void systemRequestedQuit() override
-    {
+    void systemRequestedQuit() override {
         // This is called when the app is being asked to quit: you can ignore this
         // request and let the app carry on running, or call quit() to allow the app to close.
         quit();
     }
 
-    void anotherInstanceStarted (const juce::String& commandLine) override
-    {
-        // When another instance of the app is launched while this one is running,
-        // this method is invoked, and the commandLine parameter tells you what
-        // the other instance's command-line arguments were.
-    }
+    void anotherInstanceStarted (const juce::String& commandLine) override { /* DO NOTHING */ }
 
     //==============================================================================
     /*
         This class implements the desktop window that contains an instance of
         our MainComponent class.
     */
-    class MainWindow    : public juce::DocumentWindow
-    {
+    class MainWindow    : public juce::DocumentWindow {
     public:
         MainWindow (juce::String name)
-                : DocumentWindow (name,
-                                  juce::Desktop::getInstance().getDefaultLookAndFeel()
-                                          .findColour (juce::ResizableWindow::backgroundColourId),
-                                  DocumentWindow::allButtons)
-        {
+                : DocumentWindow (name, juce::Desktop::getInstance().getDefaultLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId),
+                                  DocumentWindow::allButtons) {
+
             setUsingNativeTitleBar (true);
             setContentOwned (new MainComponent(), true);
 
-#if JUCE_IOS || JUCE_ANDROID
-            setFullScreen (true);
-#else
-            setResizable (true, true);
-            centreWithSize (getWidth(), getHeight());
-#endif
+            #if JUCE_IOS || JUCE_ANDROID
+                setFullScreen (true);
+            #else
+                setResizable (true, true);
+                centreWithSize (getWidth(), getHeight());
+            #endif
 
             setVisible (true);
+            setResizable(false, false);
         }
 
         void closeButtonPressed() override {
