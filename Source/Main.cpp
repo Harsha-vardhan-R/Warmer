@@ -57,7 +57,7 @@ public:
             #endif
 
             setVisible (true);
-            setResizable(false, false);
+            setResizable(true, true);
         }
 
         void closeButtonPressed() override {

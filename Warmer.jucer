@@ -5,6 +5,10 @@
               headerPath="~/Downloads/JUCE_/JUCE/modules">
   <MAINGROUP id="i1IZ57" name="Warmer">
     <GROUP id="{96AA9396-9DAD-7D0F-4F64-27DF1BACBC55}" name="Source">
+      <FILE id="jy2qrr" name="MIDIPianoComponent.cpp" compile="1" resource="0"
+            file="Source/MIDIPianoComponent.cpp"/>
+      <FILE id="myVgKU" name="MIDIPianoComponent.h" compile="0" resource="0"
+            file="Source/MIDIPianoComponent.h"/>
       <GROUP id="{01B86B6A-B111-8779-01D9-63F373592C3F}" name="GraphNodes">
         <FILE id="CJ79sG" name="GraphNodeMaster.h" compile="0" resource="0"
               file="Source/GraphNodes/GraphNodeMaster.h"/>
