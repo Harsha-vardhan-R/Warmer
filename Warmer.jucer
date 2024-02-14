@@ -5,6 +5,16 @@
               headerPath="~/Downloads/JUCE_/JUCE/modules">
   <MAINGROUP id="i1IZ57" name="Warmer">
     <GROUP id="{96AA9396-9DAD-7D0F-4F64-27DF1BACBC55}" name="Source">
+      <GROUP id="{01B86B6A-B111-8779-01D9-63F373592C3F}" name="GraphNodes">
+        <FILE id="CJ79sG" name="GraphNodeMaster.h" compile="0" resource="0"
+              file="Source/GraphNodes/GraphNodeMaster.h"/>
+      </GROUP>
+      <FILE id="Qb0s5L" name="EditPage.cpp" compile="1" resource="0" file="Source/EditPage.cpp"/>
+      <FILE id="aLs5WB" name="EditPage.h" compile="0" resource="0" file="Source/EditPage.h"/>
+      <FILE id="uL3FTy" name="GraphPage.cpp" compile="1" resource="0" file="Source/GraphPage.cpp"/>
+      <FILE id="DbOg17" name="GraphPage.h" compile="0" resource="0" file="Source/GraphPage.h"/>
+      <FILE id="ztBCpN" name="PlayPage.cpp" compile="1" resource="0" file="Source/PlayPage.cpp"/>
+      <FILE id="kEUP4q" name="PlayPage.h" compile="0" resource="0" file="Source/PlayPage.h"/>
       <FILE id="nePoUx" name="PresetSwitch.h" compile="0" resource="0" file="Source/PresetSwitch.h"/>
       <FILE id="Peufm3" name="MasterComponent.cpp" compile="1" resource="0"
             file="Source/MasterComponent.cpp"/>

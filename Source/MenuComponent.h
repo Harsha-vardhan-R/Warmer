@@ -24,7 +24,7 @@ public:
         g.fillAll (juce::Colour(0xff262b2b));
     }
     juce::Font getMenuBarFont (juce::MenuBarComponent& menuBar, int itemIndex, const juce::String& itemText) override {
-        return juce::Font(22.0f);
+        return juce::Font(12.0f);
     }
     void drawPopupMenuBackground (juce::Graphics& g, int width, int height) override {
         juce::Rectangle<int> popupBounds(0, 0, width, height);

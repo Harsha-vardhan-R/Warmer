@@ -10,7 +10,9 @@
 
 #pragma once
 #include <JuceHeader.h>
+#include "ModeSwitch.h"
 
+//
 class MasterComponent : public juce::Component {
 public:
 
@@ -21,5 +23,7 @@ public:
     void resized() override;
 
 private:
+    std::unique_ptr<ModeSwitch> modeSwitch;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MasterComponent)
 };

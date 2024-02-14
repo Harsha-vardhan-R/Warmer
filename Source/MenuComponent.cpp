@@ -79,9 +79,9 @@ void MenuComponent::drawMenuBarItem (juce::Graphics& g,
                       bool isMenuOpen,
                       bool isMouseOverBar,
                       juce::MenuBarComponent& menuBar) {
-    juce::Rectangle<int> highLight(3, 3, width-6, height-6);
+    juce::Rectangle<int> highLight(1, 1, width-2, height-2);
     if (isMouseOverItem) {
-        g.setColour(juce::Colour(0xff005931));
+        g.setColour(juce::Colour(0xff8f0375));
         g.fillRoundedRectangle(highLight.toFloat(), 3.0f);
     }
     g.setColour(juce::Colours::white);
@@ -105,7 +105,7 @@ void MenuComponent::drawPopupMenuItem (juce::Graphics& g,
         g.setColour(juce::Colours::white);
         g.drawLine(area.getX(), area.getCentreY(), area.getX() + area.getWidth(), area.getCentreY(), 0.1f);
     } else if (isHighlighted) {
-        g.setColour(juce::Colour(0xff005931));
+        g.setColour(juce::Colour(0xff8f0375));
         g.fillRoundedRectangle(highLight.toFloat(), 3.0f);
     }
     g.setColour(juce::Colours::white);

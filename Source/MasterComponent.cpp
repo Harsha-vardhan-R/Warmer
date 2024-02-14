@@ -9,18 +9,28 @@
 */
 
 #include "MasterComponent.h"
+#include "ModeSwitch.h"
 
+// upperComponent will set the offset in the y-direction at which the
 MasterComponent::MasterComponent(int upperComponent) {
-    setBounds(0, upperComponent, getParentWidth(), 45);
+    setBounds(0, upperComponent, getParentWidth(), getParentHeight()*0.8f);
+
+    modeSwitch = std::make_unique<ModeSwitch>();
+    addAndMakeVisible(modeSwitch.get());
+    modeSwitch.get()->setBounds(getLocalBounds());
+
     resized();
 }
 
-MasterComponent::~MasterComponent() {}
+MasterComponent::~MasterComponent() {
+    modeSwitch.reset(nullptr);
+    deleteAllChildren();
+}
 
 void MasterComponent::paint(juce::Graphics &g) {
-    g.fillAll(juce::Colour());
+    g.fillAll(juce::Colour(0xff262b2b));
 }
 
 void MasterComponent::resized() {
-    setSize(getParentWidth(), 45);
+    setSize(getParentWidth(), getParentHeight()*0.8f);
 }
