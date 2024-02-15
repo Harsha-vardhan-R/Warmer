@@ -4,6 +4,9 @@
 
 // We do not need to implement the `MenuBarComponent`,
 // it is added as a class member.
+/*
+    This also acts as a LookAndFeel master class that contains the styles for different classes.
+*/
 class MenuComponent :   public juce::Component,
                         public juce::MenuBarModel,
                         public juce::LookAndFeel_V4
@@ -50,6 +53,8 @@ public:
                             const juce::String& shortcutKeyText,
                             const juce::Drawable* icon,
                             const juce::Colour* textColourToUse) override;
+    //================================
+    // look and feel but to be used in other classes like the MIDISettings.
 
 
 

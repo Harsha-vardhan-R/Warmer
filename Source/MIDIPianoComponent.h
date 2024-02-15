@@ -11,6 +11,9 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "MIDISettings.h"
+#include "Piano.h"
+#include "Wheels.h"
 
 // TODO : Command listener so that we can use keyboard for midi input without velocity.
 class MIDIPianoComponent : public juce::Component {
@@ -25,6 +28,10 @@ public:
 private:
     int offset;
     int height;
+
+    std::unique_ptr<MIDISettings> midiSettings;
+    std::unique_ptr<Wheels> wheelComponent;
+    std::unique_ptr<Piano> pianoComponent;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MIDIPianoComponent)
 };

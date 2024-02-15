@@ -9,49 +9,50 @@
 */
 
 #pragma once
-
 #include <JuceHeader.h>
+#include "Instrument.h"
+#include "Modes.h"
+
 
 /*
     Contains the code to manage the bar and component that is used to switch between modes, like `Play`, `Graph` and `Edit` mode.
     This component lies below `instrumentAndPresetSelector`
 */
-class ModeSwitch final : public juce::TabbedComponent,
-                         public juce::LookAndFeel_V4 {
+class ModeSwitch final : public juce::TabbedComponent {
 public:
-
-    enum Mode {
-        Play, // Using the instrument.
-        Graph, // Editing the node setup.
-        Edit, // Editing the Appearance and the Position of elements on the instrument.
-    };
 
     ModeSwitch() : juce::TabbedComponent(juce::TabbedButtonBar::Orientation::TabsAtLeft) {
         setSize(getParentWidth(), getParentHeight());
         auto colour_here = juce::Colour(0xff262b2b);
 
-        addTab("Play", colour_here, new juce::Component() , true);
-        addTab("Graph", colour_here, new juce::Component() , true);
-        addTab("Edit", colour_here, new juce::Component() , true);
+        this->instrument = std::make_unique<Instrument>(getTabBarDepth());
+
+        addTab("Play", colour_here, this->instrument.get() , true);
+        addTab("Graph", colour_here, this->instrument.get() , true);
+        addTab("Edit", colour_here, this->instrument.get() , true);
+
+        //this->addMouseListener(this);
+
+        instrumentPresent = false;
     }
 
     ~ModeSwitch() override {
-        clearTabs(); /* Removes all the tabs before closing(No Memory Leaks) */
+        instrument.get()->~Instrument();
     }
     //+++++++++++++++
     void resized() override {
         setBounds(0, 35, getParentWidth(), getParentHeight()-35);
         juce::TabbedComponent::resized();
     }
-    //+++++++++++++++
-    void drawTabButton ( juce::TabBarButton& t,
-                         juce::Graphics& g,
-                         bool 	isMouseOver,
-                         bool 	isMouseDown ) override {
-        g.fillAll(juce::Colours::black);
-    }
+    //==============
+    // Called when the tab is switched, this will call the instrument's setMode()
+
+
 
 private:
+    std::unique_ptr<Instrument> instrument;
+    bool instrumentPresent;
+
     const std::vector<std::string> modeTypes = { "Play",
                                                  "Graph",
                                                  "Edit" };

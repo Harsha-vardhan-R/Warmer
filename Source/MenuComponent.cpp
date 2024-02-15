@@ -3,7 +3,7 @@
 MenuComponent::MenuComponent() {
     // `this` already implements the `MenuBarModel` so this is going to return a
     // `MenuBarComponent` with the Model already setup.
-    menuComponent.reset(new juce::MenuBarComponent(this));
+    menuComponent = std::make_unique<juce::MenuBarComponent>(this);
     // getting the new component to show up.
     addAndMakeVisible(menuComponent.get());
     setLookAndFeel(this);
@@ -102,8 +102,9 @@ void MenuComponent::drawPopupMenuItem (juce::Graphics& g,
     juce::Rectangle<int> highLight(area.getX() + 3, area.getY(), area.getWidth() - 6 , area.getHeight());
     juce::Rectangle<int> aligner(area.getX() + 15, area.getY(), area.getWidth() , area.getHeight());
     if (isSeparator) {
-        g.setColour(juce::Colours::white);
-        g.drawLine(area.getX(), area.getCentreY(), area.getX() + area.getWidth(), area.getCentreY(), 0.1f);
+        g.setColour(juce::Colours::grey);
+        juce::Rectangle<int> sepLine(area.getX()+3, area.getCentreY(), area.getWidth()-6, 1);
+        g.fillRect(sepLine);
     } else if (isHighlighted) {
         g.setColour(juce::Colour(0xff8f0375));
         g.fillRoundedRectangle(highLight.toFloat(), 3.0f);

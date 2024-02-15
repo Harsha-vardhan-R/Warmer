@@ -4,7 +4,18 @@
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
               headerPath="~/Downloads/JUCE_/JUCE/modules">
   <MAINGROUP id="i1IZ57" name="Warmer">
+    <GROUP id="{ABD2107A-91D9-3367-075C-DAB74831B466}" name="Assets"/>
     <GROUP id="{96AA9396-9DAD-7D0F-4F64-27DF1BACBC55}" name="Source">
+      <FILE id="ddFvAe" name="Modes.h" compile="0" resource="0" file="Source/Modes.h"/>
+      <FILE id="YrwpNg" name="Instrument.cpp" compile="1" resource="0" file="Source/Instrument.cpp"/>
+      <FILE id="idaZ8a" name="Instrument.h" compile="0" resource="0" file="Source/Instrument.h"/>
+      <FILE id="lUroU5" name="Wheels.cpp" compile="1" resource="0" file="Source/Wheels.cpp"/>
+      <FILE id="CeqbEj" name="Wheels.h" compile="0" resource="0" file="Source/Wheels.h"/>
+      <FILE id="KOjY1Y" name="Piano.cpp" compile="1" resource="0" file="Source/Piano.cpp"/>
+      <FILE id="BXohqn" name="Piano.h" compile="0" resource="0" file="Source/Piano.h"/>
+      <FILE id="BV3sT0" name="MIDISettings.cpp" compile="1" resource="0"
+            file="Source/MIDISettings.cpp"/>
+      <FILE id="kndaI9" name="MIDISettings.h" compile="0" resource="0" file="Source/MIDISettings.h"/>
       <FILE id="jy2qrr" name="MIDIPianoComponent.cpp" compile="1" resource="0"
             file="Source/MIDIPianoComponent.cpp"/>
       <FILE id="myVgKU" name="MIDIPianoComponent.h" compile="0" resource="0"
