@@ -56,15 +56,27 @@ public:
                 centreWithSize (getWidth(), getHeight());
             #endif
 
+            this->setConstrainer(getConstrainer());
+
             setVisible (true);
             setResizable(true, true);
         }
 
+        // Setting the minimum height and width that the app can be resized to.
+        juce::ComponentBoundsConstrainer* getConstrainer() {
+            constrain.reset(new juce::ComponentBoundsConstrainer());
+            constrain.get()->setMinimumWidth(850);  // Set minimum width
+            constrain.get()->setMinimumHeight(500); // Set minimum height
+            return constrain.get();
+        }
+
         void closeButtonPressed() override {
+
             JUCEApplication::getInstance()->systemRequestedQuit();
         }
 
     private:
+        std::unique_ptr<juce::ComponentBoundsConstrainer> constrain;
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainWindow)
     };
 

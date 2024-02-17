@@ -24,14 +24,14 @@ public:
     void menuItemSelected(int menuItemID, int topLevelMenuIndex) override;
     //========================================
     void drawMenuBarBackground (juce::Graphics& g, int width, int height, bool, juce::MenuBarComponent& menuBar) override {
-        g.fillAll (juce::Colour(0xff262b2b));
+        g.fillAll (juce::Colour(0xffeee3e7));
     }
     juce::Font getMenuBarFont (juce::MenuBarComponent& menuBar, int itemIndex, const juce::String& itemText) override {
         return juce::Font(12.0f);
     }
     void drawPopupMenuBackground (juce::Graphics& g, int width, int height) override {
         juce::Rectangle<int> popupBounds(0, 0, width, height);
-        g.fillAll(juce::Colour(0xff262b2b));
+        g.fillAll(juce::Colour(0xffeee3e7));
     }
     void drawMenuBarItem (juce::Graphics& g,
                           int width,
@@ -54,8 +54,29 @@ public:
                             const juce::Drawable* icon,
                             const juce::Colour* textColourToUse) override;
     //================================
-    // look and feel but to be used in other classes like the MIDISettings.
+    // look and feel but to be used in other classes.
 
+    // ++++++++++++++ COMBO BOX STYLES ++++++++++++++
+    void drawComboBox ( juce::Graphics& g,
+                        int width,
+                        int height,
+                        bool isButtonDown,
+                        int buttonX,
+                        int buttonY,
+                        int buttonW,
+                        int buttonH,
+                        juce::ComboBox& box) override;
+//    void drawComboBoxTextWhenNothingSelected(juce::Graphics& g,
+//                                             juce::ComboBox& box,
+//                                             juce::Label& text) override;
+
+    // ++++++++++++++ TAB BAR STYLES ++++++++++++++++++
+    void drawTabButton(juce::TabBarButton& button,
+                       juce::Graphics& g,
+                       bool isMouseOver,
+                       bool isMouseDown) override;
+    int getTabButtonBestWidth(juce::TabBarButton& button,
+                              int tabDepth) override;
 
 
 private:

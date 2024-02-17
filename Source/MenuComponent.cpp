@@ -27,7 +27,7 @@ void MenuComponent::resized() {
 }
 
 juce::StringArray MenuComponent::getMenuBarNames() {
-    return {"Instrument", "Settings", "Edit"};
+    return {"Instrument", "View", "Preferences", "Edit"};
 }
 
 juce::PopupMenu MenuComponent::getMenuForIndex(int topLevelMenuIndex, const juce::String& menuName) {
@@ -41,16 +41,17 @@ juce::PopupMenu MenuComponent::getMenuForIndex(int topLevelMenuIndex, const juce
         menu.addItem(6, "Export blueprint");
         menu.addSeparator();
         menu.addItem(5, "Exit");
-    } else if (menuName == "Settings") {
-        menu.addItem(15, "Theme");
-        menu.addItem(16, "Scale+");
-        menu.addItem(17, "Scale-");
+    } else if (menuName == "View") {
+        menu.addItem(15, "Accent Colour");
+        menu.addItem(17, "Size+");
+        menu.addItem(18, "Size-");
+    } else if (menuName == "Preferences") {
+        menu.addItem(19, "MIDI");
+        menu.addItem(20, "Audio preferences");
         menu.addSeparator();
-        menu.addItem(18, "MIDI");
-        menu.addItem(19, "Audio preferences");
-        menu.addItem(20, "About");
+        menu.addItem(21, "About");
     } else if (menuName == "Edit") {
-        menu.addItem(21, "undo");
+        menu.addItem(22, "undo");
     }
 
     return menu;
@@ -69,7 +70,7 @@ void MenuComponent::menuItemSelected(int menuItemID, int topLevelMenuIndex) {
     }
 }
 
-//
+
 void MenuComponent::drawMenuBarItem (juce::Graphics& g,
                       int width,
                       int height,
@@ -81,10 +82,10 @@ void MenuComponent::drawMenuBarItem (juce::Graphics& g,
                       juce::MenuBarComponent& menuBar) {
     juce::Rectangle<int> highLight(1, 1, width-2, height-2);
     if (isMouseOverItem) {
-        g.setColour(juce::Colour(0xff8f0375));
+        g.setColour(juce::Colour(0xfff6abb6));
         g.fillRoundedRectangle(highLight.toFloat(), 3.0f);
     }
-    g.setColour(juce::Colours::white);
+    g.setColour(juce::Colours::darkgrey);
     g.drawText(itemText, 0, 0, width, height, juce::Justification::centred);
 }
 
@@ -106,10 +107,74 @@ void MenuComponent::drawPopupMenuItem (juce::Graphics& g,
         juce::Rectangle<int> sepLine(area.getX()+3, area.getCentreY(), area.getWidth()-6, 1);
         g.fillRect(sepLine);
     } else if (isHighlighted) {
-        g.setColour(juce::Colour(0xff8f0375));
+        g.setColour(juce::Colour(0xfff6abb6));
         g.fillRoundedRectangle(highLight.toFloat(), 3.0f);
     }
-    g.setColour(juce::Colours::white);
+    g.setColour(juce::Colours::darkgrey);
     g.drawText(text, aligner, juce::Justification::centredLeft);
 
+}
+
+
+void MenuComponent::drawComboBox(juce::Graphics &g, int width, int height, bool isButtonDown, int buttonX, int buttonY,
+                                 int buttonW, int buttonH, juce::ComboBox& box) {
+    g.setColour(juce::Colour(0xfff6abb6));
+    g.fillRoundedRectangle(box.getLocalBounds().reduced(2).toFloat(), 3.0f);
+
+    juce::Path arrow;
+    float arrowDimen = 10;
+    float arrowX = width - 25; // X position of the arrow
+    float arrowY = (height - arrowDimen) / 2; // Y position of the arrow
+
+    if (box.isPopupActive()) {
+        arrow.addTriangle(arrowX + (arrowDimen * 0.5f) + 1, arrowY,
+                          arrowX, arrowY + arrowDimen,
+                          arrowX + arrowDimen + 2, arrowY + arrowDimen);
+    } else {
+        arrow.addTriangle(arrowX, arrowY,
+                          arrowX + arrowDimen + 2, arrowY,
+                          arrowX + (arrowDimen * 0.5f) + 1, arrowY + arrowDimen);
+    }
+
+    g.setColour(box.findColour(juce::ComboBox::arrowColourId));
+    g.fillPath(arrow);
+}
+
+//================================ Tab styles ===================================
+void MenuComponent::drawTabButton(juce::TabBarButton& button,
+                                  juce::Graphics& g,
+                                  bool isMouseOver,
+                                  bool isMouseDown) {
+
+    g.fillAll(juce::Colour(0xffeee3e7));
+
+    if (button.isFrontTab()) {
+        g.setColour(juce::Colour(0xfff6abb6));
+        g.fillRoundedRectangle(button.getLocalBounds().toFloat().reduced(3.0f), 2.0f);
+        // for the square look at the junction.
+        juce::Rectangle<int> squ(button.getLocalBounds().getX()+10, button.getLocalBounds().getY()+3, button.getWidth()-10, button.getHeight()-6);
+        g.fillRect(squ);
+    } else if (isMouseOver) {
+        g.setColour(juce::Colour(0xfff4b6c2));
+        g.fillRoundedRectangle(button.getLocalBounds().toFloat().reduced(3.0f), 2.0f);
+    } else {
+        g.setColour(juce::Colour(0xffeec9d2));
+        g.fillRoundedRectangle(button.getLocalBounds().toFloat().reduced(3.0f), 2.0f);
+    }
+
+    g.setColour(juce::Colours::grey);
+
+    juce::AffineTransform transform = juce::AffineTransform::rotation(-1.57,
+                                                                      button.getLocalBounds().getCentreX(),
+                                                                      button.getLocalBounds().getCentreY());
+
+    g.drawLine(button.getWidth(), -5, button.getWidth(), button.getHeight());
+
+    g.addTransform(transform);
+    g.drawText(button.getButtonText(), button.getLocalBounds().reduced(-15), juce::Justification::centred);
+
+}
+
+int MenuComponent::getTabButtonBestWidth(juce::TabBarButton &button, int tabDepth) {
+    return 80;
 }

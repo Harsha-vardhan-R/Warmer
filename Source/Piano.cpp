@@ -19,11 +19,11 @@ Piano::~Piano() {
 }
 
 void Piano::paint(juce::Graphics &g) {
-    g.fillAll(juce::Colours::darkolivegreen);
-    g.fillRoundedRectangle(getLocalBounds().toFloat(), 13.0f);
+    g.fillAll(juce::Colour(0xffeee3e7));
+    g.setColour(juce::Colours::grey);
+    g.drawRect(getLocalBounds().toFloat(), 1.0f);
 }
 
 void Piano::resized() {
     setBounds(150, 20 ,getParentWidth()-150, getParentHeight() - 20);
-    std::cout << getParentHeight() << "\n";
 }

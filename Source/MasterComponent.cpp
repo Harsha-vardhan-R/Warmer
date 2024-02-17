@@ -20,6 +20,10 @@ MasterComponent::MasterComponent(int upperComponent, int otherComponentCumulativ
     setBounds(0, this->upperComponent, getParentWidth(), getParentHeight()-otherComponentCumulativeHeight);
 
     modeSwitch = std::make_unique<ModeSwitch>();
+    modeSwitch.get()->setOutline(1);
+    modeSwitch.get()->setIndent(1);
+    modeSwitch.get()->setColour(juce::TabbedComponent::ColourIds::backgroundColourId, juce::Colour(0xffeee3e7));
+    modeSwitch.get()->setColour(juce::TabbedComponent::ColourIds::outlineColourId, juce::Colours::grey);
     addAndMakeVisible(modeSwitch.get());
 
     presetSwitch = std::make_unique<PresetSwitch>();

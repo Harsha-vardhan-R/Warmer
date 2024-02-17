@@ -12,6 +12,7 @@
 #include <JuceHeader.h>
 #include "Instrument.h"
 #include "Modes.h"
+#include "MenuComponent.h"
 
 
 /*
@@ -22,18 +23,22 @@ class ModeSwitch final : public juce::TabbedComponent {
 public:
 
     ModeSwitch() : juce::TabbedComponent(juce::TabbedButtonBar::Orientation::TabsAtLeft) {
-        setSize(getParentWidth(), getParentHeight());
+        //setSize(getParentWidth(), getParentHeight());
         auto colour_here = juce::Colour(0xff262b2b);
 
+        this->setTabBarDepth(30);
         this->instrument = std::make_unique<Instrument>(getTabBarDepth());
 
         addTab("Play", colour_here, this->instrument.get() , true);
         addTab("Graph", colour_here, this->instrument.get() , true);
         addTab("Edit", colour_here, this->instrument.get() , true);
 
-        //this->addMouseListener(this);
+        styles.reset(new MenuComponent());
+        setLookAndFeel(styles.get());
 
         instrumentPresent = false;
+
+        resized();
     }
 
     ~ModeSwitch() override {
@@ -52,6 +57,7 @@ public:
 private:
     std::unique_ptr<Instrument> instrument;
     bool instrumentPresent;
+    std::unique_ptr<juce::LookAndFeel_V4> styles;
 
     const std::vector<std::string> modeTypes = { "Play",
                                                  "Graph",

@@ -22,18 +22,17 @@ Instrument::Instrument(int tabWidth) {
 Instrument::~Instrument() {}
 
 void Instrument::paint(juce::Graphics& g) {
-    g.fillAll(juce::Colours::black);
+    g.fillAll(juce::Colour(0xffeee3e7));
 
-    switch (this->presentMode) {
-        case Mode::Play:
-            g.setColour(juce::Colours::grey);
-        case Mode::Edit:
-            g.setColour(juce::Colours::red);
-        case Mode::Graph:
-            g.setColour(juce::Colours::white);
-    }
-
-    g.fillRoundedRectangle(getLocalBounds().toFloat(), 15.0f);
+    g.setColour(juce::Colour(0xfff6abb6));
+//    switch (this->presentMode) {
+//        case Mode::Play:
+//            g.setColour(juce::Colours::grey);
+//        case Mode::Edit:
+//            g.setColour(juce::Colours::red);
+//        case Mode::Graph:
+//            g.setColour(juce::Colours::darksalmon);
+//    }
 }
 
 
