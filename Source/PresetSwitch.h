@@ -36,7 +36,7 @@ public:
         presetSelect.get()->setText("Select Preset");
         addAndMakeVisible(presetSelect.get());
 
-        juce::Image myImage = juce::ImageFileFormat::loadFrom(juce::File("/home/harshavardhan/Documents/cpp_proj/Warmer/Builds/LinuxMakefile/build/Assets/Icons/jjj.png"));
+        juce::Image myImage = juce::ImageFileFormat::loadFrom(juce::File("Builds/LinuxMakefile/build/Assets/Icons/jjj.png"));
         logo = std::make_unique<juce::ImageComponent>();
         logo.get()->setImage(myImage);
         addAndMakeVisible(logo.get());

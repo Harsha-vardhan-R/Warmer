@@ -20,8 +20,8 @@ Wheels::Wheels() {
     wheelAreas.add(new juce::Rectangle<int>(55, 10, 25, getParentHeight() - 40));
     wheelAreas.add(new juce::Rectangle<int>(105, 10, 25, getParentHeight() - 40));
     // for up transpose and low transpose
-    wheelAreas.add(new juce::Rectangle<int>(5, 10, 45, 40));
-    wheelAreas.add(new juce::Rectangle<int>(5, 50, 45, 40));
+    wheelAreas.add(new juce::Rectangle<int>(5, 10, 45, 60));
+    wheelAreas.add(new juce::Rectangle<int>(5, 50, 45, 60));
 
     resized();
 }
@@ -40,12 +40,13 @@ void drawWheelWithLevel(juce::Rectangle<float> bounds, // wheel bounds
     float notchCentre= ((float)bounds.getHeight()*0.95)*(1.0-level);
     g.setColour(juce::Colour(juce::Colours::grey));
     g.fillRoundedRectangle(bounds.getX() + 1, bounds.getY()+(int)notchCentre, bounds.getWidth()-2, 5.0, 3.0f);
+    g.setColour(juce::Colour(juce::Colours::white));
+    g.fillRect(bounds.getX() + 2, bounds.getY()+(int)notchCentre+2, bounds.getWidth()-4, 1.0);
+    g.setColour(juce::Colour(juce::Colours::grey));
 }
 
 void Wheels::paint(juce::Graphics &g) {
     g.fillAll(juce::Colour(0xffeee3e7));
-    g.setColour(juce::Colours::grey);
-    g.drawRect(getLocalBounds().toFloat(), 1.0f);
 
     juce::Rectangle<int> pitchWheel(55, 10, 25, getParentHeight() - 40);
     juce::Rectangle<int> modWheel(105, 10, 25, getParentHeight() - 40);
@@ -76,12 +77,12 @@ void Wheels::paint(juce::Graphics &g) {
 
     juce::Path upArrow;
     juce::Path lowArrow;
-    lowArrow.addTriangle(22, 75,
-                         32, 75,
-                         27, 85);
-    upArrow.addTriangle(27, 20,
-                        22, 30,
-                        32, 30);
+    lowArrow.addTriangle(22, 85,
+                         32, 85,
+                         27, 95);
+    upArrow.addTriangle(27, 30,
+                        22, 40,
+                        32, 40);
 
     g.fillPath(upArrow);
     g.fillPath(lowArrow);

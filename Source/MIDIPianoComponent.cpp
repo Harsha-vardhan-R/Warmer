@@ -48,5 +48,7 @@ void MIDIPianoComponent::resized() {
 
     if (midiSettings.get() != nullptr) midiSettings.get()->resized();
     if (wheelComponent.get() != nullptr) wheelComponent.get()->resized();
-    if (pianoComponent.get() != nullptr) pianoComponent.get()->resized();
+    if (pianoComponent.get() != nullptr) {
+        pianoComponent.get()->resized();
+    }
 }

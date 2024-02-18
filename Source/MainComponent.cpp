@@ -12,13 +12,13 @@ MainComponent::MainComponent() {
     addAndMakeVisible(menuBarComponent.get());
 
     // Also takes the height of remaining part of the other two components combined take(because the menu and the piano's sizes are hardcoded).
-    this->masterComponent = std::make_unique<MasterComponent>(menuBarComponent.get()->getHeight(), 150);
+    this->masterComponent = std::make_unique<MasterComponent>(menuBarComponent.get()->getHeight(), 175);
     addAndMakeVisible(masterComponent.get());
 
     // The height will be 'Total height of the MainWindow - Menu height(25px) - Master height(0.8 of MainWindow)'
     // The offset is the remaining part of the window height.
-    this->midiPianoComponent = std::make_unique<MIDIPianoComponent>( getHeight()-125,
-                                                                     125
+    this->midiPianoComponent = std::make_unique<MIDIPianoComponent>( getHeight()-150,
+                                                                     150
     );
     addAndMakeVisible(midiPianoComponent.get());
 

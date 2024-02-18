@@ -29,6 +29,18 @@ public:
     /* Sets the mode and calls the paint function, basically will switch tabs */
     void setMode(Mode mode);
 
+    void mouseDown(const juce::MouseEvent& event) override {
+
+    }
+
+    void mouseDrag(const juce::MouseEvent& event) override {
+
+    }
+
+    void mouseUp(const juce::MouseEvent& event) override {
+
+    }
+
 private:
     int size_width, size_height;
     int tabWidth;

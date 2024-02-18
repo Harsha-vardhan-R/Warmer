@@ -65,8 +65,10 @@ public:
         // Setting the minimum height and width that the app can be resized to.
         juce::ComponentBoundsConstrainer* getConstrainer() {
             constrain.reset(new juce::ComponentBoundsConstrainer());
-            constrain.get()->setMinimumWidth(850);  // Set minimum width
-            constrain.get()->setMinimumHeight(500); // Set minimum height
+            constrain.get()->setMinimumWidth(950);
+            constrain.get()->setMinimumHeight(600);
+
+            constrain.get()->setMaximumWidth(1922);
             return constrain.get();
         }
 
