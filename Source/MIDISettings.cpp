@@ -18,9 +18,20 @@ MIDISettings::MIDISettings() {
     myCheckbox.get()->setButtonText("Polyphony");
     myCheckbox.get()->setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::pink);
     myCheckbox.get()->setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::grey);
+    myCheckbox.get()->setColour(juce::TextButton::ColourIds::textColourOnId, juce::Colours::darkgrey);
     addAndMakeVisible(myCheckbox.get());
     myCheckbox.get()->changeWidthToFitText();
     myCheckbox.get()->addListener(this);
+
+    MIDIFromKeyboard = std::make_unique<juce::TextButton>();
+    MIDIFromKeyboard.get()->setClickingTogglesState(true);
+    MIDIFromKeyboard.get()->setButtonText("Keyboard");
+    MIDIFromKeyboard.get()->setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::pink);
+    MIDIFromKeyboard.get()->setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::grey);
+    MIDIFromKeyboard.get()->setColour(juce::TextButton::ColourIds::textColourOnId, juce::Colours::darkgrey);
+    addAndMakeVisible(MIDIFromKeyboard.get());
+    MIDIFromKeyboard.get()->changeWidthToFitText();
+    MIDIFromKeyboard.get()->addListener(this);
 
     comboBox = std::make_unique<juce::ComboBox>();
     comboBox.get()->addItem("2", 2); comboBox.get()->addItem("3", 3);
@@ -53,11 +64,12 @@ void MIDISettings::resized() {
     int width = getWidth();
     int height = getHeight();
 
+    MIDIFromKeyboard.get()->setBounds(300, 1, 55, height-2);
     myCheckbox.get()->setSize(65, height-2);
     myCheckbox.get()->setBounds(15, 1, 65, height-2);
     comboBox.get()->setBounds(myCheckbox.get()->getWidth()+15, 1, 55, height-2);
 }
 
 void MIDISettings::paint(juce::Graphics &g) {
-    g.fillAll(juce::Colours::black);
+    g.fillAll(juce::Colour(0xffeee3e7));
 }

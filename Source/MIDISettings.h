@@ -28,6 +28,7 @@ public:
 
 private:
     std::unique_ptr<juce::TextButton> myCheckbox;
+    std::unique_ptr<juce::TextButton> MIDIFromKeyboard;
     std::unique_ptr<juce::ComboBox> comboBox;
     std::unique_ptr<juce::LookAndFeel_V4> styles;
 

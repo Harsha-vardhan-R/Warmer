@@ -36,13 +36,13 @@ void Piano::paint(juce::Graphics &g) {
         if (i%7 == 0) {
             juce::String noteC("Cz");
             g.setColour(juce::Colours::grey);
-            g.drawText(noteC.replaceCharacter('z', c), (pianoWhiteKeyWidth+1)*i-offset, 100, 32, 20, juce::Justification::centred);
+            g.drawText(noteC.replaceCharacter('z', c), (pianoWhiteKeyWidth+1)*i-offset, 100, 32, 20, juce::Justification::centredBottom);
             c++;
         }
 
     }
 
-    g.setColour(juce::Colours::black);
+    g.setColour(juce::Colours::darkgrey);
 
     for (auto i : blackKeysPosition) {
         if (((pianoWhiteKeyWidth + 1) * (i-1)) + 23 - offset > getWidth()) break;
@@ -52,6 +52,8 @@ void Piano::paint(juce::Graphics &g) {
     g.setColour(juce::Colours::grey);
     g.drawRect(getLocalBounds().toFloat(), 2.5f);
 
+    g.setColour(juce::Colour(0xffeee3e7));
+    g.drawRect(getLocalBounds().toFloat(), 0.5);
 }
 
 void Piano::resized() {

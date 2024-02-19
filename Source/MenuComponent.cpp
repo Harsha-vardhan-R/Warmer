@@ -64,6 +64,7 @@ void MenuComponent::menuItemSelected(int menuItemID, int topLevelMenuIndex) {
             break;
         case 5:
             std::cout << "Exiting Warmer..." << std::endl;
+            juce::JUCEApplication::getInstance()->systemRequestedQuit();
             break;
         default:
             break;
