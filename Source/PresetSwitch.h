@@ -61,7 +61,6 @@ public:
     void resized() override {
         setSize(getParentWidth(), 35);
 
-
         if (instrumentSelect.get() != nullptr) instrumentSelect.get()->setBounds(130, 1, (getParentWidth()-130)*0.4f, 33);
         if (logo.get() != nullptr) logo.get()->setBounds(10, 2, 115, 31);
         if (presetSelect.get() != nullptr) presetSelect.get()->setBounds(130+instrumentSelect.get()->getWidth(), 1, (getParentWidth()-130)*0.25f, 33);

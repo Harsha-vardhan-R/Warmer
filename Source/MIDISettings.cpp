@@ -25,12 +25,12 @@ MIDISettings::MIDISettings() {
 
     MIDIFromKeyboard = std::make_unique<juce::TextButton>();
     MIDIFromKeyboard.get()->setClickingTogglesState(true);
-    MIDIFromKeyboard.get()->setButtonText("Keyboard");
+    MIDIFromKeyboard.get()->setButtonText("Keyboard->MIDI");
+    MIDIFromKeyboard.get()->changeWidthToFitText();
     MIDIFromKeyboard.get()->setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::pink);
     MIDIFromKeyboard.get()->setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::grey);
     MIDIFromKeyboard.get()->setColour(juce::TextButton::ColourIds::textColourOnId, juce::Colours::darkgrey);
     addAndMakeVisible(MIDIFromKeyboard.get());
-    MIDIFromKeyboard.get()->changeWidthToFitText();
     MIDIFromKeyboard.get()->addListener(this);
 
     comboBox = std::make_unique<juce::ComboBox>();
