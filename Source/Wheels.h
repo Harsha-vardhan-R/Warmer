@@ -11,17 +11,18 @@
 #pragma once
 #include <JuceHeader.h>
 
+
 /*
  * Modulation and pitch wheels sit here also contains the transpose buttons.
 */
-
-static int transposeLevel = 0; // global level static(a bit risky)
 
 class Wheels : public juce::Component {
 public:
 
     Wheels();
     ~Wheels() override;
+
+    static int TRANSPOSE;
 
     void paint(juce::Graphics& g) override;
     void resized() override;
@@ -56,11 +57,11 @@ public:
             this->pitchWheelLevel = 0.5;
         } else if (dragIndex == 2) {
             this->transpose = std::clamp(this->transpose+1, -5, 5);
-            transposeLevel = transpose;
-            std::cout << transposeLevel << "\n";
+            TRANSPOSE = this->transpose;
+            std::cout << TRANSPOSE << "\n";
         } else if (dragIndex == 3) {
             this->transpose = std::clamp(this->transpose-1, -5, 5);
-            transposeLevel = transpose;
+            TRANSPOSE = this->transpose;
         }
         dragIndex = -1;
         repaint();

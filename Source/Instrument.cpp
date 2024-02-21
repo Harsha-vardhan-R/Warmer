@@ -12,6 +12,8 @@
 #include "Instrument.h"
 #include "Modes.h"
 
+
+
 Instrument::Instrument(int tabWidth) {
     this->tabWidth = tabWidth;
 
@@ -22,9 +24,9 @@ Instrument::Instrument(int tabWidth) {
 Instrument::~Instrument() {}
 
 void Instrument::paint(juce::Graphics& g) {
-    g.fillAll(juce::Colour(0xffeee3e7));
-
-    g.setColour(juce::Colour(0xfff6abb6));
+      g.fillAll(juce::Colour(0xffeee3e7));
+//
+//    g.setColour(juce::Colour(0xfff6abb6));
 //    switch (this->presentMode) {
 //        case Mode::Play:
 //            g.setColour(juce::Colours::grey);

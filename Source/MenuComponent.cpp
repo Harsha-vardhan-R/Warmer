@@ -158,7 +158,8 @@ void MenuComponent::drawTabButton(juce::TabBarButton& button,
         g.fillRoundedRectangle(button.getLocalBounds().toFloat().reduced(3.0f), 2.0f);
         // for the square look at the junction.
         juce::Rectangle<int> squ(button.getLocalBounds().getX()+10, button.getLocalBounds().getY()+3, button.getWidth()-10, button.getHeight()-6);
-        g.fillRect(squ);
+        g.fillRect(squ);g.setColour(juce::Colours::grey);
+        g.fillRect(button.getWidth()-1, -5, 1, button.getHeight()+10);
     } else if (isMouseOver) {
         g.setColour(MouseOverTabColourID);
         g.fillRoundedRectangle(button.getLocalBounds().toFloat().reduced(3.0f), 2.0f);
@@ -166,9 +167,6 @@ void MenuComponent::drawTabButton(juce::TabBarButton& button,
         g.setColour(IdleTabColourID);
         g.fillRoundedRectangle(button.getLocalBounds().toFloat().reduced(3.0f), 2.0f);
     }
-
-    g.setColour(juce::Colours::black);
-    g.drawRect(button.getWidth(), -5, 3, button.getHeight()+10, 5);
 
     if (button.isFrontTab()) {
         g.setColour(SelectedTabTextColourID);
@@ -181,6 +179,7 @@ void MenuComponent::drawTabButton(juce::TabBarButton& button,
                                                                       button.getLocalBounds().getCentreY());
     g.addTransform(transform);
     g.drawText(button.getButtonText(), button.getLocalBounds().reduced(-15), juce::Justification::centred);
+
 }
 
 int MenuComponent::getTabButtonBestWidth(juce::TabBarButton &button, int tabDepth) {

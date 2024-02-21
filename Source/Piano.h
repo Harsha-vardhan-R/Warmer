@@ -10,6 +10,7 @@
 
 #pragma once
 #include <JuceHeader.h>
+#include "Wheels.h"
 
 
 class Piano : public juce::Component {
@@ -62,8 +63,14 @@ public:
 //        std::function<void(int)> BlackKeyUpCallback;
 
 
+    void setTransposeLevel(int level) {
+        transposeLevel = level;
+    }
+
     private:
         int offset;
+
+        int transposeLevel;
 
         // The white keys that are presently pressed.
         std::set<int> pressedWhiteKeys;

@@ -9,7 +9,9 @@
 */
 
 #include "Piano.h"
-#include "Wheels.h"
+
+
+int Wheels::TRANSPOSE = 0;
 
 // Fixed positions of the white keys(without the offset).
 const int WhiteKeyPositions[53] = {
@@ -34,22 +36,20 @@ const int blackKeyPianoPosition[37] = {
         1689 ,1723
 };
 
-
+// Bad naming, Sorry :(
 int KeysAndCorrespondingKeyCodes[150];
-int KeyMap[12] = {97, 115, 100, 102, 103,
-                  104, 106};
-int PianoKeyMap[12] = {21, 22, 23, 24, 25,
-                       26, 27};
+int KeyMap[12] = {97, 115, 100, 102, 103, 104, 106};
+int PianoKeyMap[12] = {21, 22, 23, 24, 25, 26, 27};
 int BlackKeysAndCorrespondingKeyCodes[150];
-int BlackKeyMap[12] = {119, 101, 116,
-                  121, 117};
-int BlackPianoKeyMap[12] = {15, 16, 17,
-                       18, 19};
+int BlackKeyMap[12] = {119, 101, 116, 121, 117};
+int BlackPianoKeyMap[12] = {15, 16, 17, 18, 19};
 
 Piano::Piano() {
     overlayPainter.reset(new Piano::OverlayKeyPaint());
     overlayPainter.get()->setWantsKeyboardFocus(true);
     addAndMakeVisible(overlayPainter.get());
+
+    setBufferedToImage(true);
 
     resized();
 }
@@ -103,26 +103,36 @@ Piano::OverlayKeyPaint::OverlayKeyPaint() {
 
     this->addKeyListener(this);
 
+    setBufferedToImage(true);
+
     resized();
 }
 
+int presentKey;
+
 void Piano::OverlayKeyPaint::WhiteKeyDown(int keyIndex) {
-    this->pressedWhiteKeys.insert(keyIndex + (transposeLevel*7));
+    presentKey = keyIndex+(Wheels::TRANSPOSE*7);
+    if (presentKey < 0 || presentKey > 52) return;
+    this->pressedWhiteKeys.insert(presentKey);
+    repaint();
 }
 
 void Piano::OverlayKeyPaint::WhiteKeyUp(int keyIndex) {
     // does not raise an exception if not found, so no need to handle any kind of exception.
-    this->pressedWhiteKeys.erase(keyIndex + (transposeLevel*7));
+    this->pressedWhiteKeys.erase(keyIndex+(Wheels::TRANSPOSE*7));
     repaint();
 }
 
 void Piano::OverlayKeyPaint::BlackKeyDown(int keyIndex) {
-    this->pressedBlackKeys.insert(keyIndex + (transposeLevel*5));
+    presentKey = keyIndex+(Wheels::TRANSPOSE*5);
+    if (presentKey < 0 || presentKey > 36) return;
+    this->pressedBlackKeys.insert(presentKey);
     repaint();
 }
 
 void Piano::OverlayKeyPaint::BlackKeyUp(int keyIndex) {
-    this->pressedBlackKeys.erase(keyIndex + (transposeLevel*5));
+    this->pressedBlackKeys.erase(keyIndex+(Wheels::TRANSPOSE*5));
+    repaint();
 }
 
 void fillGradient(juce::Graphics& g, const juce::Colour& colour1, const juce::Colour& colour2,
@@ -135,7 +145,7 @@ void fillGradient(juce::Graphics& g, const juce::Colour& colour1, const juce::Co
 int count = 0;
 void Piano::OverlayKeyPaint::paint(juce::Graphics &g) {
 
-    std::cout << transposeLevel << " " << count++ << " \n";
+    std::cout << Wheels::TRANSPOSE << " " << count++ << " \n";
 
     int pianoWhiteKeyWidth = 33;
     int pianoBlackKeyWidth = 20;
@@ -162,17 +172,14 @@ void Piano::OverlayKeyPaint::resized() {
 bool Piano::OverlayKeyPaint::keyPressed(const juce::KeyPress& k, juce::Component* c) {
     int code = k.getKeyCode();
     int keyCode = KeysAndCorrespondingKeyCodes[code];
+
     if (keyCode != -1) {
         this->pressedWhiteKeyCodes.insert(code);
         WhiteKeyDown(keyCode);
-        repaint();
         return true;
-    }
-    keyCode = BlackKeysAndCorrespondingKeyCodes[code];
-    if (keyCode != -1) {
+    } else if (BlackKeysAndCorrespondingKeyCodes[code] != -1) {
         this->pressedBlackKeyCodes.insert(code);
-        BlackKeyDown(keyCode);
-        repaint();
+        BlackKeyDown(BlackKeysAndCorrespondingKeyCodes[code]);
         return true;
     }
 
