@@ -52,14 +52,7 @@ public:
         void mouseUp(const juce::MouseEvent& event) override;
 
         bool keyPressed(const juce::KeyPress&, juce::Component*) override;
-        bool keyStateChanged(bool isKeyDown, juce::Component* c) override {
-            if (isKeyDown == false) {
-                WhiteKeyUp(25);
-                repaint();
-                return true;
-            }
-            return false;
-        };
+        bool keyStateChanged(bool isKeyDown, juce::Component* c) override;
 
 
         // for callbacks from other classes like from MIDI and keyboard.
@@ -75,6 +68,16 @@ public:
         // The white keys that are presently pressed.
         std::set<int> pressedWhiteKeys;
         std::set<int> pressedBlackKeys;
+
+        std::set<int> pressedWhiteKeyCodes;
+        std::set<int> pressedBlackKeyCodes;
+
+        int pos_to_type[7] = {1, 2, 3, 1, 2, 2, 3};
+
+
+        // images to overlay.
+        juce::Image WImage = juce::ImageFileFormat::loadFrom(juce::File("./Assets/KeyPressedImages/PianoFullImageWhitePressed.png"));
+        juce::Image Bimage = juce::ImageFileFormat::loadFrom(juce::File("./Assets/KeyPressedImages/B.png"));
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OverlayKeyPaint)
     };
@@ -103,6 +106,8 @@ private:
     };
 
     std::unique_ptr<Piano::OverlayKeyPaint> overlayPainter;
+
+    juce::Image PianoImage = juce::ImageFileFormat::loadFrom(juce::File("./Assets/KeyPressedImages/PianoFullImage.png"));
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Piano)

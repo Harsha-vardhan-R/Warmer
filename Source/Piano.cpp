@@ -9,6 +9,7 @@
 */
 
 #include "Piano.h"
+#include "Wheels.h"
 
 // Fixed positions of the white keys(without the offset).
 const int WhiteKeyPositions[53] = {
@@ -33,11 +34,22 @@ const int blackKeyPianoPosition[37] = {
         1689 ,1723
 };
 
+
+int KeysAndCorrespondingKeyCodes[150];
+int KeyMap[12] = {97, 115, 100, 102, 103,
+                  104, 106};
+int PianoKeyMap[12] = {21, 22, 23, 24, 25,
+                       26, 27};
+int BlackKeysAndCorrespondingKeyCodes[150];
+int BlackKeyMap[12] = {119, 101, 116,
+                  121, 117};
+int BlackPianoKeyMap[12] = {15, 16, 17,
+                       18, 19};
+
 Piano::Piano() {
     overlayPainter.reset(new Piano::OverlayKeyPaint());
     overlayPainter.get()->setWantsKeyboardFocus(true);
     addAndMakeVisible(overlayPainter.get());
-
 
     resized();
 }
@@ -45,39 +57,11 @@ Piano::Piano() {
 Piano::~Piano() {}
 
 void Piano::paint(juce::Graphics &g) {
-    g.fillAll(juce::Colours::grey);
-
-    int pianoWhiteKeyWidth = 33;
-    int pianoBlackKeyWidth = 20;
-    char c = '0';
-
     int offset = 885-(getWidth()/2);
-    int firstVisibleWhiteKey = offset / pianoWhiteKeyWidth-1;
-    int lastVisibleWhiteKey = juce::jmin(53, (getWidth() + offset) / pianoWhiteKeyWidth+1);
-
-    // draw white keys.
-    g.setColour(juce::Colour(0xffeee3e7));
-    for (int i = firstVisibleWhiteKey; i < lastVisibleWhiteKey; ++i) {
-        g.fillRect(WhiteKeyPositions[i]-offset, 0, pianoWhiteKeyWidth, 126);
-    }
-
-    // draw the octave numbers for all the c keys.
+    g.drawImage(PianoImage, 0 , 0, getWidth(), getHeight(),
+                offset, 0, getWidth(), getHeight(), false);
     g.setColour(juce::Colours::grey);
-    for (int i = 0; i < 53; i+=7, c++) {
-            juce::String noteC("Cz");
-            g.drawText(noteC.replaceCharacter('z', c), WhiteKeyPositions[i]-offset, 100, 32, 20, juce::Justification::centredBottom);
-    }
-
-    // draw the black keys.
-    g.setColour(juce::Colours::darkgrey);
-    for (int i = 0; i < 37; i++) {
-        if (blackKeyPianoPosition[i] - offset > getWidth()) break;
-        g.fillRect(blackKeyPianoPosition[i] - offset, 0, pianoBlackKeyWidth, 90);
-    }
-
-    g.setColour(juce::Colours::grey);
-    g.fillRect(0, 0, getWidth(), 3);
-    g.drawRect(getLocalBounds().toFloat(), 1.0f);
+    g.drawRect(getLocalBounds(), 1);
 }
 
 void Piano::resized() {
@@ -100,30 +84,45 @@ Piano::OverlayKeyPaint::OverlayKeyPaint() {
     pressedWhiteKeys = {};
     pressedBlackKeys = {};
 
+    for (int i = 0; i < 150; i++) {
+        KeysAndCorrespondingKeyCodes[i] = -1;
+    }
+    int i = 0;
+    for (auto j : KeyMap) {
+        KeysAndCorrespondingKeyCodes[j] = PianoKeyMap[i];
+        i++;
+    }
+    for (int i = 0; i < 150; i++) {
+        BlackKeysAndCorrespondingKeyCodes[i] = -1;
+    }
+    i = 0;
+    for (auto j : BlackKeyMap) {
+        BlackKeysAndCorrespondingKeyCodes[j] = BlackPianoKeyMap[i];
+        i++;
+    }
+
     this->addKeyListener(this);
 
     resized();
 }
 
 void Piano::OverlayKeyPaint::WhiteKeyDown(int keyIndex) {
-    this->pressedWhiteKeys.insert(keyIndex);
-    repaint();
+    this->pressedWhiteKeys.insert(keyIndex + (transposeLevel*7));
 }
 
 void Piano::OverlayKeyPaint::WhiteKeyUp(int keyIndex) {
     // does not raise an exception if not found, so no need to handle any kind of exception.
-    this->pressedWhiteKeys.erase(keyIndex);
+    this->pressedWhiteKeys.erase(keyIndex + (transposeLevel*7));
     repaint();
 }
 
 void Piano::OverlayKeyPaint::BlackKeyDown(int keyIndex) {
-    this->pressedBlackKeys.insert(keyIndex);
+    this->pressedBlackKeys.insert(keyIndex + (transposeLevel*5));
     repaint();
 }
 
 void Piano::OverlayKeyPaint::BlackKeyUp(int keyIndex) {
-    this->pressedBlackKeys.erase(keyIndex);
-    repaint();
+    this->pressedBlackKeys.erase(keyIndex + (transposeLevel*5));
 }
 
 void fillGradient(juce::Graphics& g, const juce::Colour& colour1, const juce::Colour& colour2,
@@ -133,39 +132,77 @@ void fillGradient(juce::Graphics& g, const juce::Colour& colour1, const juce::Co
     g.fillRect(x, y, width, height);
 }
 
+int count = 0;
 void Piano::OverlayKeyPaint::paint(juce::Graphics &g) {
+
+    std::cout << transposeLevel << " " << count++ << " \n";
 
     int pianoWhiteKeyWidth = 33;
     int pianoBlackKeyWidth = 20;
+    int num;
 
     // Draw the overlay for the pressed white keys.
-    // Not looking for out of bounds, handled by the `fillRoundedRectangle`
-    g.setColour(juce::Colour(0xffeee3e7));
     for (auto i = pressedWhiteKeys.begin(); i != pressedWhiteKeys.end(); ++i) {
-        fillGradient(g, juce::Colour(0xffeee3e7), juce::Colour(0x33f6abb6),
-                     WhiteKeyPositions[*i] - offset, 90, pianoWhiteKeyWidth, 33);
+        g.drawImage(WImage, WhiteKeyPositions[*i] - offset - 1, 0, 34, 130,
+                    WhiteKeyPositions[*i], 1, 34, 130, false);
     }
 
-    g.setColour(juce::Colours::darkgrey);
     for (auto i = pressedBlackKeys.begin(); i != pressedBlackKeys.end(); ++i) {
-        std::cout << *i << "\n";
-        g.fillRoundedRectangle(blackKeyPianoPosition[*i] - offset, 80, pianoBlackKeyWidth, 13, 3.0f);
+        g.drawImage(Bimage, blackKeyPianoPosition[*i] - offset, 2, 20, 89,
+                    0, 2, 20, 89, false);
     }
 
 }
 
 void Piano::OverlayKeyPaint::resized() {
-    if (this->getParentComponent() != nullptr) setBounds(this->getParentComponent()->getLocalBounds().reduced(2));
-    this->offset = 885-(getWidth()/2);
+    if (this->getParentComponent() != nullptr) setBounds(this->getParentComponent()->getLocalBounds().reduced(1));
+    this->offset = 884-(getWidth()/2);
 }
 
 bool Piano::OverlayKeyPaint::keyPressed(const juce::KeyPress& k, juce::Component* c) {
-
-    if (k == juce::KeyPress::spaceKey) {
-        WhiteKeyDown(25);
+    int code = k.getKeyCode();
+    int keyCode = KeysAndCorrespondingKeyCodes[code];
+    if (keyCode != -1) {
+        this->pressedWhiteKeyCodes.insert(code);
+        WhiteKeyDown(keyCode);
+        repaint();
+        return true;
+    }
+    keyCode = BlackKeysAndCorrespondingKeyCodes[code];
+    if (keyCode != -1) {
+        this->pressedBlackKeyCodes.insert(code);
+        BlackKeyDown(keyCode);
         repaint();
         return true;
     }
 
     return false;
 }
+
+std::queue<int> WhitePressedTemp;
+std::queue<int> BlackPressedTemp;
+
+bool Piano::OverlayKeyPaint::keyStateChanged(bool isKeyDown, juce::Component* c) {
+    int num = 0;
+    for (auto i = pressedWhiteKeyCodes.begin(); i != pressedWhiteKeyCodes.end(); i++) {
+        if (!juce::KeyPress::isKeyCurrentlyDown(*i)) {
+            WhitePressedTemp.push(*i);num ++;
+            WhiteKeyUp(KeysAndCorrespondingKeyCodes[*i]);
+        }
+    }
+    while(!WhitePressedTemp.empty()) {
+        pressedWhiteKeyCodes.erase(WhitePressedTemp.front()); WhitePressedTemp.pop();
+    }
+
+    for (auto i = pressedBlackKeyCodes.begin(); i != pressedBlackKeyCodes.end(); i++) {
+        if (!juce::KeyPress::isKeyCurrentlyDown(*i)) {
+            BlackPressedTemp.push(*i);num ++;
+            BlackKeyUp(BlackKeysAndCorrespondingKeyCodes[*i]);
+        }
+    }
+    while(!BlackPressedTemp.empty()) {
+        pressedBlackKeyCodes.erase(WhitePressedTemp.front()); BlackPressedTemp.pop();
+    }
+
+    return false;
+};

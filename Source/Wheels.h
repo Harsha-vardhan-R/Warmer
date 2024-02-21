@@ -15,6 +15,8 @@
  * Modulation and pitch wheels sit here also contains the transpose buttons.
 */
 
+static int transposeLevel = 0; // global level static(a bit risky)
+
 class Wheels : public juce::Component {
 public:
 
@@ -54,8 +56,11 @@ public:
             this->pitchWheelLevel = 0.5;
         } else if (dragIndex == 2) {
             this->transpose = std::clamp(this->transpose+1, -5, 5);
+            transposeLevel = transpose;
+            std::cout << transposeLevel << "\n";
         } else if (dragIndex == 3) {
             this->transpose = std::clamp(this->transpose-1, -5, 5);
+            transposeLevel = transpose;
         }
         dragIndex = -1;
         repaint();

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "ColourPalette.h"
 
 // We do not need to implement the `MenuBarComponent`,
 // it is added as a class member.
@@ -31,7 +32,7 @@ public:
     }
     void drawPopupMenuBackground (juce::Graphics& g, int width, int height) override {
         juce::Rectangle<int> popupBounds(0, 0, width, height);
-        g.fillAll(juce::Colour(0xffeee3e7));
+        g.fillAll(MenuBackgroundID);
     }
     void drawMenuBarItem (juce::Graphics& g,
                           int width,

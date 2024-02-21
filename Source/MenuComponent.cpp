@@ -15,9 +15,7 @@ MenuComponent::~MenuComponent() {
     setLookAndFeel(nullptr);
 }
 
-void MenuComponent::paint(juce::Graphics& g) {
-    g.fillAll(juce::Colours::lightgrey);
-}
+void MenuComponent::paint(juce::Graphics& g) {}
 
 void MenuComponent::resized() {
     //setting the size of our normal component.
@@ -83,10 +81,12 @@ void MenuComponent::drawMenuBarItem (juce::Graphics& g,
                       juce::MenuBarComponent& menuBar) {
     juce::Rectangle<int> highLight(1, 1, width-2, height-2);
     if (isMouseOverItem) {
-        g.setColour(juce::Colour(0xfff6abb6));
+        g.setColour(MenuMouseOverColourID);
         g.fillRoundedRectangle(highLight.toFloat(), 3.0f);
+        g.setColour(SelectedTabTextColourID);
+    } else {
+        g.setColour(IdleTabTextColourID);
     }
-    g.setColour(juce::Colours::darkgrey);
     g.drawText(itemText, 0, 0, width, height, juce::Justification::centred);
 }
 
@@ -104,14 +104,18 @@ void MenuComponent::drawPopupMenuItem (juce::Graphics& g,
     juce::Rectangle<int> highLight(area.getX() + 3, area.getY(), area.getWidth() - 6 , area.getHeight());
     juce::Rectangle<int> aligner(area.getX() + 15, area.getY(), area.getWidth() , area.getHeight());
     if (isSeparator) {
-        g.setColour(juce::Colours::grey);
+        g.setColour(SeparatorColourID);
         juce::Rectangle<int> sepLine(area.getX()+3, area.getCentreY(), area.getWidth()-6, 1);
         g.fillRect(sepLine);
+        return;
     } else if (isHighlighted) {
-        g.setColour(juce::Colour(0xfff6abb6));
+        g.setColour(MenuMouseOverColourID);
         g.fillRoundedRectangle(highLight.toFloat(), 3.0f);
+        g.setColour(SelectedTabTextColourID);
+    } else {
+        g.setColour(IdleTabTextColourID);
     }
-    g.setColour(juce::Colours::darkgrey);
+
     g.drawText(text, aligner, juce::Justification::centredLeft);
 
 }
@@ -119,7 +123,7 @@ void MenuComponent::drawPopupMenuItem (juce::Graphics& g,
 
 void MenuComponent::drawComboBox(juce::Graphics &g, int width, int height, bool isButtonDown, int buttonX, int buttonY,
                                  int buttonW, int buttonH, juce::ComboBox& box) {
-    g.setColour(juce::Colour(0xfff6abb6));
+    g.setColour(MenuMouseOverColourID);
     g.fillRoundedRectangle(box.getLocalBounds().reduced(2).toFloat(), 3.0f);
 
     juce::Path arrow;
@@ -137,7 +141,7 @@ void MenuComponent::drawComboBox(juce::Graphics &g, int width, int height, bool 
                           arrowX + (arrowDimen * 0.5f) + 1, arrowY + arrowDimen);
     }
 
-    g.setColour(box.findColour(juce::ComboBox::arrowColourId));
+    g.setColour(ComboBoxArrowColourID);
     g.fillPath(arrow);
 }
 
@@ -147,33 +151,36 @@ void MenuComponent::drawTabButton(juce::TabBarButton& button,
                                   bool isMouseOver,
                                   bool isMouseDown) {
 
-    g.fillAll(juce::Colour(0xffeee3e7));
+    g.fillAll(MenuBackgroundID);
 
     if (button.isFrontTab()) {
-        g.setColour(juce::Colour(0xfff6abb6));
+        g.setColour(SelectTabColourID);
         g.fillRoundedRectangle(button.getLocalBounds().toFloat().reduced(3.0f), 2.0f);
         // for the square look at the junction.
         juce::Rectangle<int> squ(button.getLocalBounds().getX()+10, button.getLocalBounds().getY()+3, button.getWidth()-10, button.getHeight()-6);
         g.fillRect(squ);
     } else if (isMouseOver) {
-        g.setColour(juce::Colour(0xfff4b6c2));
+        g.setColour(MouseOverTabColourID);
         g.fillRoundedRectangle(button.getLocalBounds().toFloat().reduced(3.0f), 2.0f);
     } else {
-        g.setColour(juce::Colour(0xffeec9d2));
+        g.setColour(IdleTabColourID);
         g.fillRoundedRectangle(button.getLocalBounds().toFloat().reduced(3.0f), 2.0f);
     }
 
-    g.setColour(juce::Colours::grey);
+    g.setColour(juce::Colours::black);
+    g.drawRect(button.getWidth(), -5, 3, button.getHeight()+10, 5);
+
+    if (button.isFrontTab()) {
+        g.setColour(SelectedTabTextColourID);
+    } else {
+        g.setColour(IdleTabTextColourID);
+    }
 
     juce::AffineTransform transform = juce::AffineTransform::rotation(-1.57,
                                                                       button.getLocalBounds().getCentreX(),
                                                                       button.getLocalBounds().getCentreY());
-
-    g.drawLine(button.getWidth(), -5, button.getWidth(), button.getHeight());
-
     g.addTransform(transform);
     g.drawText(button.getButtonText(), button.getLocalBounds().reduced(-15), juce::Justification::centred);
-
 }
 
 int MenuComponent::getTabButtonBestWidth(juce::TabBarButton &button, int tabDepth) {
