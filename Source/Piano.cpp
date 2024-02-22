@@ -102,7 +102,7 @@ Piano::OverlayKeyPaint::OverlayKeyPaint() {
     }
 
     this->addKeyListener(this);
-
+    setWantsKeyboardFocus(true);
     setBufferedToImage(true);
 
     resized();
@@ -133,13 +133,6 @@ void Piano::OverlayKeyPaint::BlackKeyDown(int keyIndex) {
 void Piano::OverlayKeyPaint::BlackKeyUp(int keyIndex) {
     this->pressedBlackKeys.erase(keyIndex+(Wheels::TRANSPOSE*5));
     repaint();
-}
-
-void fillGradient(juce::Graphics& g, const juce::Colour& colour1, const juce::Colour& colour2,
-                  int x, int y, int width, int height) {
-    juce::ColourGradient gradient(colour1, x, y, colour2, x + width, y + height, false);
-    g.setGradientFill(gradient);
-    g.fillRect(x, y, width, height);
 }
 
 int count = 0;

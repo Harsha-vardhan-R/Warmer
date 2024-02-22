@@ -9,6 +9,7 @@
 */
 
 #include "Wheels.h"
+#include "ColourPalette.h"
 #include <cmath>
 
 
@@ -35,24 +36,27 @@ void drawWheelWithLevel(juce::Rectangle<float> bounds, // wheel bounds
                         juce::Graphics &g,
                         float level) { // level varies from 0.0 to 1.0
     // draw a thin rectangle, then draw the notch.
-    g.setColour(juce::Colour(0xfff6abb6));
+    g.setColour(WheelBackgroundID);
     g.fillRoundedRectangle(bounds.toFloat(), 3.0f);
     float notchCentre= ((float)bounds.getHeight()*0.95)*(1.0-level);
-    g.setColour(juce::Colour(juce::Colours::grey));
+    g.setColour(WheelSliderBackgroundID);
     g.fillRoundedRectangle(bounds.getX() + 1, bounds.getY()+(int)notchCentre, bounds.getWidth()-2, 5.0, 3.0f);
-    g.setColour(juce::Colour(juce::Colours::white));
+    g.setColour(WheelSliderLineBackgroundID);
     g.fillRect(bounds.getX() + 2, bounds.getY()+(int)notchCentre+2, bounds.getWidth()-4, 1.0);
-    g.setColour(juce::Colour(juce::Colours::grey));
+    g.setColour(WheelSliderLineBackgroundID);
+    g.drawRoundedRectangle(bounds.toFloat(), 3.0f, 1.0f);
 }
 
 void Wheels::paint(juce::Graphics &g) {
-    g.fillAll(juce::Colour(0xffeee3e7));
+    g.fillAll(WheelComponentBackgroundID);
 
     juce::Rectangle<int> pitchWheel(55, 10, 25, getParentHeight() - 40);
     juce::Rectangle<int> modWheel(105, 10, 25, getParentHeight() - 40);
 
     drawWheelWithLevel(modWheel.toFloat(), g, this->modWheelLevel);
     drawWheelWithLevel(pitchWheel.toFloat(), g, this->pitchWheelLevel);
+
+    g.setColour(WheelArrowColourID);
 
     juce::Path arrow;
     arrow.addTriangle(135, 10,
@@ -83,6 +87,7 @@ void Wheels::paint(juce::Graphics &g) {
     upArrow.addTriangle(27, 30,
                         22, 40,
                         32, 40);
+
 
     g.fillPath(upArrow);
     g.fillPath(lowArrow);

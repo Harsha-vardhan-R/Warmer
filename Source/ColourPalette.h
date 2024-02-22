@@ -14,18 +14,30 @@
 
 
 // Stores the colours for the present theme.
-static auto textColourID = juce::Colours::grey;
+static auto textColourID = juce::Colours::darkgrey;
 static auto textSelectedColourID = juce::Colours::white;
 
-static auto MenuBackgroundID = juce::Colour(0xffeee3e7);
-//static auto MenuSelectColourID = ;
-static auto MenuMouseOverColourID = juce::Colour(0xff7db9b6);
+static auto MenuBackgroundID = juce::Colour(0xffd5f5e3);
+static auto MenuMouseOverColourID = juce::Colour(0xffa9dfbf);
 
-static auto MouseOverTabColourID = juce::Colour(0xcc7db9b6);
-static auto SelectTabColourID = juce::Colour(0xff7db9b6);
-static auto IdleTabColourID = juce::Colour(0xffeec9d2);
-static auto IdleTabTextColourID = juce::Colours::grey;
-static auto SelectedTabTextColourID = juce::Colours::white;
 
-static auto ComboBoxArrowColourID = juce::Colours::white;
-static auto SeparatorColourID = juce::Colours::grey;
+static auto MouseOverTabColourID = juce::Colour(0xcca9dfbf);
+static auto SelectTabColourID = juce::Colour(0xffa9dfbf);
+static auto IdleTabColourID = juce::Colour(0x88a9dfbf);
+static auto IdleTabTextColourID = juce::Colours::darkgrey;
+static auto SelectedTabTextColourID = juce::Colours::black;
+
+static auto ComboBoxArrowColourID = juce::Colours::darkgrey;
+static auto SeparatorColourID = juce::Colour(0xffd5f5e3);
+static auto ComboBoxTextSelectedColourID = juce::Colours::grey;
+
+static auto WheelComponentBackgroundID = juce::Colour(0xffd5f5e3);
+static auto WheelArrowColourID = juce::Colours::darkgrey;
+static auto WheelBackgroundID = juce::Colour(0xffa9dfbf);
+static auto WheelSliderBackgroundID = juce::Colours::darkgrey;
+static auto WheelSliderLineBackgroundID = juce::Colours::white;
+
+
+
+
+

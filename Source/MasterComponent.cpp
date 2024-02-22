@@ -11,6 +11,7 @@
 #include "MasterComponent.h"
 #include "ModeSwitch.h"
 #include "PresetSwitch.h"
+#include "ColourPalette.h"
 
 // upperComponent will set the offset in the y-direction at which the
 MasterComponent::MasterComponent(int upperComponent, int otherComponentCumulativeHeight) {
@@ -22,7 +23,7 @@ MasterComponent::MasterComponent(int upperComponent, int otherComponentCumulativ
     modeSwitch = std::make_unique<ModeSwitch>();
     modeSwitch.get()->setOutline(1);
     modeSwitch.get()->setIndent(1);
-    modeSwitch.get()->setColour(juce::TabbedComponent::ColourIds::backgroundColourId, juce::Colour(0xffeee3e7));
+    modeSwitch.get()->setColour(juce::TabbedComponent::ColourIds::backgroundColourId, MenuBackgroundID);
     modeSwitch.get()->setColour(juce::TabbedComponent::ColourIds::outlineColourId, juce::Colours::grey);
     addAndMakeVisible(modeSwitch.get());
 

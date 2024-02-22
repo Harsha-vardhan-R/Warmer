@@ -11,6 +11,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "MenuComponent.h"
+#include "ColourPalette.h"
 
 /*
     The class that handles selecting various instruments and various presets if the instruments have them available,
@@ -23,20 +24,18 @@ public:
     PresetSwitch() {
         instrumentSelect = std::make_unique<juce::ComboBox>();
         instrumentSelect.get()->setJustificationType(juce::Justification::centred);
-        instrumentSelect.get()->setColour(juce::ComboBox::textColourId, juce::Colours::white);
-        instrumentSelect.get()->setColour(juce::ComboBox::arrowColourId, juce::Colours::grey);
+        instrumentSelect.get()->setColour(juce::ComboBox::textColourId, ComboBoxTextSelectedColourID);
         instrumentSelect.get()->setText("Select Instrument");
         addAndMakeVisible(instrumentSelect.get());
 
         presetSelect = std::make_unique<juce::ComboBox>();
         presetSelect.get()->setJustificationType(juce::Justification::centred);
-        presetSelect.get()->setColour(juce::ComboBox::textColourId, juce::Colours::white);
-        presetSelect.get()->setColour(juce::ComboBox::arrowColourId, juce::Colours::grey);
+        presetSelect.get()->setColour(juce::ComboBox::textColourId, ComboBoxTextSelectedColourID);
         // will change the text when you are changing the instrument.
         presetSelect.get()->setText("Select Preset");
         addAndMakeVisible(presetSelect.get());
 
-        juce::Image myImage = juce::ImageFileFormat::loadFrom(juce::File("./Assets/Icons/jjj.png"));
+        juce::Image myImage = juce::ImageFileFormat::loadFrom(juce::File("./Assets/Icons/icon.png"));
         logo = std::make_unique<juce::ImageComponent>();
         logo.get()->setImage(myImage);
         addAndMakeVisible(logo.get());

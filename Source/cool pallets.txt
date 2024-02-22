@@ -1,0 +1,22 @@
+/// Kinda blue
+
+static auto textColourID = juce::Colours::grey;
+static auto textSelectedColourID = juce::Colours::white;
+
+static auto MenuBackgroundID = juce::Colour(0xffd6d1db);
+static auto MenuMouseOverColourID = juce::Colour(0xff8f97b7);
+
+static auto MouseOverTabColourID = juce::Colour(0xcc8f97b7);
+static auto SelectTabColourID = juce::Colour(0xff8f97b7);
+static auto IdleTabColourID = juce::Colour(0xffc0b0bc);
+static auto IdleTabTextColourID = juce::Colours::grey;
+static auto SelectedTabTextColourID = juce::Colours::white;
+
+static auto ComboBoxArrowColourID = juce::Colours::white;
+static auto SeparatorColourID = juce::Colours::grey;
+
+static auto WheelComponentBackgroundID = juce::Colour(0xffd6d1db);
+static auto WheelArrowColourID = juce::Colours::grey;
+static auto WheelBackgroundID = juce::Colour(0xfff5c2cb);
+static auto WheelSliderBackgroundID = juce::Colours::grey;
+static auto WheelSliderLineBackgroundID = juce::Colours::white;

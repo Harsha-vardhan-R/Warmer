@@ -29,9 +29,9 @@ public:
         this->setTabBarDepth(30);
         this->instrument = std::make_unique<Instrument>(getTabBarDepth());
 
-        addTab("Play", colour_here, this->instrument.get() , true);
-        addTab("Graph", colour_here, this->instrument.get() , true);
-        addTab("Edit", colour_here, this->instrument.get() , true);
+        addTab("Play", colour_here, this->instrument.get()->getPlayPage() , true);
+        addTab("Graph", colour_here, this->instrument.get()->getGraphPage() , true);
+        addTab("Edit", colour_here, this->instrument.get()->getEditPage() , true);
 
         styles.reset(new MenuComponent());
         setLookAndFeel(styles.get());

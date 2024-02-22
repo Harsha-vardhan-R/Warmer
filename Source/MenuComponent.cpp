@@ -159,7 +159,7 @@ void MenuComponent::drawTabButton(juce::TabBarButton& button,
         // for the square look at the junction.
         juce::Rectangle<int> squ(button.getLocalBounds().getX()+10, button.getLocalBounds().getY()+3, button.getWidth()-10, button.getHeight()-6);
         g.fillRect(squ);g.setColour(juce::Colours::grey);
-        g.fillRect(button.getWidth()-1, -5, 1, button.getHeight()+10);
+        g.fillRect(button.getWidth()-2, -5, 2, button.getHeight()+10);
     } else if (isMouseOver) {
         g.setColour(MouseOverTabColourID);
         g.fillRoundedRectangle(button.getLocalBounds().toFloat().reduced(3.0f), 2.0f);

@@ -29,13 +29,70 @@ public:
     /* Sets the mode and calls the paint function, basically will switch tabs */
     void setMode(Mode mode);
 
+    // Will contain the paint methods for the page, the data what to show will be in the parent(in hierarchy) class.
+    class EditPage : public juce::Component {
+    public:
+
+        EditPage();
+        ~EditPage() override {}
+
+        void paint(juce::Graphics& g) override;
+        void resized() override;
+
+    private:
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EditPage)
+    };
+
+    // Will contain the paint methods for the page, the data what to show will be in the parent(in hierarchy) class.
+    class GraphPage : public juce::Component {
+    public:
+        GraphPage();
+        ~GraphPage() override {}
+
+        void paint(juce::Graphics& g) override;
+        void resized() override;
+
+    private:
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GraphPage)
+    };
+
+    // Will contain the paint methods for the page, the data what to show will be in the parent(in hierarchy) class.
+    class PlayPage : public juce::Component {
+    public:
+        PlayPage();
+        ~PlayPage() override {}
+
+        void paint(juce::Graphics& g) override;
+        void resized() override;
+
+    private:
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlayPage)
+    };
+
+
+    // Because the pages to be displayed are private, get functions for the pages.
+    // Please do not use this before creating the pages, or else everything will crash
+    juce::Component* getEditPage() {
+        return this->editPage.get();
+    }
+
+    juce::Component* getGraphPage() {
+        return this->graphPage.get();
+    }
+
+    juce::Component* getPlayPage() {
+        return this->playPage.get();
+    }
 
 private:
+    std::unique_ptr<juce::Component> editPage;
+    std::unique_ptr<juce::Component> graphPage;
+    std::unique_ptr<juce::Component> playPage;
+
     int size_width, size_height;
     int tabWidth;
-    // This will be set before painting, used to render different things from the same component.
-    Mode presentMode;
 
+    Mode presentMode;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Instrument)
 };
