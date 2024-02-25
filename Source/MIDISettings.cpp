@@ -10,26 +10,29 @@
 
 #include "MIDISettings.h"
 #include "MenuComponent.h"
+#include "ColourPalette.h"
 
 MIDISettings::MIDISettings() {
 
     myCheckbox = std::make_unique<juce::TextButton>();
     myCheckbox.get()->setClickingTogglesState(true);
     myCheckbox.get()->setButtonText("Polyphony");
-    myCheckbox.get()->setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::pink);
-    myCheckbox.get()->setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::grey);
-    myCheckbox.get()->setColour(juce::TextButton::ColourIds::textColourOnId, juce::Colours::darkgrey);
+    myCheckbox.get()->setColour(juce::TextButton::ColourIds::buttonOnColourId, MIDISettingsButtonColourSelectID);
+    myCheckbox.get()->setColour(juce::TextButton::ColourIds::buttonColourId, MIDISettingsButtonColourID);
+    myCheckbox.get()->setColour(juce::TextButton::ColourIds::textColourOnId, MIDISettingsTextSelectID);
+    myCheckbox.get()->setColour(juce::TextButton::ColourIds::textColourOffId, MIDISettingsTextID);
     addAndMakeVisible(myCheckbox.get());
     myCheckbox.get()->changeWidthToFitText();
     myCheckbox.get()->addListener(this);
 
     MIDIFromKeyboard = std::make_unique<juce::TextButton>();
     MIDIFromKeyboard.get()->setClickingTogglesState(true);
-    MIDIFromKeyboard.get()->setButtonText("Keyboard->MIDI");
+    MIDIFromKeyboard.get()->setButtonText("Keyboard");
     MIDIFromKeyboard.get()->changeWidthToFitText();
-    MIDIFromKeyboard.get()->setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::pink);
-    MIDIFromKeyboard.get()->setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::grey);
-    MIDIFromKeyboard.get()->setColour(juce::TextButton::ColourIds::textColourOnId, juce::Colours::darkgrey);
+    MIDIFromKeyboard.get()->setColour(juce::TextButton::ColourIds::buttonOnColourId, MIDISettingsButtonColourSelectID);
+    MIDIFromKeyboard.get()->setColour(juce::TextButton::ColourIds::buttonColourId, MIDISettingsButtonColourID);
+    MIDIFromKeyboard.get()->setColour(juce::TextButton::ColourIds::textColourOnId, MIDISettingsTextSelectID);
+    MIDIFromKeyboard.get()->setColour(juce::TextButton::ColourIds::textColourOffId, MIDISettingsTextID);
     addAndMakeVisible(MIDIFromKeyboard.get());
     MIDIFromKeyboard.get()->addListener(this);
 
@@ -45,9 +48,6 @@ MIDISettings::MIDISettings() {
     comboBox.get()->setSelectedId(8);
     addAndMakeVisible(comboBox.get());
     comboBox.get()->addListener(this);
-
-    styles.reset(new MenuComponent());
-    setLookAndFeel(styles.get());
 
     resized();
 }
@@ -71,5 +71,5 @@ void MIDISettings::resized() {
 }
 
 void MIDISettings::paint(juce::Graphics &g) {
-    g.fillAll(juce::Colour(0xffeee3e7));
+    g.fillAll(MIDISettingsBackgroundID);
 }

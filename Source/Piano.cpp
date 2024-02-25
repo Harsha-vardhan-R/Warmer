@@ -10,7 +10,6 @@
 
 #include "Piano.h"
 
-
 int Wheels::TRANSPOSE = 0;
 
 // Fixed positions of the white keys(without the offset).
@@ -44,9 +43,12 @@ int BlackKeysAndCorrespondingKeyCodes[150];
 int BlackKeyMap[12] = {119, 101, 116, 121, 117};
 int BlackPianoKeyMap[12] = {15, 16, 17, 18, 19};
 
+
+
 Piano::Piano() {
     overlayPainter.reset(new Piano::OverlayKeyPaint());
     overlayPainter.get()->setWantsKeyboardFocus(true);
+    overlayPainter.get()->addKeyListener(overlayPainter.get());
     addAndMakeVisible(overlayPainter.get());
 
     setBufferedToImage(true);
@@ -60,26 +62,23 @@ void Piano::paint(juce::Graphics &g) {
     int offset = 885-(getWidth()/2);
     g.drawImage(PianoImage, 0 , 0, getWidth(), getHeight(),
                 offset, 0, getWidth(), getHeight(), false);
+
     g.setColour(juce::Colours::grey);
-    g.drawRect(getLocalBounds(), 1);
+    g.drawRect(getLocalBounds(), 2);
 }
 
 void Piano::resized() {
     setBounds(150, 20 ,getParentWidth()-150, getParentHeight() - 20);
-    if (overlayPainter.get() != nullptr) overlayPainter.get()->resized();
-}
 
-void Piano::OverlayKeyPaint::mouseDown(const juce::MouseEvent &event) {
-    WhiteKeyDown(((event.x+offset)/34));
-}
+    if (overlayPainter.get() != nullptr) {
+        overlayPainter.get()->resized();
+        overlayPainter.get()->setWantsKeyboardFocus(true);
+    }
 
-void Piano::OverlayKeyPaint::mouseUp(const juce::MouseEvent &event) {
-    WhiteKeyUp(((event.x+offset)/34));
 }
 
 // Overlay method implementations
 // Mostly used from the callbacks from the instrument.
-
 Piano::OverlayKeyPaint::OverlayKeyPaint() {
     pressedWhiteKeys = {};
     pressedBlackKeys = {};
@@ -101,11 +100,10 @@ Piano::OverlayKeyPaint::OverlayKeyPaint() {
         i++;
     }
 
-    this->addKeyListener(this);
     setWantsKeyboardFocus(true);
-    setBufferedToImage(true);
 
     resized();
+
 }
 
 int presentKey;
@@ -120,7 +118,6 @@ void Piano::OverlayKeyPaint::WhiteKeyDown(int keyIndex) {
 void Piano::OverlayKeyPaint::WhiteKeyUp(int keyIndex) {
     // does not raise an exception if not found, so no need to handle any kind of exception.
     this->pressedWhiteKeys.erase(keyIndex+(Wheels::TRANSPOSE*7));
-    repaint();
 }
 
 void Piano::OverlayKeyPaint::BlackKeyDown(int keyIndex) {
@@ -132,17 +129,11 @@ void Piano::OverlayKeyPaint::BlackKeyDown(int keyIndex) {
 
 void Piano::OverlayKeyPaint::BlackKeyUp(int keyIndex) {
     this->pressedBlackKeys.erase(keyIndex+(Wheels::TRANSPOSE*5));
-    repaint();
 }
 
 int count = 0;
 void Piano::OverlayKeyPaint::paint(juce::Graphics &g) {
-
-    std::cout << Wheels::TRANSPOSE << " " << count++ << " \n";
-
-    int pianoWhiteKeyWidth = 33;
-    int pianoBlackKeyWidth = 20;
-    int num;
+    //std::cout << Wheels::TRANSPOSE << " " << count++ << " \n";
 
     // Draw the overlay for the pressed white keys.
     for (auto i = pressedWhiteKeys.begin(); i != pressedWhiteKeys.end(); ++i) {
@@ -179,14 +170,16 @@ bool Piano::OverlayKeyPaint::keyPressed(const juce::KeyPress& k, juce::Component
     return false;
 }
 
+
+
 std::queue<int> WhitePressedTemp;
 std::queue<int> BlackPressedTemp;
 
 bool Piano::OverlayKeyPaint::keyStateChanged(bool isKeyDown, juce::Component* c) {
-    int num = 0;
+
     for (auto i = pressedWhiteKeyCodes.begin(); i != pressedWhiteKeyCodes.end(); i++) {
         if (!juce::KeyPress::isKeyCurrentlyDown(*i)) {
-            WhitePressedTemp.push(*i);num ++;
+            WhitePressedTemp.push(*i);
             WhiteKeyUp(KeysAndCorrespondingKeyCodes[*i]);
         }
     }
@@ -196,13 +189,15 @@ bool Piano::OverlayKeyPaint::keyStateChanged(bool isKeyDown, juce::Component* c)
 
     for (auto i = pressedBlackKeyCodes.begin(); i != pressedBlackKeyCodes.end(); i++) {
         if (!juce::KeyPress::isKeyCurrentlyDown(*i)) {
-            BlackPressedTemp.push(*i);num ++;
+            BlackPressedTemp.push(*i);
             BlackKeyUp(BlackKeysAndCorrespondingKeyCodes[*i]);
         }
     }
     while(!BlackPressedTemp.empty()) {
         pressedBlackKeyCodes.erase(WhitePressedTemp.front()); BlackPressedTemp.pop();
     }
+
+    repaint();
 
     return false;
 };

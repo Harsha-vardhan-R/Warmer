@@ -58,7 +58,6 @@ public:
         } else if (dragIndex == 2) {
             this->transpose = std::clamp(this->transpose+1, -5, 5);
             TRANSPOSE = this->transpose;
-            std::cout << TRANSPOSE << "\n";
         } else if (dragIndex == 3) {
             this->transpose = std::clamp(this->transpose-1, -5, 5);
             TRANSPOSE = this->transpose;

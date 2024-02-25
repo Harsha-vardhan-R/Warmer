@@ -23,9 +23,6 @@ public:
     void resized() override;
 
 
-    // overridden function from juce::KeyListener
-    //bool keyPressed(const juce::KeyPress& key) override;
-
     /*
         This is an overlay which exactly lies over the piano component,
         because we need not draw every key every time a key is pressed or released ,
@@ -48,12 +45,8 @@ public:
         void BlackKeyUp(int keyIndex);
 
 
-        void mouseDown(const juce::MouseEvent& event) override;
-        void mouseDrag(const juce::MouseEvent& event) override {};
-        void mouseUp(const juce::MouseEvent& event) override;
-
         bool keyPressed(const juce::KeyPress&, juce::Component*) override;
-        bool keyStateChanged(bool isKeyDown, juce::Component* c) override;
+        bool keyStateChanged(bool isKeyDown, juce::Component*) override;
 
 
         // for callbacks from other classes like from MIDI and keyboard.
@@ -62,10 +55,9 @@ public:
 //        std::function<void(int)> BlackKeyDownCallback;
 //        std::function<void(int)> BlackKeyUpCallback;
 
-
-    void setTransposeLevel(int level) {
-        transposeLevel = level;
-    }
+        void setTransposeLevel(int level) {
+            transposeLevel = level;
+        }
 
     private:
         int offset;
@@ -79,7 +71,7 @@ public:
         std::set<int> pressedWhiteKeyCodes;
         std::set<int> pressedBlackKeyCodes;
 
-        int pos_to_type[7] = {1, 2, 3, 1, 2, 2, 3};
+//        int pos_to_type[7] = {1, 2, 3, 1, 2, 2, 3};
 
 
         // images to overlay.
@@ -88,6 +80,10 @@ public:
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OverlayKeyPaint)
     };
+
+    // Should be visible.
+
+    std::unique_ptr<Piano::OverlayKeyPaint> overlayPainter;
 
 
 private:
@@ -112,7 +108,7 @@ private:
             0, 1, 0, 1, 0, 0, 1
     };
 
-    std::unique_ptr<Piano::OverlayKeyPaint> overlayPainter;
+
 
     juce::Image PianoImage = juce::ImageFileFormat::loadFrom(juce::File("./Assets/KeyPressedImages/PianoFullImage.png"));
 

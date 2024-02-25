@@ -11,6 +11,7 @@
 #include "MIDIPianoComponent.h"
 #include "MIDISettings.h"
 #include "Piano.h"
+#include "Instrument.h"
 
 // This is always going to be of the same height
 // The offset is to tell how low it should start.
@@ -28,11 +29,10 @@ MIDIPianoComponent::MIDIPianoComponent(int offset, int height) {
     addAndMakeVisible(pianoComponent.get());
 
     resized();
-}
-
-MIDIPianoComponent::~MIDIPianoComponent() {
 
 }
+
+MIDIPianoComponent::~MIDIPianoComponent() {}
 
 void MIDIPianoComponent::paint(juce::Graphics &g) {
     g.fillAll(juce::Colours::blueviolet);
@@ -50,5 +50,7 @@ void MIDIPianoComponent::resized() {
     if (wheelComponent.get() != nullptr) wheelComponent.get()->resized();
     if (pianoComponent.get() != nullptr) {
         pianoComponent.get()->resized();
+        Instrument::VoidPointerToPianoComponent = (void*)pianoComponent.get();
     }
+
 }

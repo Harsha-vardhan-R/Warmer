@@ -11,13 +11,21 @@
 #pragma once
 #include <JuceHeader.h>
 #include "Modes.h"
+#include "Piano.h"
+
 
 /*
     Contains all the functions related to Instrument.
     Everything from loading an instrument, saving it, playing it and painting it on the component.
 */
-class Instrument : public juce::Component {
+class Instrument : public juce::Component,
+                   public juce::MidiInputCallback {
 public:
+
+    // Maintaining a global static variable for the instance pointer,
+    // Not a good idea, but refactoring takes years.
+    // no memory management required as it will be taken care of.
+    static void* VoidPointerToPianoComponent;
 
     Instrument(int);
     ~Instrument() override;
@@ -25,6 +33,10 @@ public:
     void paint(juce::Graphics& g) override;
     void resized() override;
     //====== INSTRUMENT'S API's ========
+
+
+
+    void handleIncomingMidiMessage(juce::MidiInput* source, const juce::MidiMessage& message) override;
 
     /* Sets the mode and calls the paint function, basically will switch tabs */
     void setMode(Mode mode);
@@ -93,6 +105,8 @@ private:
     int tabWidth;
 
     Mode presentMode;
+
+    juce::OwnedArray<juce::MidiInput> midiInputs;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Instrument)
 };

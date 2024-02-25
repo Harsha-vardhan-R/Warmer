@@ -38,7 +38,7 @@ void drawWheelWithLevel(juce::Rectangle<float> bounds, // wheel bounds
     // draw a thin rectangle, then draw the notch.
     g.setColour(WheelBackgroundID);
     g.fillRoundedRectangle(bounds.toFloat(), 3.0f);
-    float notchCentre= ((float)bounds.getHeight()*0.95)*(1.0-level);
+    float notchCentre= ((float)bounds.getHeight()*0.96)*(1.0-level);
     g.setColour(WheelSliderBackgroundID);
     g.fillRoundedRectangle(bounds.getX() + 1, bounds.getY()+(int)notchCentre, bounds.getWidth()-2, 5.0, 3.0f);
     g.setColour(WheelSliderLineBackgroundID);

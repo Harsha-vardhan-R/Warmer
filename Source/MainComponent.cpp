@@ -30,13 +30,7 @@ MainComponent::~MainComponent() {
 
 }
 
-
-void MainComponent::paint (juce::Graphics& g) {
-    g.fillAll (juce::Colours::darkgrey);
-
-    g.setFont (juce::Font (16.0f));
-    g.setColour (juce::Colours::white);
-}
+void MainComponent::paint (juce::Graphics& g) {}
 
 void MainComponent::resized() {
     if (masterComponent.get() != nullptr) masterComponent.get()->resized();
