@@ -44,9 +44,9 @@ public:
         void BlackKeyDown(int keyIndex);
         void BlackKeyUp(int keyIndex);
 
-
         bool keyPressed(const juce::KeyPress&, juce::Component*) override;
         bool keyStateChanged(bool isKeyDown, juce::Component*) override;
+
 
 
         // for callbacks from other classes like from MIDI and keyboard.
@@ -76,7 +76,7 @@ public:
 
         // images to overlay.
         juce::Image WImage = juce::ImageFileFormat::loadFrom(juce::File("./Assets/KeyPressedImages/PianoFullImageWhitePressed.png"));
-        juce::Image Bimage = juce::ImageFileFormat::loadFrom(juce::File("./Assets/KeyPressedImages/B.png"));
+        juce::Image Bimage = juce::ImageFileFormat::loadFrom(juce::File("./Assets/KeyPressedImages/B2.png"));
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OverlayKeyPaint)
     };

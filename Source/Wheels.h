@@ -19,6 +19,19 @@
 class Wheels : public juce::Component {
 public:
 
+    static void* instancePtr;
+
+    static void* getInstance() {
+        if (instancePtr != nullptr) {
+            return instancePtr;
+        }
+        int *ptr = nullptr;
+        int a;
+        std::cout << "Wheels 'get instance' is being called before creating the function, CRASH!!!" << "\n";
+        a = *ptr;
+        return nullptr;// compiler complaining.
+    }
+
     Wheels();
     ~Wheels() override;
 
@@ -65,6 +78,9 @@ public:
         dragIndex = -1;
         repaint();
     }
+
+    void setModWheel(float value);
+    void setPitchWheel(float value);
 
 
 private:

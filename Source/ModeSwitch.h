@@ -24,7 +24,7 @@ public:
 
     ModeSwitch() : juce::TabbedComponent(juce::TabbedButtonBar::Orientation::TabsAtLeft) {
         //setSize(getParentWidth(), getParentHeight());
-        auto colour_here = juce::Colour(0xff262b2b);
+        auto colour_here = juce::Colours::white;
 
         this->setTabBarDepth(30);
         this->instrument = std::make_unique<Instrument>(getTabBarDepth());

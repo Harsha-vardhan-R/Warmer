@@ -11,6 +11,7 @@
 #include "MIDISettings.h"
 #include "MenuComponent.h"
 #include "ColourPalette.h"
+#include "MyLookAndFeel.h"
 
 MIDISettings::MIDISettings() {
 
@@ -47,12 +48,18 @@ MIDISettings::MIDISettings() {
     comboBox.get()->addItem("16", 16);
     comboBox.get()->setSelectedId(8);
     addAndMakeVisible(comboBox.get());
+    comboBox.get()->setColour(juce::ComboBox::ColourIds::textColourId, textColourID);
     comboBox.get()->addListener(this);
+
+    styles.reset(new MyLookAndFeel());
+    this->setLookAndFeel(styles.get());
 
     resized();
 }
 
-MIDISettings::~MIDISettings() {}
+MIDISettings::~MIDISettings() {
+    styles.reset(nullptr);
+}
 
 void MIDISettings::buttonClicked(juce::Button* b) {}
 

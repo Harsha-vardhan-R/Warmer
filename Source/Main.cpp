@@ -40,7 +40,7 @@ public:
         This class implements the desktop window that contains an instance of
         our MainComponent class.
     */
-    class MainWindow    : public juce::DocumentWindow {
+    class MainWindow : public juce::DocumentWindow {
     public:
         MainWindow (juce::String name)
                 : DocumentWindow (name, juce::Desktop::getInstance().getDefaultLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId),
@@ -65,8 +65,8 @@ public:
         // Setting the minimum height and width that the app can be resized to.
         juce::ComponentBoundsConstrainer* getConstrainer() {
             constrain.reset(new juce::ComponentBoundsConstrainer());
-            constrain.get()->setMinimumWidth(950);
-            constrain.get()->setMinimumHeight(600);
+            constrain.get()->setMinimumWidth(1050);
+            constrain.get()->setMinimumHeight(700);
 
             constrain.get()->setMaximumWidth(1922);
             return constrain.get();

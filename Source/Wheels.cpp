@@ -12,6 +12,8 @@
 #include "ColourPalette.h"
 #include <cmath>
 
+void* Wheels::instancePtr = nullptr;
+
 
 Wheels::Wheels() {
     this->modWheelLevel = 0.0;
@@ -25,6 +27,8 @@ Wheels::Wheels() {
     wheelAreas.add(new juce::Rectangle<int>(5, 50, 45, 60));
 
     resized();
+
+    Wheels::instancePtr = this;
 }
 
 Wheels::~Wheels() {
@@ -96,4 +100,16 @@ void Wheels::paint(juce::Graphics &g) {
 
 void Wheels::resized() {
     setBounds(0, 20 ,150, getParentHeight() - 20);
+}
+
+
+void Wheels::setModWheel(float value) {
+    modWheelLevel = value;
+    repaint();
+}
+
+
+void Wheels::setPitchWheel(float value) {
+    pitchWheelLevel = value;
+    repaint();
 }
