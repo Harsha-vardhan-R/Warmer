@@ -1,4 +1,5 @@
 #include "MenuComponent.h"
+#include "Instrument.h"
 
 MenuComponent::MenuComponent() {
     // `this` already implements the `MenuBarModel` so this is going to return a
@@ -44,8 +45,8 @@ juce::PopupMenu MenuComponent::getMenuForIndex(int topLevelMenuIndex, const juce
         menu.addItem(17, "Size+");
         menu.addItem(18, "Size-");
     } else if (menuName == "Preferences") {
-        menu.addItem(19, "MIDI");
-        menu.addItem(20, "Audio preferences");
+        menu.addItem(20, "Refresh MIDI devices");
+        menu.addItem(19, "Audio/MIDI preferences");
         menu.addSeparator();
         menu.addItem(21, "About");
     } else if (menuName == "Edit") {
@@ -56,13 +57,20 @@ juce::PopupMenu MenuComponent::getMenuForIndex(int topLevelMenuIndex, const juce
 }
 
 void MenuComponent::menuItemSelected(int menuItemID, int topLevelMenuIndex) {
+    auto instrument = Instrument::getInstance();
     switch (menuItemID) {
         case 1:
-
+            instrument->Initialize();
             break;
         case 5:
             std::cout << "Exiting Warmer..." << std::endl;
             juce::JUCEApplication::getInstance()->systemRequestedQuit();
+            break;
+        case 19:
+            instrument->OpenAudioAndMIDISettings();
+            break;
+        case 20:
+            instrument->refreshMIDIDevices();
             break;
         default:
             break;

@@ -17,6 +17,10 @@
 static auto textColourID = juce::Colours::darkgrey;
 static auto textSelectedColourID = juce::Colours::white;
 
+static auto ButtonBackColourID = juce::Colours::white;
+static auto ButtonBackSelectedColourID = juce::Colours::black;
+static auto ButtonOutlineColourID = juce::Colours::darkgrey;
+
 static auto MenuBackgroundID = juce::Colour(0xffe1f0da);
 static auto MenuMouseOverColourID = juce::Colour(0xffa9dfbf);
 
@@ -59,3 +63,7 @@ static auto GraphNodeFloatingColourID = juce::Colour(0xfff1c2b);
 static auto GraphNodeImpColourID = juce::Colours::white;
 
 
+static auto EditPageBackColourOneID = juce::Colours::grey;
+static auto EditPageBackColourTwoID = juce::Colour(0xffe1f0da);
+
+static auto InstrumentDefaultBackColourID = juce::Colour(0xffe1f0da);

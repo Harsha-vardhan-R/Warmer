@@ -25,7 +25,26 @@ public:
     // Maintaining a global static variable for the instance pointer,
     // Not a good idea, but refactoring takes years.
     // no memory management required as it will be taken care of.
+    static Instrument* instancePtr;
+
+
+    static Instrument* getInstance() {
+
+        if (Instrument::instancePtr != nullptr) {
+            return instancePtr;
+        }
+
+        int *ptr = nullptr;
+        int a;
+        std::cout << "Instruments get instance is called before creating the function, CRASHING!!" << "\n";
+        a = *ptr;
+        return nullptr;// compiler complaining.
+    }
+
+
+    // Get instance for the api calls.
     static void* VoidPointerToPianoComponent;
+    static void* VoidPointerToWheelComponent;
 
     Instrument(int);
     ~Instrument() override;
@@ -33,7 +52,39 @@ public:
     void paint(juce::Graphics& g) override;
     void resized() override;
     //====== INSTRUMENT'S API's ========
+    void OpenAudioAndMIDISettings() {
+        std::cout << "This function is called" << "\n";
+    }
 
+    void Initialize();
+
+    // This is like a shortcut,
+    // Turns ON all the non-NULL MIDI devices.
+    void refreshMIDIDevices() {
+        // Firstly remove all the devices.
+        while (midiInputs.size() != 0) {
+            midiInputs.remove(0);
+        }
+
+        // Setting up for the MIDI listening.
+        auto midiDevicesHere = juce::MidiInput::getAvailableDevices();
+
+
+        for (const auto& device : midiDevicesHere) {
+            auto midiInput = juce::MidiInput::openDevice(device.identifier, this);
+            if (midiInput != nullptr) {
+                midiInput->start();
+                midiInputs.add(std::move(midiInput));
+            } else {
+                std::cerr << "Failed to open MIDI device: " << device.identifier << std::endl;
+            }
+        }
+
+        std::cout << "Listening From : " << "\n";
+        for (auto i : midiInputs) {
+            std::cout << i->getName() << "\n";
+        }
+    }
 
 
     void handleIncomingMidiMessage(juce::MidiInput* source, const juce::MidiMessage& message) override;
@@ -51,7 +102,40 @@ public:
         void paint(juce::Graphics& g) override;
         void resized() override;
 
+        // Makes sure the numbers in the text boxes are valid,
+        // Creates a canvas if they are.
+        void createCanvasButtonClicked();
+
     private:
+
+        class InstrumentCanvas : public juce::Component {
+        public:
+            InstrumentCanvas(int x, int y) {
+                this->x = x;
+                this->y = y;
+            };
+            ~InstrumentCanvas() override {};
+
+            void paint(juce::Graphics& g) override;
+            void resized() override {
+                setBounds((getParentWidth()/2)-(x/2), (getParentHeight()/2)-(y/2), x, y);
+            };
+
+        private:
+            int x, y;
+
+            JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(InstrumentCanvas)
+        };
+
+        bool isCanvasPresent;
+        std::unique_ptr<juce::Component> Canvas;
+
+        int x, y;
+
+        std::unique_ptr<juce::TextEditor> size_x;
+        std::unique_ptr<juce::TextEditor> size_y;
+        std::unique_ptr<juce::TextButton> createCanvasButton;
+
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EditPage)
     };
 
@@ -65,6 +149,8 @@ public:
         void resized() override;
 
     private:
+        std::unique_ptr<juce::PopupMenu> AddNodesPopupMenu;
+
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GraphPage)
     };
 
@@ -107,6 +193,9 @@ private:
     Mode presentMode;
 
     juce::OwnedArray<juce::MidiInput> midiInputs;
+
+    //std::unique_ptr<juce::AudioDeviceSelectorComponent> AudioMIDISettingsJUCE;
+    std::unique_ptr<juce::Component> AudioMIDISettingsJUCE;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Instrument)
 };

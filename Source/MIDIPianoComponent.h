@@ -15,6 +15,7 @@
 #include "Piano.h"
 #include "Wheels.h"
 
+
 // TODO : Command listener so that we can use keyboard for midi input without velocity.
 class MIDIPianoComponent : public juce::Component {
 public:

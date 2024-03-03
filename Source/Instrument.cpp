@@ -13,9 +13,13 @@
 #include "Modes.h"
 #include "./GraphNodes/Collection.h"
 #include "Piano.h"
+#include "Wheels.h"
+#include "ColourPalette.h"
 
+Instrument* Instrument::instancePtr = nullptr;
+
+void* Instrument::VoidPointerToWheelComponent = nullptr;
 void* Instrument::VoidPointerToPianoComponent = nullptr;
-
 
 // This maps from the midi input to my representation,
 // anything above 99 is for a black key, whose actual value is (value-100)
@@ -52,16 +56,30 @@ Instrument::Instrument(int tabWidth) {
     for (const auto& device : midiDevicesHere) {
         auto midiInput = juce::MidiInput::openDevice(device.identifier, this);
         if (midiInput != nullptr) {
-            midiInput->start();// Starting to listen on all the possible MIDI inputs.
-            midiInputs.add(std::move(midiInput)); // Use std::move to transfer ownership.
+            midiInput->start();
+            midiInputs.add(std::move(midiInput));
+        } else {
+            std::cerr << "Failed to open MIDI device: " << device.identifier << std::endl;
         }
     }
 
+    std::cout << "Available Devices : " << "\n";
     for (auto i : midiInputs) {
         std::cout << i->getName() << "\n";
     }
 
     resized();
+
+    Instrument::instancePtr = this;
+}
+
+
+// TODO : ask to save changes, before replacing.
+void Instrument::Initialize() {
+    // Just replacing all the changed pages to new ones.
+//    editPage.get() = *(new Instrument::EditPage());
+//    graphPage.get() = *(new Instrument::GraphPage());
+//    playPage.get() = *(new Instrument::PlayPage());
 }
 
 Instrument::~Instrument() {
@@ -91,24 +109,92 @@ void Instrument::resized() {
 }
 
 
-
+/////////////////////////////
 /////// EDIT PAGE ///////////
+/////////////////////////////
 Instrument::EditPage::EditPage() {
+
+    size_x.reset(new juce::TextEditor());
+    addAndMakeVisible(size_x.get());
+
+    size_y.reset(new juce::TextEditor());
+    addAndMakeVisible(size_y.get());
+
+    createCanvasButton.reset(new juce::TextButton());
+    createCanvasButton.get()->setButtonText("Create Instrument Canvas");
+    addAndMakeVisible(createCanvasButton.get());
+    createCanvasButton.get()->onClick = [this] { createCanvasButtonClicked(); };
+
+
     resized();
 }
 
 void Instrument::EditPage::resized() {
+
     juce::TabbedComponent* parent = (juce::TabbedComponent*)getParentComponent();
     if (parent != nullptr) setBounds(30, 1, parent->getWidth() - 29, parent->getHeight() - 2);
+
+
+    auto bounds = getLocalBounds();
+    auto horizontalCenter = bounds.getX()+getHeight()/2;
+    auto verticalCenter = bounds.getX()+getWidth()/2;
+
+    if (size_x.get() != nullptr) size_x.get()->setBounds(verticalCenter-180, horizontalCenter, 50, 25);
+    if (size_y.get() != nullptr) size_y.get()->setBounds(verticalCenter-125, horizontalCenter, 50, 25);
+    if (createCanvasButton.get() != nullptr) createCanvasButton.get()->setBounds(verticalCenter-65, horizontalCenter, 200, 25);
+
+    if (Canvas.get() != nullptr) Canvas.get()->resized();
+
 }
 
 void Instrument::EditPage::paint(juce::Graphics &g) {
-    g.fillAll(juce::Colours::grey);
+    g.fillAll(juce::Colours::white);
 }
 
+void Instrument::EditPage::createCanvasButtonClicked() {
+    juce::String x_dimen = size_x.get()->getText();
+    juce::String y_dimen = size_y.get()->getText();
 
+    int x = x_dimen.getIntValue();
+    int y = y_dimen.getIntValue();
 
+    if (x_dimen.isNotEmpty() && y_dimen.isNotEmpty()) {
+        if (x != 0 && y != 0) {
+            if ((x > 100 && x < 2500) && (y > 100 && y < 2500)) { // Create the canvas.
+                this->x = x;
+                this->y = y;
+                Canvas.reset(new InstrumentCanvas(x, y));
+                // Deleting the components and adding the canvas.
+                size_x.reset(nullptr);
+                size_y.reset(nullptr);
+                createCanvasButton.reset(nullptr);
+
+                addChildComponent(Canvas.get());
+                addAndMakeVisible(Canvas.get());
+                resized();
+                repaint();
+            } else {
+                std::cout << "The dimensions are too small or too large to create the canvas" << "\n";
+                return;
+            }
+        } else {
+            std::cout << "Invalid inputs to create the canvas" << "\n";
+            return;
+        }
+    } else {
+        std::cout << "Please fill both the fields to create the canvas" << "\n";
+        return;
+    }
+}
+
+// +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+void Instrument::EditPage::InstrumentCanvas::paint(juce::Graphics &g) {
+    g.fillAll(InstrumentDefaultBackColourID);
+}
+
+//////////////////////////////
 /////// GRAPH PAGE ///////////
+//////////////////////////////
 Instrument::GraphPage::GraphPage() {
     resized();
 }
@@ -122,8 +208,9 @@ void Instrument::GraphPage::paint(juce::Graphics &g) {
     g.fillAll(juce::Colours::white);
 }
 
-
+/////////////////////////////
 /////// VIEW PAGE ///////////
+//////////////////////////////
 Instrument::PlayPage::PlayPage() {
     resized();
 }
@@ -150,10 +237,11 @@ void Instrument::handleIncomingMidiMessage(juce::MidiInput* source, const juce::
     }
 
     auto PianoComponent = (Piano*)Instrument::VoidPointerToPianoComponent;
+    auto comp = (Wheels*)Instrument::VoidPointerToWheelComponent;
 
     if (message.isNoteOn()) {
         int noteNumber = message.getNoteNumber();
-        int velocity = message.getVelocity();
+        int velocity = message.getVelocity(); // need to set.
         int midi_ = MIDI_TO_MINE[noteNumber];
 
         if (midi_ > 99) {
@@ -171,7 +259,11 @@ void Instrument::handleIncomingMidiMessage(juce::MidiInput* source, const juce::
         } else if (midi_ > -1) {
             PianoComponent->overlayPainter.get()->WhiteKeyUp(midi_);
         }
+    } else if (message.isPitchWheel() && std::rand()%15 == 0) {
+        if (comp == nullptr) return;
+        comp->setPitchWheel((float)(message.getPitchWheelValue()/128));
     }
+
 
     PianoComponent->overlayPainter.get()->repaint();
 }

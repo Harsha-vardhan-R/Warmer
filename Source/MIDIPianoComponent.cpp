@@ -35,7 +35,6 @@ MIDIPianoComponent::MIDIPianoComponent(int offset, int height) {
 MIDIPianoComponent::~MIDIPianoComponent() {}
 
 void MIDIPianoComponent::paint(juce::Graphics &g) {
-    g.fillAll(juce::Colours::blueviolet);
     juce::Rectangle<int> area(getLocalBounds());
     g.setColour(juce::Colours::darkgrey);
     g.fillRoundedRectangle(area.toFloat(), 10.0f);

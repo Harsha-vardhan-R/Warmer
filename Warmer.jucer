@@ -2,10 +2,16 @@
 
 <JUCERPROJECT id="rwHOSr" name="Warmer" projectType="guiapp" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
-              headerPath="~/Downloads/JUCE_/JUCE/modules">
+              headerPath="~/Downloads/JUCE_/JUCE/modules" compilerFlagSchemes="NewScheme"
+              version="0.1.0">
   <MAINGROUP id="i1IZ57" name="Warmer">
     <GROUP id="{ABD2107A-91D9-3367-075C-DAB74831B466}" name="Assets"/>
     <GROUP id="{96AA9396-9DAD-7D0F-4F64-27DF1BACBC55}" name="Source">
+      <FILE id="YSUUCC" name="MyLookAndFeel.cpp" compile="1" resource="0"
+            file="Source/MyLookAndFeel.cpp"/>
+      <FILE id="z0ooqH" name="MyLookAndFeel.h" compile="0" resource="0" file="Source/MyLookAndFeel.h"/>
+      <FILE id="rUV19w" name="VolumeLevel.cpp" compile="1" resource="0" file="Source/VolumeLevel.cpp"/>
+      <FILE id="fGL8Qi" name="VolumeLevel.h" compile="0" resource="0" file="Source/VolumeLevel.h"/>
       <GROUP id="{84834CDD-895B-8D6C-B0AE-2967ECFD6417}" name="InstrumentUIComponents"/>
       <FILE id="mQTnJ6" name="ColourPalette.h" compile="0" resource="0" file="Source/ColourPalette.h"/>
       <FILE id="ddFvAe" name="Modes.h" compile="0" resource="0" file="Source/Modes.h"/>

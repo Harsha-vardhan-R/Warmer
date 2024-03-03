@@ -4,7 +4,7 @@
 #include "MIDIPianoComponent.h"
 
 MainComponent::MainComponent() {
-    setSize (1400, 850);
+    setSize (1500, 780);
     this->minWidth = 400;
     this->minHeight = 400;
 

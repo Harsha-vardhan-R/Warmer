@@ -112,7 +112,6 @@ void Piano::OverlayKeyPaint::WhiteKeyDown(int keyIndex) {
     presentKey = keyIndex+(Wheels::TRANSPOSE*7);
     if (presentKey < 0 || presentKey > 52) return;
     this->pressedWhiteKeys.insert(presentKey);
-    repaint();
 }
 
 void Piano::OverlayKeyPaint::WhiteKeyUp(int keyIndex) {
@@ -124,7 +123,6 @@ void Piano::OverlayKeyPaint::BlackKeyDown(int keyIndex) {
     presentKey = keyIndex+(Wheels::TRANSPOSE*5);
     if (presentKey < 0 || presentKey > 36) return;
     this->pressedBlackKeys.insert(presentKey);
-    repaint();
 }
 
 void Piano::OverlayKeyPaint::BlackKeyUp(int keyIndex) {
@@ -133,7 +131,6 @@ void Piano::OverlayKeyPaint::BlackKeyUp(int keyIndex) {
 
 int count = 0;
 void Piano::OverlayKeyPaint::paint(juce::Graphics &g) {
-    //std::cout << Wheels::TRANSPOSE << " " << count++ << " \n";
 
     // Draw the overlay for the pressed white keys.
     for (auto i = pressedWhiteKeys.begin(); i != pressedWhiteKeys.end(); ++i) {
@@ -154,16 +151,21 @@ void Piano::OverlayKeyPaint::resized() {
 }
 
 bool Piano::OverlayKeyPaint::keyPressed(const juce::KeyPress& k, juce::Component* c) {
+
     int code = k.getKeyCode();
     int keyCode = KeysAndCorrespondingKeyCodes[code];
 
-    if (keyCode != -1) {
+    if (keyCode != -1 && (this->pressedWhiteKeyCodes.find(code) == this->pressedWhiteKeyCodes.end())) {
         this->pressedWhiteKeyCodes.insert(code);
         WhiteKeyDown(keyCode);
+        repaint();
         return true;
-    } else if (BlackKeysAndCorrespondingKeyCodes[code] != -1) {
+    }
+
+    if (BlackKeysAndCorrespondingKeyCodes[code] != -1 && (this->pressedBlackKeyCodes.find(code) == this->pressedBlackKeyCodes.end())) {
         this->pressedBlackKeyCodes.insert(code);
         BlackKeyDown(BlackKeysAndCorrespondingKeyCodes[code]);
+        repaint();
         return true;
     }
 
@@ -172,10 +174,13 @@ bool Piano::OverlayKeyPaint::keyPressed(const juce::KeyPress& k, juce::Component
 
 
 
+
 std::queue<int> WhitePressedTemp;
 std::queue<int> BlackPressedTemp;
 
 bool Piano::OverlayKeyPaint::keyStateChanged(bool isKeyDown, juce::Component* c) {
+
+    bool stateChange = false;
 
     for (auto i = pressedWhiteKeyCodes.begin(); i != pressedWhiteKeyCodes.end(); i++) {
         if (!juce::KeyPress::isKeyCurrentlyDown(*i)) {
@@ -184,7 +189,7 @@ bool Piano::OverlayKeyPaint::keyStateChanged(bool isKeyDown, juce::Component* c)
         }
     }
     while(!WhitePressedTemp.empty()) {
-        pressedWhiteKeyCodes.erase(WhitePressedTemp.front()); WhitePressedTemp.pop();
+        pressedWhiteKeyCodes.erase(WhitePressedTemp.front()); WhitePressedTemp.pop();stateChange = true;
     }
 
     for (auto i = pressedBlackKeyCodes.begin(); i != pressedBlackKeyCodes.end(); i++) {
@@ -194,10 +199,10 @@ bool Piano::OverlayKeyPaint::keyStateChanged(bool isKeyDown, juce::Component* c)
         }
     }
     while(!BlackPressedTemp.empty()) {
-        pressedBlackKeyCodes.erase(WhitePressedTemp.front()); BlackPressedTemp.pop();
+        pressedBlackKeyCodes.erase(BlackPressedTemp.front()); BlackPressedTemp.pop();stateChange = true;
     }
 
-    repaint();
+    if (stateChange) repaint();
 
     return false;
 };
