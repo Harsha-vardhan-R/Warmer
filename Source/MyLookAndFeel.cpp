@@ -60,3 +60,33 @@ void MyLookAndFeel::drawMenuBarItem (juce::Graphics& g,
     }
     g.drawText(itemText, 0, 0, width, height, juce::Justification::centred);
 }
+
+void MyLookAndFeel::drawPopupMenuItem (juce::Graphics& g,
+                                       const juce::Rectangle<int>& area,
+                                       bool isSeparator,
+                                       bool isActive,
+                                       bool isHighlighted,
+                                       bool isTicked,
+                                       bool hasSubMenu,
+                                       const juce::String& text,
+                                       const juce::String& shortcutKeyText,
+                                       const juce::Drawable* icon,
+                                       const juce::Colour* textColourToUse) {
+    juce::Rectangle<int> highLight(area.getX() + 3, area.getY(), area.getWidth() - 6 , area.getHeight());
+    juce::Rectangle<int> aligner(area.getX() + 15, area.getY(), area.getWidth() , area.getHeight());
+    if (isSeparator) {
+        g.setColour(SeparatorColourID);
+        juce::Rectangle<int> sepLine(area.getX()+3, area.getCentreY(), area.getWidth()-6, 1);
+        g.fillRect(sepLine);
+        return;
+    } else if (isHighlighted) {
+        g.setColour(MenuMouseOverColourID);
+        g.fillRoundedRectangle(highLight.toFloat(), 3.0f);
+        g.setColour(SelectedTabTextColourID);
+    } else {
+        g.setColour(IdleTabTextColourID);
+    }
+
+    g.drawText(text, aligner, juce::Justification::centredLeft);
+
+}
