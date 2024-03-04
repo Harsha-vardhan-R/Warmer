@@ -14,7 +14,6 @@
 class MyLookAndFeel : public juce::LookAndFeel_V4 {
 public:
 
-
     void drawTextEditorOutline(juce::Graphics& g,
                                int width,
                                int height,
@@ -39,6 +38,18 @@ public:
                                          bool isMenuOpen,
                                          bool isMouseOverBar,
                                          juce::MenuBarComponent& menuBar) override;
+
+    void drawPopupMenuItem (juce::Graphics& g,
+                                           const juce::Rectangle<int>& area,
+                                           bool isSeparator,
+                                           bool isActive,
+                                           bool isHighlighted,
+                                           bool isTicked,
+                                           bool hasSubMenu,
+                                           const juce::String& text,
+                                           const juce::String& shortcutKeyText,
+                                           const juce::Drawable* icon,
+                                           const juce::Colour* textColourToUse) override;
 private:
 
 };

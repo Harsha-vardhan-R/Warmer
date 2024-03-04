@@ -48,7 +48,7 @@ static auto MIDISettingsBackgroundID = juce::Colour(0xffe1f0da);
 static auto MIDISettingsTextID = juce::Colours::white;
 static auto MIDISettingsTextSelectID = juce::Colours::darkgrey;
 static auto MIDISettingsButtonColourID = juce::Colours::grey;
-static auto MIDISettingsButtonColourSelectID = juce::Colours::pink;
+static auto MIDISettingsButtonColourSelectID = juce::Colour(0xffa9dfbf);
 
 
 static auto GraphNodeBackgroundColourID = juce::Colours::black;

@@ -10,11 +10,13 @@
 
 
 #include "Instrument.h"
+#include "MyLookAndFeel.h"
 #include "Modes.h"
 #include "./GraphNodes/Collection.h"
 #include "Piano.h"
 #include "Wheels.h"
 #include "ColourPalette.h"
+#include <JuceHeader.h>
 
 Instrument* Instrument::instancePtr = nullptr;
 
@@ -39,6 +41,7 @@ int MIDI_TO_MINE[113] = {
 
 
 Instrument::Instrument(int tabWidth) {
+
 
     this->tabWidth = tabWidth;
 
@@ -67,6 +70,13 @@ Instrument::Instrument(int tabWidth) {
     for (auto i : midiInputs) {
         std::cout << i->getName() << "\n";
     }
+
+    deviceManager.reset(new juce::AudioDeviceManager());
+    deviceManager.get()->initialise(2, 2, nullptr, true);
+
+    AudioMIDISettingsJUCE = std::make_unique<Instrument::AudioMIDISettingClass>(*deviceManager.get());
+    AudioMIDISettingsJUCE.get()->closeButtonPressed();
+
 
     resized();
 
@@ -106,6 +116,7 @@ void Instrument::resized() {
     if (graphPage.get()->getParentComponent() != nullptr) {graphPage.get()->resized();}
     if (playPage.get()->getParentComponent() != nullptr) {playPage.get()->resized();}
 
+    if (AudioMIDISettingsJUCE.get() != nullptr) AudioMIDISettingsJUCE.get()->setBounds(0, 0, 300, 300);
 }
 
 
@@ -270,4 +281,27 @@ void Instrument::handleIncomingMidiMessage(juce::MidiInput* source, const juce::
 
 
 
+Instrument::AudioMIDISettingClass::AudioMIDISettingClass(juce::AudioDeviceManager& deviceManager) : DocumentWindow("Audio/MIDI Settings",
+                                                                            ButtonOutlineColourID,
+                                                                            DocumentWindow::closeButton) {
+
+    // This is to make sure the input audio is set to none.
+    juce::AudioDeviceManager::AudioDeviceSetup setup;
+    deviceManager.getAudioDeviceSetup(setup);
+    setup.inputDeviceName = "";
+    setup.useDefaultInputChannels = false;
+    setup.inputChannels.clear();
+    deviceManager.setAudioDeviceSetup(setup, true);
+
+
+    settingPage.reset(new juce::AudioDeviceSelectorComponent(deviceManager,0, 0, 0,256, true, false, true, false));
+    settingPage.get()->setSize(1200, 800);
+//    setResizable(true, true);
+//    setDraggable(false);
+//    setUsingNativeTitleBar(true);
+
+    setContentOwned(settingPage.get(), true);
+    //setVisible(false);
+
+}
 

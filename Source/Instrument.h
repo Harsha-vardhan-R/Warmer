@@ -53,7 +53,8 @@ public:
     void resized() override;
     //====== INSTRUMENT'S API's ========
     void OpenAudioAndMIDISettings() {
-        std::cout << "This function is called" << "\n";
+        AudioMIDISettingsJUCE.get()->setVisible(true);
+        AudioMIDISettingsJUCE.get()->setCentrePosition(getParentWidth()/2, getParentHeight()/2);
     }
 
     void Initialize();
@@ -85,7 +86,6 @@ public:
             std::cout << i->getName() << "\n";
         }
     }
-
 
     void handleIncomingMidiMessage(juce::MidiInput* source, const juce::MidiMessage& message) override;
 
@@ -168,6 +168,23 @@ public:
     };
 
 
+    class AudioMIDISettingClass : public juce::DocumentWindow {
+    public:
+        AudioMIDISettingClass(juce::AudioDeviceManager&);
+        ~AudioMIDISettingClass() override {}
+
+        void closeButtonPressed() override {
+            setVisible(false); // Hide the window when close button is pressed
+        }
+
+    private:
+        std::unique_ptr<juce::Component> settingPage;
+
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioMIDISettingClass)
+    };
+
+
+
     // Because the pages to be displayed are private, get functions for the pages.
     // Please do not use this before creating the pages, or else everything will crash
     juce::Component* getEditPage() {
@@ -182,6 +199,8 @@ public:
         return this->playPage.get();
     }
 
+
+
 private:
     std::unique_ptr<juce::Component> editPage;
     std::unique_ptr<juce::Component> graphPage;
@@ -193,9 +212,8 @@ private:
     Mode presentMode;
 
     juce::OwnedArray<juce::MidiInput> midiInputs;
-
-    //std::unique_ptr<juce::AudioDeviceSelectorComponent> AudioMIDISettingsJUCE;
-    std::unique_ptr<juce::Component> AudioMIDISettingsJUCE;
+    std::unique_ptr<juce::DocumentWindow> AudioMIDISettingsJUCE;
+    std::unique_ptr<juce::AudioDeviceManager> deviceManager;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Instrument)
 };
