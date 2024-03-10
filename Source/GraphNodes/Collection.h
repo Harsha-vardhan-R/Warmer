@@ -10,8 +10,11 @@
 
 #pragma once
 
-#include "DemoNode.h"
+#include "GraphNode.h"
 
 // Mandatory nodes that should be present in the graph.
 #include "InputMasterGraphNode.h"
 #include "OutputMasterGraphNode.h"
+
+// Demo for dev testing
+#include "DemoNode.h"

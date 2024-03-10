@@ -45,11 +45,15 @@ Instrument::Instrument(int tabWidth) {
 
     this->tabWidth = tabWidth;
 
+    presentMode = Mode::Play;
+
+    InputNode = new InputMasterGraphNode(50, 90);
+    OutputNode = new OutputMasterGraphNode(400, 500);
+
     editPage.reset(new Instrument::EditPage());
     graphPage.reset(new Instrument::GraphPage());
     playPage.reset(new Instrument::PlayPage());
 
-    presentMode = Mode::Play;
 
     deviceManager.reset(new juce::AudioDeviceManager());
     deviceManager.get()->initialise(2, 2, nullptr, true);
@@ -136,7 +140,8 @@ void Instrument::Initialize() {
 }
 
 Instrument::~Instrument() {
-
+    delete InputNode;
+    delete OutputNode;
 }
 
 void Instrument::paint(juce::Graphics& g) {}
@@ -185,7 +190,7 @@ Instrument::EditPage::EditPage() {
     addAndMakeVisible(createCanvasButton.get());
     createCanvasButton.get()->onClick = [this] { createCanvasButtonClicked(); };
 
-    instrumentCanvas == nullptr;
+    instrumentCanvas = nullptr;
 
     resized();
 }
@@ -253,7 +258,7 @@ void Instrument::EditPage::createCanvasButtonClicked() {
 
 // +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
 void Instrument::InstrumentCanvas::paint(juce::Graphics &g) {
-    g.fillAll(juce::Colours::black);
+    g.fillAll(juce::Colours::grey);
 }
 
 //////////////////////////////
@@ -264,7 +269,9 @@ Instrument::GraphPage::GraphPage() {
     // Creating and adding the menus.
     AddNodesPopupMenu.reset(new juce::PopupMenu());
 
-
+    subMenuArray.add(new juce::PopupMenu());
+    subMenuArray.add(new juce::PopupMenu());
+    subMenuArray.add(new juce::PopupMenu());
     subMenuArray.add(new juce::PopupMenu());
     subMenuArray.add(new juce::PopupMenu());
     subMenuArray.add(new juce::PopupMenu());
@@ -276,12 +283,19 @@ Instrument::GraphPage::GraphPage() {
     subMenuArray[1]->addItem(202, "eq 8");
 
 
-    AddNodesPopupMenu.get()->addSubMenu("Filters", *subMenuArray[0]);
-    AddNodesPopupMenu.get()->addSubMenu("Eq's", *subMenuArray[1]);
-    AddNodesPopupMenu.get()->addSubMenu("Utils", *subMenuArray[2]);
+    AddNodesPopupMenu.get()->addSubMenu("General", *subMenuArray[0]);
+    AddNodesPopupMenu.get()->addSubMenu("Oscillators", *subMenuArray[1]);
+    AddNodesPopupMenu.get()->addSubMenu("Effects", *subMenuArray[2]);
+    AddNodesPopupMenu.get()->addSubMenu("Filters", *subMenuArray[3]);
+    AddNodesPopupMenu.get()->addSubMenu("Math", *subMenuArray[4]);
+    AddNodesPopupMenu.get()->addSubMenu("MIDI", *subMenuArray[5]);
 
     styles.reset(new MyLookAndFeel());
     AddNodesPopupMenu.get()->setLookAndFeel(styles.get());
+
+    // Adding the initial nodes.
+    addAndMakeVisible(Instrument::instancePtr->InputNode);
+    addAndMakeVisible(Instrument::instancePtr->OutputNode);
 
     resized();
 }
@@ -330,7 +344,7 @@ void Instrument::PlayPage::paint(juce::Graphics &g) {
                    getLocalBounds(),
                    juce::Justification::centred);
     } else {
-        addAndMakeVisible(InstrumentInstance->Canvas.get());
+        if (InstrumentInstance->Canvas.get() != nullptr) addAndMakeVisible(InstrumentInstance->Canvas.get());
     }
 }
 
@@ -371,7 +385,6 @@ void Instrument::handleIncomingMidiMessage(juce::MidiInput* source, const juce::
         comp->setPitchWheel((float)(message.getPitchWheelValue()/128));
     }
 
-
     PianoComponent->overlayPainter.get()->repaint();
 }
 
@@ -392,15 +405,18 @@ Instrument::AudioMIDISettingClass::AudioMIDISettingClass(juce::AudioDeviceManage
 
     settingPage.reset(new juce::AudioDeviceSelectorComponent(deviceManager,0, 0, 0,256, true, false, true, false));
     settingPage.get()->setSize(1200, 800);
-//    setResizable(true, true);
-      setDraggable(false);
-//    setUsingNativeTitleBar(true);
+    setDraggable(false);
 
     styles.reset(new MyLookAndFeel());
     settingPage.get()->setLookAndFeel(styles.get());
 
     setContentOwned(settingPage.get(), true);
-    //setVisible(false);
-
 }
+
+// #####
+// #####
+// ##### AUDIO PROCESSING CALL BACK SEQUENCER.
+// #####
+// #####
+
 

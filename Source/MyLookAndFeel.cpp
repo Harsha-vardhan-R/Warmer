@@ -51,6 +51,7 @@ void MyLookAndFeel::drawMenuBarItem (juce::Graphics& g,
                                      bool isMouseOverBar,
                                      juce::MenuBarComponent& menuBar) {
     juce::Rectangle<int> highLight(1, 1, width-2, height-2);
+
     if (isMouseOverItem) {
         g.setColour(MenuMouseOverColourID);
         g.fillRoundedRectangle(highLight.toFloat(), 3.0f);
@@ -72,8 +73,13 @@ void MyLookAndFeel::drawPopupMenuItem (juce::Graphics& g,
                                        const juce::String& shortcutKeyText,
                                        const juce::Drawable* icon,
                                        const juce::Colour* textColourToUse) {
+
     juce::Rectangle<int> highLight(area.getX() + 3, area.getY(), area.getWidth() - 6 , area.getHeight());
     juce::Rectangle<int> aligner(area.getX() + 15, area.getY(), area.getWidth() , area.getHeight());
+
+    auto width = area.getWidth();
+
+
     if (isSeparator) {
         g.setColour(SeparatorColourID);
         juce::Rectangle<int> sepLine(area.getX()+3, area.getCentreY(), area.getWidth()-6, 1);
@@ -87,6 +93,21 @@ void MyLookAndFeel::drawPopupMenuItem (juce::Graphics& g,
         g.setColour(IdleTabTextColourID);
     }
 
+    // Draw a side arrow if there is a submenu.
+    if (hasSubMenu) {
+        juce::Path arrow;
+        arrow.addTriangle( width - 12,  6,
+                           width - 6,  10,
+                           width - 12,  14);
+        g.setColour(ComboBoxArrowColourID);
+        g.fillPath(arrow);
+    }
+
     g.drawText(text, aligner, juce::Justification::centredLeft);
 
+}
+
+void MyLookAndFeel::drawPopupMenuBackground(juce::Graphics &g, int width, int height) {
+    g.setColour(MenuBackgroundID);
+    g.fillAll();
 }

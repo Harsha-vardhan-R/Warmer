@@ -59,8 +59,10 @@ public:
                                            const juce::String& shortcutKeyText,
                                            const juce::Drawable* icon,
                                            const juce::Colour* textColourToUse) override;
+
+    void drawPopupMenuBackground(juce::Graphics& g, int width, int height) override;
+
 private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MyLookAndFeel)
-
 };

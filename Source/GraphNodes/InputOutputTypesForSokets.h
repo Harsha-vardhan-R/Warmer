@@ -21,3 +21,8 @@ enum SocketDataType {
     Floating,
     NULLType, // when there exists no node like this.
 };
+
+enum direction {
+    IN,
+    OUT
+};
