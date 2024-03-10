@@ -10,6 +10,8 @@
 
 #pragma once
 #include "GraphNode.h"
+#include "Socket.h"
+#include "InputOutputTypesForSokets.h"
 
 class InputMasterGraphNode : public GraphNode {
 public:
@@ -18,20 +20,18 @@ public:
             GraphNode("MIDI IN",
                       pos_x,
                       pos_y,
-                      60,
-                      80) {
+                      120,
+                      350) {
 
-        OUTSocket[0] = SocketDataType::MIDI;
-        OUTSocket[1] = SocketDataType::Floating;
-        OUTSocket[2] = SocketDataType::Floating;
+        InputSockets.add(new Socket("Audio IN",
+                                    direction::IN));
 
-        OutputSocketNames[0] = juce::String("MIDI Data");
-        OutputSocketNames[1] = juce::String("Mod Wheel Value");
-        OutputSocketNames[2] = juce::String("Pitch Wheel Value");
     };
-    ~InputMasterGraphNode() override;
 
+    ~InputMasterGraphNode() override {};
 
-private:
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(InputMasterGraphNode)
+    void paint(juce::Graphics& g) override {
+        paintBasic(g, 0);
+    }
+
 };

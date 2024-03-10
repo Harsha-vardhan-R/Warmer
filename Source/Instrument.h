@@ -12,6 +12,7 @@
 #include <JuceHeader.h>
 #include "Modes.h"
 #include "Piano.h"
+#include "GraphNodes/Collection.h"
 
 
 /*
@@ -29,7 +30,6 @@ public:
 
 
     static Instrument* getInstance() {
-
         if (Instrument::instancePtr != nullptr) {
             return instancePtr;
         }
@@ -71,8 +71,31 @@ public:
     // Handling the midi from selected midi devices.
     void handleIncomingMidiMessage(juce::MidiInput* source, const juce::MidiMessage& message) override;
 
-    /* Sets the mode and calls the paint function, basically will switch tabs */
+    /* Sets the mode */
     void setMode(Mode mode);
+
+
+
+    GraphNode* InputNode;
+    GraphNode* OutputNode;
+    /////##################################
+    /// DATA STRUCTURES
+    /////##################################
+
+    /*
+        Nodes will be represented in the form of a set,
+        When there is a connection to the output node and an internal connection changed,
+        We call the function `BuildTreeAndMakeQueue` on the nodes, which will :
+            - Eliminate useless nodes.
+            - Create Extra buffers for multiple outputs(for in-place processing).
+            - Create a priority queue with priorities depending on the dependencies.
+            - Process the audio based on the priority queue and the
+    */
+    std::set<GraphNode, int> AllNodes;
+
+    void BuildTreeAndMakeQueue();
+
+    /////##################################
 
     ///////////////////////
     /////////////////////
@@ -139,6 +162,10 @@ public:
         static void AddNodeCallback(int result, GraphPage* graphPageComponent);
 
     private:
+        int mid_x, mid_y; // for panning the graph.
+        int zoomValue = 0;
+
+
         std::unique_ptr<juce::PopupMenu> AddNodesPopupMenu;
         // This stores the submenus in an owned array to make the memory management easy.
         juce::OwnedArray<juce::PopupMenu> subMenuArray;
@@ -181,7 +208,6 @@ public:
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioMIDISettingClass)
     };
-
 
 
     // Because the pages to be displayed are private, get functions for the pages.
