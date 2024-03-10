@@ -13,6 +13,7 @@
 #include "MenuComponent.h"
 #include "ColourPalette.h"
 #include "VolumeLevel.h"
+#include "WaveShapeDisp.h"
 
 
 /*
@@ -37,9 +38,12 @@ public:
         presetSelect.get()->setText("Select Preset");
         addAndMakeVisible(presetSelect.get());
 
-        volumeBars.reset(new VolumeLevel(presetSelect.get()->getX()+10+presetSelect.get()->getWidth()));
+        volumeBars.reset(new VolumeLevel());
         addAndMakeVisible(volumeBars.get());
         VolumeLevel::instance = volumeBars.get();
+
+        waveShape.reset(new WaveShapeDisp());
+        addAndMakeVisible(waveShape.get());
 
         juce::Image myImage = juce::ImageFileFormat::loadFrom(juce::File("./Assets/Icons/icon.png"));
         logo = std::make_unique<juce::ImageComponent>();
@@ -70,10 +74,8 @@ public:
         if (instrumentSelect.get() != nullptr) instrumentSelect.get()->setBounds(130, 1, (getParentWidth()-130)*0.4f, 33);
         if (logo.get() != nullptr) logo.get()->setBounds(10, 2, 115, 31);
         if (presetSelect.get() != nullptr) presetSelect.get()->setBounds(130+instrumentSelect.get()->getWidth(), 1, (getParentWidth()-130)*0.25f, 33);
-        if (volumeBars.get() != nullptr) volumeBars.get()->setBounds(500,
-                                                                     0,
-                                                                     getWidth()*0.15,
-                                                                     getHeight());
+        if (volumeBars.get() != nullptr) volumeBars.get()->setBounds(presetSelect.get()->getX()+presetSelect.get()->getWidth()+5, 2, getWidth()-(370+instrumentSelect.get()->getWidth()+presetSelect.get()->getWidth()), 31);
+        if (waveShape.get() != nullptr) waveShape.get()->setBounds(getWidth()-230, 2, 225, 31);
 
     };
 
@@ -85,6 +87,7 @@ private:
     std::unique_ptr<juce::ComboBox> presetSelect;
     std::unique_ptr<juce::LookAndFeel_V4> styles;
     std::unique_ptr<VolumeLevel> volumeBars;
+    std::unique_ptr<WaveShapeDisp> waveShape;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PresetSwitch)
 };

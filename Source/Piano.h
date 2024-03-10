@@ -75,7 +75,7 @@ public:
 
 
         // images to overlay.
-        juce::Image WImage = juce::ImageFileFormat::loadFrom(juce::File("./Assets/KeyPressedImages/PianoFullImageWhitePressed.png"));
+        juce::Image WImage = juce::ImageFileFormat::loadFrom(juce::File("./Assets/KeyPressedImages/PianoFullImageWhitePressed_.png"));
         juce::Image Bimage = juce::ImageFileFormat::loadFrom(juce::File("./Assets/KeyPressedImages/B2.png"));
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OverlayKeyPaint)
@@ -110,7 +110,7 @@ private:
 
 
 
-    juce::Image PianoImage = juce::ImageFileFormat::loadFrom(juce::File("./Assets/KeyPressedImages/PianoFullImage.png"));
+    juce::Image PianoImage = juce::ImageFileFormat::loadFrom(juce::File("./Assets/KeyPressedImages/PianoFullImage_.png"));
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Piano)

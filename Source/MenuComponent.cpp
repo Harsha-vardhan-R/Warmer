@@ -45,7 +45,7 @@ juce::PopupMenu MenuComponent::getMenuForIndex(int topLevelMenuIndex, const juce
         menu.addItem(17, "Size+");
         menu.addItem(18, "Size-");
     } else if (menuName == "Preferences") {
-        menu.addItem(20, "Refresh MIDI devices");
+        menu.addItem(20, "Listen from all MIDI inputs");
         menu.addItem(19, "Audio/MIDI preferences");
         menu.addSeparator();
         menu.addItem(21, "About");
@@ -70,7 +70,7 @@ void MenuComponent::menuItemSelected(int menuItemID, int topLevelMenuIndex) {
             instrument->OpenAudioAndMIDISettings();
             break;
         case 20:
-            instrument->refreshMIDIDevices();
+            instrument->listenFromAllMIDIInputs();
             break;
         default:
             break;
@@ -166,8 +166,9 @@ void MenuComponent::drawTabButton(juce::TabBarButton& button,
         g.fillRoundedRectangle(button.getLocalBounds().toFloat().reduced(3.0f), 2.0f);
         // for the square look at the junction.
         juce::Rectangle<int> squ(button.getLocalBounds().getX()+10, button.getLocalBounds().getY()+3, button.getWidth()-10, button.getHeight()-6);
-        g.fillRect(squ);g.setColour(juce::Colours::grey);
-        g.fillRect(button.getWidth()-2, -5, 2, button.getHeight()+10);
+        g.fillRect(squ);
+        g.setColour(juce::Colours::grey);
+        g.fillRect(button.getWidth()-1, -5, 1, button.getHeight()+10);
     } else if (isMouseOver) {
         g.setColour(MouseOverTabColourID);
         g.fillRoundedRectangle(button.getLocalBounds().toFloat().reduced(3.0f), 2.0f);

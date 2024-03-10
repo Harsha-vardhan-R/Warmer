@@ -60,19 +60,18 @@ Piano::~Piano() {}
 
 void Piano::paint(juce::Graphics &g) {
     int offset = 885-(getWidth()/2);
-    g.drawImage(PianoImage, 0 , 0, getWidth(), getHeight(),
+    g.drawImage(PianoImage, 0 , -3, getWidth(), getHeight(),
                 offset, 0, getWidth(), getHeight(), false);
 
-    g.setColour(juce::Colours::grey);
-    g.drawRect(getLocalBounds(), 2);
+//    g.setColour(juce::Colours::grey);
+//    g.drawRect(getLocalBounds(), 2);
 }
 
 void Piano::resized() {
-    setBounds(150, 20 ,getParentWidth()-150, getParentHeight() - 20);
+    setBounds(150, 0 ,getParentWidth()-150, getParentHeight());
 
     if (overlayPainter.get() != nullptr) {
         overlayPainter.get()->resized();
-        overlayPainter.get()->setWantsKeyboardFocus(true);
     }
 
 }
@@ -106,6 +105,8 @@ Piano::OverlayKeyPaint::OverlayKeyPaint() {
 
 }
 
+
+
 int presentKey;
 
 void Piano::OverlayKeyPaint::WhiteKeyDown(int keyIndex) {
@@ -129,18 +130,20 @@ void Piano::OverlayKeyPaint::BlackKeyUp(int keyIndex) {
     this->pressedBlackKeys.erase(keyIndex+(Wheels::TRANSPOSE*5));
 }
 
-int count = 0;
+
+
+
 void Piano::OverlayKeyPaint::paint(juce::Graphics &g) {
 
     // Draw the overlay for the pressed white keys.
     for (auto i = pressedWhiteKeys.begin(); i != pressedWhiteKeys.end(); ++i) {
-        g.drawImage(WImage, WhiteKeyPositions[*i] - offset - 1, 0, 34, 130,
+        g.drawImage(WImage, WhiteKeyPositions[*i] - offset - 1, -3, 34, 130,
                     WhiteKeyPositions[*i], 1, 34, 130, false);
     }
 
     for (auto i = pressedBlackKeys.begin(); i != pressedBlackKeys.end(); ++i) {
-        g.drawImage(Bimage, blackKeyPianoPosition[*i] - offset, 2, 20, 89,
-                    0, 2, 20, 89, false);
+        g.drawImage(Bimage, blackKeyPianoPosition[*i] - offset, 3, 20, 85,
+                    0, 6, 20, 85, false);
     }
 
 }

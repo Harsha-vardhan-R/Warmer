@@ -44,11 +44,11 @@ static auto WheelSliderBackgroundID = juce::Colours::darkgrey;
 static auto WheelSliderLineBackgroundID = juce::Colours::white;
 
 
-static auto MIDISettingsBackgroundID = juce::Colour(0xffe1f0da);
-static auto MIDISettingsTextID = juce::Colours::white;
-static auto MIDISettingsTextSelectID = juce::Colours::darkgrey;
-static auto MIDISettingsButtonColourID = juce::Colours::grey;
-static auto MIDISettingsButtonColourSelectID = juce::Colour(0xffa9dfbf);
+//static auto MIDISettingsBackgroundID = juce::Colour(0xffffffff);
+//static auto MIDISettingsTextID = juce::Colours::white;
+//static auto MIDISettingsTextSelectID = juce::Colours::darkgrey;
+//static auto MIDISettingsButtonColourID = juce::Colours::grey;
+//static auto MIDISettingsButtonColourSelectID = juce::Colour(0xffa9dfbf);
 
 
 static auto GraphNodeBackgroundColourID = juce::Colours::black;

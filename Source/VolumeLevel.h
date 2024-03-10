@@ -18,7 +18,7 @@ public :
 
     static inline VolumeLevel* instance = nullptr;
 
-    VolumeLevel(int offset);
+    VolumeLevel();
     ~VolumeLevel() override {};
 
     void paint(juce::Graphics& g) override;
@@ -29,8 +29,7 @@ public :
 
 
 private :
-
-    int offset;
+    double level;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VolumeLevel)
 };

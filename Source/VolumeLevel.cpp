@@ -12,18 +12,20 @@
 
 
 
-VolumeLevel::VolumeLevel(int offset) {
-    this->offset = offset;
+VolumeLevel::VolumeLevel() {
+    VolumeLevel::instance = this;
     resized();
 }
 
 void VolumeLevel::paint(juce::Graphics& g) {
-    g.fillAll(juce::Colours::black);
+    g.setColour(juce::Colours::grey);
+    g.fillRoundedRectangle(getLocalBounds().toFloat(), 5.0);
+    // Draw the present level here.
+    // slider.
 }
 
 void VolumeLevel::resized() {
-    setBounds(this->offset, 0, getParentWidth()*0.1, getParentHeight());
-    VolumeLevel::instance = this;
+    //setBounds(this->offset, 0, getParentWidth()*0.1, getParentHeight());
 }
 
 void *VolumeLevel::getInstance() {
