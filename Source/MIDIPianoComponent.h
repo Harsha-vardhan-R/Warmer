@@ -11,7 +11,6 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "MIDISettings.h"
 #include "Piano.h"
 #include "Wheels.h"
 
@@ -30,7 +29,6 @@ private:
     int offset;
     int height;
 
-    std::unique_ptr<MIDISettings> midiSettings;
     std::unique_ptr<Wheels> wheelComponent;
     std::unique_ptr<Piano> pianoComponent;
 

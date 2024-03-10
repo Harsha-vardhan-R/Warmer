@@ -7,6 +7,9 @@
   <MAINGROUP id="i1IZ57" name="Warmer">
     <GROUP id="{ABD2107A-91D9-3367-075C-DAB74831B466}" name="Assets"/>
     <GROUP id="{96AA9396-9DAD-7D0F-4F64-27DF1BACBC55}" name="Source">
+      <FILE id="vnNRRm" name="WaveShapeDisp.cpp" compile="1" resource="0"
+            file="Source/WaveShapeDisp.cpp"/>
+      <FILE id="YiKcmI" name="WaveShapeDisp.h" compile="0" resource="0" file="Source/WaveShapeDisp.h"/>
       <FILE id="YSUUCC" name="MyLookAndFeel.cpp" compile="1" resource="0"
             file="Source/MyLookAndFeel.cpp"/>
       <FILE id="z0ooqH" name="MyLookAndFeel.h" compile="0" resource="0" file="Source/MyLookAndFeel.h"/>
@@ -21,9 +24,6 @@
       <FILE id="CeqbEj" name="Wheels.h" compile="0" resource="0" file="Source/Wheels.h"/>
       <FILE id="KOjY1Y" name="Piano.cpp" compile="1" resource="0" file="Source/Piano.cpp"/>
       <FILE id="BXohqn" name="Piano.h" compile="0" resource="0" file="Source/Piano.h"/>
-      <FILE id="BV3sT0" name="MIDISettings.cpp" compile="1" resource="0"
-            file="Source/MIDISettings.cpp"/>
-      <FILE id="kndaI9" name="MIDISettings.h" compile="0" resource="0" file="Source/MIDISettings.h"/>
       <FILE id="jy2qrr" name="MIDIPianoComponent.cpp" compile="1" resource="0"
             file="Source/MIDIPianoComponent.cpp"/>
       <FILE id="myVgKU" name="MIDIPianoComponent.h" compile="0" resource="0"
@@ -33,8 +33,16 @@
         <FILE id="zwPNdt" name="DemoNode.cpp" compile="1" resource="0" file="Source/GraphNodes/DemoNode.cpp"/>
         <FILE id="r907lL" name="DemoNode.h" compile="0" resource="0" file="Source/GraphNodes/DemoNode.h"/>
         <FILE id="mzF0Zm" name="GraphNode.h" compile="0" resource="0" file="Source/GraphNodes/GraphNode.h"/>
+        <FILE id="RwOifg" name="InputMasterGraphNode.cpp" compile="1" resource="0"
+              file="Source/GraphNodes/InputMasterGraphNode.cpp"/>
+        <FILE id="BsFAAV" name="InputMasterGraphNode.h" compile="0" resource="0"
+              file="Source/GraphNodes/InputMasterGraphNode.h"/>
         <FILE id="BurFTz" name="InputOutputTypesForSokets.h" compile="0" resource="0"
               file="Source/GraphNodes/InputOutputTypesForSokets.h"/>
+        <FILE id="JgzrQ1" name="OutputMasterGraphNode.cpp" compile="1" resource="0"
+              file="Source/GraphNodes/OutputMasterGraphNode.cpp"/>
+        <FILE id="gFY7sI" name="OutputMasterGraphNode.h" compile="0" resource="0"
+              file="Source/GraphNodes/OutputMasterGraphNode.h"/>
       </GROUP>
       <FILE id="nePoUx" name="PresetSwitch.h" compile="0" resource="0" file="Source/PresetSwitch.h"/>
       <FILE id="Peufm3" name="MasterComponent.cpp" compile="1" resource="0"

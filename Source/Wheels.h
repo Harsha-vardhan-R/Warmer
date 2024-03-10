@@ -56,9 +56,9 @@ public:
         if (isDragging && dragIndex >= 0 && dragIndex < wheelAreas.size()) {
             // Update the position of the dragged rectangle based on mouse drag
             if (dragIndex == 0) {
-                this->pitchWheelLevel = std::clamp(1.0f - (((float)event.y-(float)wheelAreas[i]->getY())/(float)(getParentHeight() - 40)), 0.0f, 1.0f);
+                this->pitchWheelLevel = std::clamp(1.0f - (((float)event.y-(float)wheelAreas[i]->getY())/(float)(getParentHeight() - 20)), 0.0f, 1.0f);
             } else if (dragIndex == 1) {
-                this->modWheelLevel = std::clamp(1.0f - (((float)event.y-(float)wheelAreas[i]->getY())/(float)(getParentHeight() - 40)), 0.0f, 1.0f);
+                this->modWheelLevel = std::clamp(1.0f - (((float)event.y-(float)wheelAreas[i]->getY())/(float)(getParentHeight() - 20)), 0.0f, 1.0f);
             }
             repaint();
         }

@@ -51,7 +51,19 @@ public:
     }
     //==============
     // Called when the tab is switched, this will call the instrument's setMode()
-
+    void currentTabChanged(int newTabIndex, const juce::String& newTabName) override {
+        switch (newTabIndex) {
+            case 0:
+                instrument.get()->setMode(Mode::Play);
+                break;
+            case 1:
+                instrument.get()->setMode(Mode::Graph);
+                break;
+            case 2:
+                instrument.get()->setMode(Mode::Edit);
+                break;
+        }
+    }
 
 
 private:

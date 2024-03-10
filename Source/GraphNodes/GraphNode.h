@@ -23,6 +23,7 @@ public :
 
     // Height of the node Component.
     // This is not the rendering height, it will depend on the zoom level.
+    // It is also the dimensions of the node when the zoom level is 0.
     int UIWidth = 20;
     int UIHeight = 40;
 
@@ -54,7 +55,7 @@ public :
             SocketDataType::NULLType,
             SocketDataType::NULLType
     };
-    juce::String OutputSocketNames[5] = {
+    juce::String OutputSocketNames[3] = {
             juce::String(""),
             juce::String(""),
             juce::String(""),
@@ -80,6 +81,7 @@ public :
     // Draws the common parts for all the nodes,
     // called before drawing the respective node related content.
     void paintBasic(juce::Graphics& g ,int zoomLevel) {
+
         auto bounds = g.getClipBounds();
         g.setColour(GraphNodeBackgroundColourID);
         g.fillRoundedRectangle(bounds.toFloat().reduced(2), 3.0f);

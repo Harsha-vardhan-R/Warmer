@@ -39,23 +39,26 @@ Wheels::~Wheels() {
 void drawWheelWithLevel(juce::Rectangle<float> bounds, // wheel bounds
                         juce::Graphics &g,
                         float level) { // level varies from 0.0 to 1.0
-    // draw a thin rectangle, then draw the notch.
+
     g.setColour(WheelBackgroundID);
     g.fillRoundedRectangle(bounds.toFloat(), 3.0f);
+//    g.fillRect(bounds);
+
+    // draw a thin rectangle, then draw the notch.
     float notchCentre= ((float)bounds.getHeight()*0.96)*(1.0-level);
     g.setColour(WheelSliderBackgroundID);
-    g.fillRoundedRectangle(bounds.getX() + 1, bounds.getY()+(int)notchCentre, bounds.getWidth()-2, 5.0, 3.0f);
+    g.fillRoundedRectangle(bounds.getX() + 1, bounds.getY()+(int)notchCentre, bounds.getWidth()-2, 5.0, 2.0f);
     g.setColour(WheelSliderLineBackgroundID);
     g.fillRect(bounds.getX() + 2, bounds.getY()+(int)notchCentre+2, bounds.getWidth()-4, 1.0);
-    g.setColour(WheelSliderLineBackgroundID);
-    g.drawRoundedRectangle(bounds.toFloat(), 3.0f, 1.0f);
+    g.setColour(WheelSliderLineBackgroundID);g.setColour(juce::Colours::black);
+    g.drawRoundedRectangle(bounds.toFloat(), 3.0f, 0.2f);
 }
 
 void Wheels::paint(juce::Graphics &g) {
     g.fillAll(WheelComponentBackgroundID);
 
-    juce::Rectangle<int> pitchWheel(55, 10, 25, getParentHeight() - 40);
-    juce::Rectangle<int> modWheel(105, 10, 25, getParentHeight() - 40);
+    juce::Rectangle<int> pitchWheel(55, 10, 25, getParentHeight() - 20);
+    juce::Rectangle<int> modWheel(105, 10, 25, getParentHeight() - 20);
 
     drawWheelWithLevel(modWheel.toFloat(), g, this->modWheelLevel);
     drawWheelWithLevel(pitchWheel.toFloat(), g, this->pitchWheelLevel);
@@ -72,8 +75,8 @@ void Wheels::paint(juce::Graphics &g) {
     arrow2.addTriangle(90, 10,
                       95, 10,
                       90, pitchWheel.getY()+(pitchWheel.getHeight()/2));
-    arrow2.addTriangle(90, getParentHeight() - 30,
-                       85, getParentHeight() - 30,
+    arrow2.addTriangle(90, getParentHeight() - 10,
+                       85, getParentHeight() - 10,
                        90, pitchWheel.getY()+(pitchWheel.getHeight()/2));
     g.fillPath(arrow2);
 
@@ -96,10 +99,13 @@ void Wheels::paint(juce::Graphics &g) {
     g.fillPath(upArrow);
     g.fillPath(lowArrow);
 
+    g.setColour(juce::Colours::grey);
+    g.fillRect(148, 0, 2, getHeight());
+
 }
 
 void Wheels::resized() {
-    setBounds(0, 20 ,150, getParentHeight() - 20);
+    setBounds(0, 0 ,150, getParentHeight());
 }
 
 

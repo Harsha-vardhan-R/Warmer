@@ -41,7 +41,7 @@ int MIDI_TO_MINE[113] = {
 
 
 Instrument::Instrument(int tabWidth) {
-
+    Instrument::instancePtr = this;
 
     this->tabWidth = tabWidth;
 
@@ -51,6 +51,11 @@ Instrument::Instrument(int tabWidth) {
 
     presentMode = Mode::Play;
 
+    deviceManager.reset(new juce::AudioDeviceManager());
+    deviceManager.get()->initialise(2, 2, nullptr, true);
+
+    AudioMIDISettingsJUCE = std::make_unique<Instrument::AudioMIDISettingClass>(*deviceManager.get());
+    AudioMIDISettingsJUCE.get()->closeButtonPressed();
 
     // Setting up for the MIDI listening.
     auto midiDevicesHere = juce::MidiInput::getAvailableDevices();
@@ -59,10 +64,10 @@ Instrument::Instrument(int tabWidth) {
     for (const auto& device : midiDevicesHere) {
         auto midiInput = juce::MidiInput::openDevice(device.identifier, this);
         if (midiInput != nullptr) {
+            // Initially listening from all the MIDI inputs.
+            deviceManager.get()->setMidiInputDeviceEnabled(device.identifier, true);
             midiInput->start();
             midiInputs.add(std::move(midiInput));
-        } else {
-            std::cerr << "Failed to open MIDI device: " << device.identifier << std::endl;
         }
     }
 
@@ -71,18 +76,56 @@ Instrument::Instrument(int tabWidth) {
         std::cout << i->getName() << "\n";
     }
 
-    deviceManager.reset(new juce::AudioDeviceManager());
-    deviceManager.get()->initialise(2, 2, nullptr, true);
-
-    AudioMIDISettingsJUCE = std::make_unique<Instrument::AudioMIDISettingClass>(*deviceManager.get());
-    AudioMIDISettingsJUCE.get()->closeButtonPressed();
-
-
     resized();
-
-    Instrument::instancePtr = this;
 }
 
+void Instrument::refreshMIDIDevices() {
+    // Firstly remove all the devices.
+    while (midiInputs.size() != 0) {
+        midiInputs.remove(0);
+    }
+
+    // Setting up for the MIDI listening.
+    auto midiDevicesHere = juce::MidiInput::getAvailableDevices();
+
+    for (const auto& device : midiDevicesHere) {
+        auto midiInput = juce::MidiInput::openDevice(device.identifier, this);
+        // Checking if the midi input is actually enabled by the user in AudioMIDIsettings.
+        if (midiInput != nullptr && deviceManager.get()->isMidiInputDeviceEnabled(device.identifier)) {
+            midiInput->start();
+            midiInputs.add(std::move(midiInput));
+        }
+    }
+
+    std::cout << "Listening From : " << "\n";
+    for (auto i : midiInputs) {
+        std::cout << i->getName() << "\n";
+    }
+}
+
+void Instrument::listenFromAllMIDIInputs() {
+    // Firstly remove all the devices.
+    while (midiInputs.size() != 0) {
+        midiInputs.remove(0);
+    }
+
+    // Setting up for the MIDI listening.
+    auto midiDevicesHere = juce::MidiInput::getAvailableDevices();
+
+    for (const auto& device : midiDevicesHere) {
+        auto midiInput = juce::MidiInput::openDevice(device.identifier, this);
+        if (midiInput != nullptr) {
+            deviceManager.get()->setMidiInputDeviceEnabled(device.identifier, true); // will put the tick mark.
+            midiInput->start();
+            midiInputs.add(std::move(midiInput));
+        }
+    }
+
+    std::cout << "Listening From : " << "\n";
+    for (auto i : midiInputs) {
+        std::cout << i->getName() << "\n";
+    }
+}
 
 // TODO : ask to save changes, before replacing.
 void Instrument::Initialize() {
@@ -100,6 +143,12 @@ void Instrument::paint(juce::Graphics& g) {}
 
 
 void Instrument::setMode(Mode mode) {
+    if (mode == Mode::Play) {
+        getPlayPage()->addAndMakeVisible(Canvas.get());
+    }
+    else if (mode == Mode::Edit) {
+        getEditPage()->addAndMakeVisible(Canvas.get());
+    }
     presentMode = mode;
     repaint();
 }
@@ -136,6 +185,7 @@ Instrument::EditPage::EditPage() {
     addAndMakeVisible(createCanvasButton.get());
     createCanvasButton.get()->onClick = [this] { createCanvasButtonClicked(); };
 
+    instrumentCanvas == nullptr;
 
     resized();
 }
@@ -154,8 +204,7 @@ void Instrument::EditPage::resized() {
     if (size_y.get() != nullptr) size_y.get()->setBounds(verticalCenter-125, horizontalCenter, 50, 25);
     if (createCanvasButton.get() != nullptr) createCanvasButton.get()->setBounds(verticalCenter-65, horizontalCenter, 200, 25);
 
-    if (Canvas.get() != nullptr) Canvas.get()->resized();
-
+    if (instrumentCanvas != nullptr) instrumentCanvas->resized();
 }
 
 void Instrument::EditPage::paint(juce::Graphics &g) {
@@ -163,6 +212,9 @@ void Instrument::EditPage::paint(juce::Graphics &g) {
 }
 
 void Instrument::EditPage::createCanvasButtonClicked() {
+
+    auto InstrumentInstace = Instrument::getInstance();
+
     juce::String x_dimen = size_x.get()->getText();
     juce::String y_dimen = size_y.get()->getText();
 
@@ -174,14 +226,15 @@ void Instrument::EditPage::createCanvasButtonClicked() {
             if ((x > 100 && x < 2500) && (y > 100 && y < 2500)) { // Create the canvas.
                 this->x = x;
                 this->y = y;
-                Canvas.reset(new InstrumentCanvas(x, y));
+                InstrumentInstace->Canvas.reset(new InstrumentCanvas(x, y));
                 // Deleting the components and adding the canvas.
                 size_x.reset(nullptr);
                 size_y.reset(nullptr);
                 createCanvasButton.reset(nullptr);
 
-                addChildComponent(Canvas.get());
-                addAndMakeVisible(Canvas.get());
+                instrumentCanvas = InstrumentInstace->Canvas.get();
+                this->addAndMakeVisible(instrumentCanvas);
+
                 resized();
                 repaint();
             } else {
@@ -199,15 +252,50 @@ void Instrument::EditPage::createCanvasButtonClicked() {
 }
 
 // +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
-void Instrument::EditPage::InstrumentCanvas::paint(juce::Graphics &g) {
-    g.fillAll(InstrumentDefaultBackColourID);
+void Instrument::InstrumentCanvas::paint(juce::Graphics &g) {
+    g.fillAll(juce::Colours::black);
 }
 
 //////////////////////////////
 /////// GRAPH PAGE ///////////
 //////////////////////////////
 Instrument::GraphPage::GraphPage() {
+
+    // Creating and adding the menus.
+    AddNodesPopupMenu.reset(new juce::PopupMenu());
+
+
+    subMenuArray.add(new juce::PopupMenu());
+    subMenuArray.add(new juce::PopupMenu());
+    subMenuArray.add(new juce::PopupMenu());
+
+    subMenuArray[0]->addItem(101, "Filter 1");
+    subMenuArray[0]->addItem(102, "Filter 2");
+
+    subMenuArray[1]->addItem(201, "eq 1");
+    subMenuArray[1]->addItem(202, "eq 8");
+
+
+    AddNodesPopupMenu.get()->addSubMenu("Filters", *subMenuArray[0]);
+    AddNodesPopupMenu.get()->addSubMenu("Eq's", *subMenuArray[1]);
+    AddNodesPopupMenu.get()->addSubMenu("Utils", *subMenuArray[2]);
+
+    styles.reset(new MyLookAndFeel());
+    AddNodesPopupMenu.get()->setLookAndFeel(styles.get());
+
     resized();
+}
+
+void Instrument::GraphPage::mouseDown(const juce::MouseEvent& event) {
+    if (event.mods.isRightButtonDown()) {
+        lastMouseDownPosition = event.getPosition();
+        AddNodesPopupMenu.get()->showMenuAsync(juce::PopupMenu::Options(),
+                                               juce::ModalCallbackFunction::forComponent(AddNodeCallback, this));
+    }
+}
+
+void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *graphPageComponent) {
+    std::cout << "Let's goo, " << result << "\n";
 }
 
 void Instrument::GraphPage::resized() {
@@ -235,7 +323,15 @@ void Instrument::PlayPage::resized() {
 }
 
 void Instrument::PlayPage::paint(juce::Graphics &g) {
-    g.fillAll(juce::Colours::aqua);
+    auto InstrumentInstance = Instrument::getInstance();
+    g.setColour(juce::Colours::grey);
+    if (InstrumentInstance->Canvas.get() == nullptr) {
+        g.drawText("Please Create an Instrument Canvas for this Instrument in the Edit Page",
+                   getLocalBounds(),
+                   juce::Justification::centred);
+    } else {
+        addAndMakeVisible(InstrumentInstance->Canvas.get());
+    }
 }
 
 void Instrument::handleIncomingMidiMessage(juce::MidiInput* source, const juce::MidiMessage& message) {
@@ -297,8 +393,11 @@ Instrument::AudioMIDISettingClass::AudioMIDISettingClass(juce::AudioDeviceManage
     settingPage.reset(new juce::AudioDeviceSelectorComponent(deviceManager,0, 0, 0,256, true, false, true, false));
     settingPage.get()->setSize(1200, 800);
 //    setResizable(true, true);
-//    setDraggable(false);
+      setDraggable(false);
 //    setUsingNativeTitleBar(true);
+
+    styles.reset(new MyLookAndFeel());
+    settingPage.get()->setLookAndFeel(styles.get());
 
     setContentOwned(settingPage.get(), true);
     //setVisible(false);

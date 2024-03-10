@@ -53,44 +53,49 @@ public:
     void resized() override;
     //====== INSTRUMENT'S API's ========
     void OpenAudioAndMIDISettings() {
-        AudioMIDISettingsJUCE.get()->setVisible(true);
         AudioMIDISettingsJUCE.get()->setCentrePosition(getParentWidth()/2, getParentHeight()/2);
+        AudioMIDISettingsJUCE.get()->setVisible(true);
     }
 
     void Initialize();
 
     // This is like a shortcut,
     // Turns ON all the non-NULL MIDI devices.
-    void refreshMIDIDevices() {
-        // Firstly remove all the devices.
-        while (midiInputs.size() != 0) {
-            midiInputs.remove(0);
-        }
+    void refreshMIDIDevices();
 
-        // Setting up for the MIDI listening.
-        auto midiDevicesHere = juce::MidiInput::getAvailableDevices();
+    // Does not care about the devices presently listening to ,
+    // Turns on all the devices which are registered as MIDI inputs
+    void listenFromAllMIDIInputs();
 
 
-        for (const auto& device : midiDevicesHere) {
-            auto midiInput = juce::MidiInput::openDevice(device.identifier, this);
-            if (midiInput != nullptr) {
-                midiInput->start();
-                midiInputs.add(std::move(midiInput));
-            } else {
-                std::cerr << "Failed to open MIDI device: " << device.identifier << std::endl;
-            }
-        }
-
-        std::cout << "Listening From : " << "\n";
-        for (auto i : midiInputs) {
-            std::cout << i->getName() << "\n";
-        }
-    }
-
+    // Handling the midi from selected midi devices.
     void handleIncomingMidiMessage(juce::MidiInput* source, const juce::MidiMessage& message) override;
 
     /* Sets the mode and calls the paint function, basically will switch tabs */
     void setMode(Mode mode);
+
+    ///////////////////////
+    /////////////////////
+    ///////////////////
+
+    // Will be created and placed when the user enters the dimensions and presses `create Instrument canvas`.
+    class InstrumentCanvas : public juce::Component {
+    public:
+        InstrumentCanvas(int x, int y) {
+            this->x = x;
+            this->y = y;
+        };
+        ~InstrumentCanvas() override {};
+
+        void paint(juce::Graphics& g) override;
+        void resized() override {
+            setBounds((getParentWidth()/2)-(x/2), (getParentHeight()/2)-(y/2), x, y);
+        };
+
+    private:
+        int x, y;
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(InstrumentCanvas)
+    };
 
     // Will contain the paint methods for the page, the data what to show will be in the parent(in hierarchy) class.
     class EditPage : public juce::Component {
@@ -108,29 +113,9 @@ public:
 
     private:
 
-        class InstrumentCanvas : public juce::Component {
-        public:
-            InstrumentCanvas(int x, int y) {
-                this->x = x;
-                this->y = y;
-            };
-            ~InstrumentCanvas() override {};
-
-            void paint(juce::Graphics& g) override;
-            void resized() override {
-                setBounds((getParentWidth()/2)-(x/2), (getParentHeight()/2)-(y/2), x, y);
-            };
-
-        private:
-            int x, y;
-
-            JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(InstrumentCanvas)
-        };
-
-        bool isCanvasPresent;
-        std::unique_ptr<juce::Component> Canvas;
-
         int x, y;
+
+        juce::Component* instrumentCanvas;
 
         std::unique_ptr<juce::TextEditor> size_x;
         std::unique_ptr<juce::TextEditor> size_y;
@@ -148,8 +133,17 @@ public:
         void paint(juce::Graphics& g) override;
         void resized() override;
 
+        void mouseDown(const juce::MouseEvent& event) override;
+
+        // Will be used as the callback function from the `showMenuAsync` function.
+        static void AddNodeCallback(int result, GraphPage* graphPageComponent);
+
     private:
         std::unique_ptr<juce::PopupMenu> AddNodesPopupMenu;
+        // This stores the submenus in an owned array to make the memory management easy.
+        juce::OwnedArray<juce::PopupMenu> subMenuArray;
+        std::unique_ptr<juce::LookAndFeel_V4> styles;
+        juce::Point<int> lastMouseDownPosition;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GraphPage)
     };
@@ -164,6 +158,8 @@ public:
         void resized() override;
 
     private:
+        juce::Component* instrumentCanvas;
+
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlayPage)
     };
 
@@ -174,11 +170,14 @@ public:
         ~AudioMIDISettingClass() override {}
 
         void closeButtonPressed() override {
+            Instrument::getInstance()->refreshMIDIDevices();
             setVisible(false); // Hide the window when close button is pressed
         }
 
     private:
         std::unique_ptr<juce::Component> settingPage;
+
+        std::unique_ptr<juce::LookAndFeel_V4> styles;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioMIDISettingClass)
     };
@@ -200,8 +199,10 @@ public:
     }
 
 
-
 private:
+    bool isCanvasPresent;
+    std::unique_ptr<juce::Component> Canvas;
+
     std::unique_ptr<juce::Component> editPage;
     std::unique_ptr<juce::Component> graphPage;
     std::unique_ptr<juce::Component> playPage;
@@ -213,7 +214,10 @@ private:
 
     juce::OwnedArray<juce::MidiInput> midiInputs;
     std::unique_ptr<juce::DocumentWindow> AudioMIDISettingsJUCE;
+
+    // Device manager and related stuff.
     std::unique_ptr<juce::AudioDeviceManager> deviceManager;
+
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Instrument)
 };
