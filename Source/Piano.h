@@ -22,6 +22,10 @@ public:
     void paint(juce::Graphics& g) override;
     void resized() override;
 
+    void setOffset(int n) {
+        offset = n;
+    }
+
 
     /*
         This is an overlay which exactly lies over the piano component,
@@ -46,6 +50,10 @@ public:
 
         bool keyPressed(const juce::KeyPress&, juce::Component*) override;
         bool keyStateChanged(bool isKeyDown, juce::Component*) override;
+
+        void setOffset(int n) {
+            offset = n;
+        }
 
 
 
@@ -87,6 +95,9 @@ public:
 
 
 private:
+
+    int offset;
+
     const int blackKeysPosition[37] = { 1,  2,  4,  5,  6,
                                         8,  9, 11, 12, 13,
                                        15, 16, 18, 19, 20,
@@ -110,7 +121,7 @@ private:
 
 
 
-    juce::Image PianoImage = juce::ImageFileFormat::loadFrom(juce::File("./Assets/KeyPressedImages/PianoFullImage_.png"));
+    juce::Image PianoImage = juce::ImageFileFormat::loadFrom(juce::File("./Assets/KeyPressedImages/piano_full_unpressed.png"));
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Piano)

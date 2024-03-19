@@ -4,9 +4,7 @@
 #include "MIDIPianoComponent.h"
 
 MainComponent::MainComponent() {
-    setSize (1500, 780);
-    this->minWidth = 400;
-    this->minHeight = 400;
+    setSize (1550, 900);
 
     this->menuBarComponent = std::make_unique<MenuComponent>();
     addAndMakeVisible(menuBarComponent.get());

@@ -13,6 +13,7 @@
 #include <JuceHeader.h>
 #include "Piano.h"
 #include "Wheels.h"
+#include "PianoSideBar.h"
 
 
 // TODO : Command listener so that we can use keyboard for midi input without velocity.
@@ -31,6 +32,7 @@ private:
 
     std::unique_ptr<Wheels> wheelComponent;
     std::unique_ptr<Piano> pianoComponent;
+    std::unique_ptr<PianoSideBar> sideBar;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MIDIPianoComponent)
 };

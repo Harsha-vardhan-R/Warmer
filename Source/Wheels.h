@@ -13,7 +13,7 @@
 
 
 /*
- * Modulation and pitch wheels sit here also contains the transpose buttons.
+ * Modulation and pitch wheels sit here, also contains the transpose buttons.
 */
 
 class Wheels : public juce::Component {
@@ -83,6 +83,11 @@ public:
     void setPitchWheel(float value);
 
 
+    void setOffset(int n) {
+        offset = n;
+    }
+
+
 private:
     float modWheelLevel;
     float pitchWheelLevel;
@@ -92,6 +97,8 @@ private:
     int dragIndex;
     juce::Point<int> dragOffset;
     int dragDist;
+
+    int offset;
 
     juce::OwnedArray<juce::Rectangle<int>> wheelAreas;
 

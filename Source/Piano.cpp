@@ -59,16 +59,12 @@ Piano::Piano() {
 Piano::~Piano() {}
 
 void Piano::paint(juce::Graphics &g) {
-    int offset = 885-(getWidth()/2);
-    g.drawImage(PianoImage, 0 , -3, getWidth(), getHeight(),
-                offset, 0, getWidth(), getHeight(), false);
-
-//    g.setColour(juce::Colours::grey);
-//    g.drawRect(getLocalBounds(), 2);
+    g.drawImage(PianoImage, 0 , 0, 1192, getHeight(),
+                0, 0, 1192, 125, false);
 }
 
 void Piano::resized() {
-    setBounds(150, 0 ,getParentWidth()-150, getParentHeight());
+    setBounds(200+offset, 0 ,1192, getParentHeight());
 
     if (overlayPainter.get() != nullptr) {
         overlayPainter.get()->resized();

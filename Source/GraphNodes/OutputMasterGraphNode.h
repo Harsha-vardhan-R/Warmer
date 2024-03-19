@@ -14,6 +14,8 @@
 class OutputMasterGraphNode : public GraphNode {
 public:
 
+    GraphNode* last;
+
     OutputMasterGraphNode(int pos_x, int pos_y) :
             GraphNode("AUDIO OUT",
                       pos_x,
@@ -21,12 +23,17 @@ public:
                       120,
                       160) {
 
+        last = nullptr;
+
     };
 
     ~OutputMasterGraphNode() override {};
 
-    void paint(juce::Graphics& g) override {
-        paintBasic(g, 0);
+    bool isConnected() {
+        return (last != nullptr);
     }
+
+    void process() override {};
+
 
 };

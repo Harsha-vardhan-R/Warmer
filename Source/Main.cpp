@@ -52,7 +52,7 @@ public:
             this->setConstrainer(getConstrainer());
 
 
-            setResizable(true, true);
+            //setResizable(true, true);
 
             #if JUCE_IOS || JUCE_ANDROID
                 setFullScreen (true);
@@ -67,10 +67,8 @@ public:
         // Setting the minimum height and width that the app can be resized to.
         juce::ComponentBoundsConstrainer* getConstrainer() {
             constrain.reset(new juce::ComponentBoundsConstrainer());
-            constrain.get()->setMinimumWidth(1350);
-            constrain.get()->setMinimumHeight(700);
-
-            constrain.get()->setMaximumWidth(1921);
+            constrain.get()->setMinimumWidth(1549);
+            constrain.get()->setMinimumHeight(800);
             return constrain.get();
         }
 

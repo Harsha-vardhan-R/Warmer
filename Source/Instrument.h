@@ -13,6 +13,7 @@
 #include "Modes.h"
 #include "Piano.h"
 #include "GraphNodes/Collection.h"
+#include "MyDataStructures.h"
 
 
 /*
@@ -75,9 +76,6 @@ public:
     void setMode(Mode mode);
 
 
-
-    GraphNode* InputNode;
-    GraphNode* OutputNode;
     /////##################################
     /// DATA STRUCTURES
     /////##################################
@@ -91,8 +89,15 @@ public:
             - Create a priority queue with priorities depending on the dependencies.
             - Process the audio based on the priority queue and the
     */
-    std::set<GraphNode, int> AllNodes;
+    InputMasterGraphNode* InputNode;
+    OutputMasterGraphNode* OutputNode;
+    std::set<GraphNode*> AllNodes;
 
+    /*
+     * Takes in the set of all nodes :
+     *      sets their audio buffers.
+     *      pushes them to the priority queue.
+     */
     void BuildTreeAndMakeQueue();
 
     /////##################################
@@ -158,8 +163,9 @@ public:
 
         void mouseDown(const juce::MouseEvent& event) override;
 
-        // Will be used as the callback function from the `showMenuAsync` function.
+        // Will be used as the callback function from the `showMenuAsync` method for the popup menu.
         static void AddNodeCallback(int result, GraphPage* graphPageComponent);
+
 
     private:
         int mid_x, mid_y; // for panning the graph.
@@ -217,7 +223,7 @@ public:
     }
 
     juce::Component* getGraphPage() {
-        return this->graphPage.get();
+        return this->viewport.get();
     }
 
     juce::Component* getPlayPage() {
@@ -236,7 +242,13 @@ private:
     int size_width, size_height;
     int tabWidth;
 
+    // The graph node is actually inside this.
+    std::unique_ptr<juce::Viewport> viewport;
+
     Mode presentMode;
+
+    // The priority queue we are going to use.
+    PriorityQueue* nodeProcessingQueue;
 
     juce::OwnedArray<juce::MidiInput> midiInputs;
     std::unique_ptr<juce::DocumentWindow> AudioMIDISettingsJUCE;
