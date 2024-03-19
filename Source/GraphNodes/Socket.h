@@ -36,6 +36,17 @@ public:
         g.fillRoundedRectangle(posx, posy, wid, wid, ((float)wid)/2.0);
     }
 
+    //deleting the socket connection.
+    void mouseDown(const juce::MouseEvent& event) override {
+        if (event.mods.isRightButtonDown()) { // check if the connection is present.
+            // Show context menu
+            juce::PopupMenu menu;
+            menu.addItem(1, "Delete Connection");
+            //menu.showMenuAsync(juce::PopupMenu::Options(),
+            //juce::ModalCallbackFunction::forComponent(deleteNodeCallback, this));
+        }
+    }
+
     void bound(int posx, int posy, int wid) {
         this->posx = posx;
         this->posy = posy;

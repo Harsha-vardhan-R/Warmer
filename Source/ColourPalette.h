@@ -12,7 +12,11 @@
 #include <JuceHeader.h>
 
 // E1F0DA e1f0da
-#define COLOUR 0xFFFFD5E5
+
+// cool aqua blue : 0xFF6DF1CC
+// cool peach : E3FFC3
+
+#define COLOUR 0xFFF1EAFF
 
 static auto textColourID = juce::Colours::darkgrey;
 static auto textSelectedColourID = juce::Colours::black;
@@ -24,9 +28,9 @@ static auto ButtonOutlineColourID = juce::Colour(COLOUR).withBrightness(0.85f); 
 static auto MenuBackgroundID = juce::Colour(COLOUR).withBrightness(0.97f);  // F2910A
 static auto MenuMouseOverColourID = juce::Colour(COLOUR).withBrightness(0.92f);  // F2910A
 
-static auto MouseOverTabColourID = juce::Colour(COLOUR).withBrightness(0.94f);  // F2910A
-static auto SelectTabColourID = juce::Colour(COLOUR).withBrightness(0.88f);  // F2910A
-static auto IdleTabColourID = juce::Colour(COLOUR).withBrightness(0.96f);  // F2910A
+static auto MouseOverTabColourID = juce::Colour(COLOUR).withBrightness(0.9f);  // F2910A
+static auto SelectTabColourID = juce::Colour(COLOUR).withBrightness(0.85f);  // F2910A
+static auto IdleTabColourID = juce::Colour(COLOUR);  // F2910A
 static auto IdleTabTextColourID = juce::Colours::darkgrey;
 static auto SelectedTabTextColourID = juce::Colours::darkgrey;
 static auto SelectedTabButtonBorderColourID = juce::Colour(COLOUR).withBrightness(0.9f);  // F2910A
@@ -41,9 +45,9 @@ static auto WheelBackgroundID = juce::Colour(0x88FFD5E5).withBrightness(0.75f); 
 static auto WheelSliderBackgroundID = juce::Colours::grey; // F2910A
 static auto WheelSliderLineBackgroundID = juce::Colours::white;
 
-static auto GraphNodeBackgroundColourID = juce::Colours::white;
-static auto GraphNodeHeadingTextID = juce::Colours::darkgrey;
-static auto GraphNodeHeadingColourID = juce::Colour(COLOUR).withBrightness(0.85f);  // F2910A
+static auto GraphNodeBackgroundColourID = juce::Colours::grey;
+static auto GraphNodeHeadingTextID = juce::Colours::white;
+static auto GraphNodeHeadingColourID = juce::Colours::darkgrey;
 
 static auto GraphNodeMIDIColourID = juce::Colour(COLOUR).withBrightness(0.93f);  // F2910A
 static auto GraphNodeAudioBufferIntColourID = juce::Colour(COLOUR).withBrightness(0.91f);  // F2910A
@@ -51,6 +55,7 @@ static auto GraphNodeAudioBufferFloatColourID = juce::Colour(COLOUR).withBrightn
 static auto GraphNodeIntegerColourID = juce::Colour(COLOUR).withBrightness(0.87f);  // F2910A
 static auto GraphNodeFloatingColourID = juce::Colour(COLOUR).withBrightness(0.85f);  // F2910A
 static auto GraphNodeImpColourID = juce::Colour(COLOUR).withBrightness(0.83f);  // F2910A
+static auto GraphPageBackgroundColourID = juce::Colour(0xFFE3E1D9);  // F2910A
 
 static auto EditPageBackColourOneID = juce::Colour(COLOUR).withBrightness(0.94f);  // F2910A
 static auto EditPageBackColourTwoID = juce::Colour(COLOUR).withBrightness(0.92f);  // F2910A

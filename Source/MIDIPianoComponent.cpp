@@ -25,6 +25,9 @@ MIDIPianoComponent::MIDIPianoComponent(int offset, int height) {
     addAndMakeVisible(pianoComponent.get());
     Instrument::VoidPointerToPianoComponent = (void*)pianoComponent.get();
 
+    sideBar.reset(new PianoSideBar());
+    addAndMakeVisible(sideBar.get());
+
     resized();
 
 }
@@ -38,10 +41,17 @@ void MIDIPianoComponent::resized() {
     setBounds(0, this->offset, getParentWidth(), this->height);
     setSize(getParentWidth(), this->height);
 
-
-    if (wheelComponent.get() != nullptr) wheelComponent.get()->resized();
-    if (pianoComponent.get() != nullptr) pianoComponent.get()->resized();
-
-
+    if (wheelComponent.get() != nullptr) {
+        wheelComponent.get()->setOffset(((getWidth()-1392)/2)-50);
+        wheelComponent.get()->resized();
+    }
+    if (pianoComponent.get() != nullptr) {
+        pianoComponent.get()->setOffset(((getWidth()-1392)/2)-50);
+        pianoComponent.get()->resized();
+    }
+    if (sideBar.get() != nullptr) {
+        sideBar.get()->setOffset(((getWidth()-1392)/2)+50);
+        sideBar.get()->resized();
+    }
 
 }

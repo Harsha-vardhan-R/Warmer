@@ -7,6 +7,8 @@
   <MAINGROUP id="i1IZ57" name="Warmer">
     <GROUP id="{ABD2107A-91D9-3367-075C-DAB74831B466}" name="Assets"/>
     <GROUP id="{96AA9396-9DAD-7D0F-4F64-27DF1BACBC55}" name="Source">
+      <FILE id="Rzi8EP" name="MyDataStructures.h" compile="0" resource="0"
+            file="Source/MyDataStructures.h"/>
       <FILE id="vnNRRm" name="WaveShapeDisp.cpp" compile="1" resource="0"
             file="Source/WaveShapeDisp.cpp"/>
       <FILE id="YiKcmI" name="WaveShapeDisp.h" compile="0" resource="0" file="Source/WaveShapeDisp.h"/>

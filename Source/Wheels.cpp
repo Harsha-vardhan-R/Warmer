@@ -20,11 +20,13 @@ Wheels::Wheels() {
     this->pitchWheelLevel = 0.5;
     this->transpose = 0;
 
-    wheelAreas.add(new juce::Rectangle<int>(55, 10, 25, getParentHeight() - 40));
-    wheelAreas.add(new juce::Rectangle<int>(105, 10, 25, getParentHeight() - 40));
+    offset = 0;
+
+    wheelAreas.add(new juce::Rectangle<int>(105+offset, 10, 25, getParentHeight() - 40));
+    wheelAreas.add(new juce::Rectangle<int>(155+offset, 10, 25, getParentHeight() - 40));
     // for up transpose and low transpose
-    wheelAreas.add(new juce::Rectangle<int>(5, 10, 45, 60));
-    wheelAreas.add(new juce::Rectangle<int>(5, 50, 45, 60));
+    wheelAreas.add(new juce::Rectangle<int>(55+offset, 10, 45, 60));
+    wheelAreas.add(new juce::Rectangle<int>(55+offset, 50, 45, 60));
 
     resized();
 
@@ -57,8 +59,8 @@ void drawWheelWithLevel(juce::Rectangle<float> bounds, // wheel bounds
 void Wheels::paint(juce::Graphics &g) {
     g.fillAll(WheelComponentBackgroundID);
 
-    juce::Rectangle<int> pitchWheel(55, 10, 25, getParentHeight() - 20);
-    juce::Rectangle<int> modWheel(105, 10, 25, getParentHeight() - 20);
+    juce::Rectangle<int> pitchWheel(105+offset, 10, 25, getParentHeight() - 20);
+    juce::Rectangle<int> modWheel(155+offset, 10, 25, getParentHeight() - 20);
 
     drawWheelWithLevel(modWheel.toFloat(), g, this->modWheelLevel);
     drawWheelWithLevel(pitchWheel.toFloat(), g, this->pitchWheelLevel);
@@ -66,46 +68,52 @@ void Wheels::paint(juce::Graphics &g) {
     g.setColour(WheelArrowColourID);
 
     juce::Path arrow;
-    arrow.addTriangle(135, 10,
-                      140, 10,
-                      135, pitchWheel.getY()+pitchWheel.getHeight());
+    arrow.addTriangle(185+offset, 10,
+                      190+offset, 10,
+                      185+offset, pitchWheel.getY()+pitchWheel.getHeight());
     g.fillPath(arrow);
 
     juce::Path arrow2;
-    arrow2.addTriangle(90, 10,
-                      95, 10,
-                      90, pitchWheel.getY()+(pitchWheel.getHeight()/2));
-    arrow2.addTriangle(90, getParentHeight() - 10,
-                       85, getParentHeight() - 10,
-                       90, pitchWheel.getY()+(pitchWheel.getHeight()/2));
+    arrow2.addTriangle(140+offset, 10,
+                      145+offset, 10,
+                      140+offset, pitchWheel.getY()+(pitchWheel.getHeight()/2));
+    arrow2.addTriangle(140+offset, getParentHeight() - 10,
+                       135+offset, getParentHeight() - 10,
+                       140+offset, pitchWheel.getY()+(pitchWheel.getHeight()/2));
     g.fillPath(arrow2);
 
 
-    juce::Rectangle<int> transposeArea(7, 10, 40, pitchWheel.getHeight());
+    juce::Rectangle<int> transposeArea(57+offset, 10, 40, pitchWheel.getHeight());
     juce::String transpose_(this->transpose);
-    g.setFont(22.0f);
+    g.setFont(24.0f);
     g.drawText(transpose_, transposeArea, juce::Justification::centred);
 
     juce::Path upArrow;
     juce::Path lowArrow;
-    lowArrow.addTriangle(22, 85,
-                         32, 85,
-                         27, 95);
-    upArrow.addTriangle(27, 30,
-                        22, 40,
-                        32, 40);
+    lowArrow.addTriangle(72+offset, 85,
+                         82+offset, 85,
+                         77+offset, 95);
+    upArrow.addTriangle(77+offset, 30,
+                        72+offset, 40,
+                        82+offset, 40);
 
 
     g.fillPath(upArrow);
     g.fillPath(lowArrow);
 
     g.setColour(juce::Colours::grey);
-    g.fillRect(148, 0, 2, getHeight());
+    g.fillRect(getWidth()-2, 0, 2, getHeight());
 
 }
 
 void Wheels::resized() {
-    setBounds(0, 0 ,150, getParentHeight());
+    setBounds(0, 0 ,200+offset, getParentHeight());
+
+    wheelAreas[0]->setBounds(105+offset, 10, 25, getParentHeight() - 20);
+    wheelAreas[1]->setBounds(155+offset, 10, 25, getParentHeight() - 20);
+
+    wheelAreas[2]->setBounds(55+offset, 10, 45, 60);
+    wheelAreas[3]->setBounds(55+offset, 50, 45, 60);
 }
 
 

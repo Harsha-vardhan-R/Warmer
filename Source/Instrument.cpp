@@ -39,7 +39,7 @@ int MIDI_TO_MINE[113] = {
         48, 135, 49, 136, 50
 };
 
-
+// Please do not mess up these thing's order.
 Instrument::Instrument(int tabWidth) {
     Instrument::instancePtr = this;
 
@@ -54,6 +54,10 @@ Instrument::Instrument(int tabWidth) {
     graphPage.reset(new Instrument::GraphPage());
     playPage.reset(new Instrument::PlayPage());
 
+    viewport.reset(new juce::Viewport());
+    viewport.get()->setViewedComponent(graphPage.get(), false);
+
+    nodeProcessingQueue = new PriorityQueue();
 
     deviceManager.reset(new juce::AudioDeviceManager());
     deviceManager.get()->initialise(2, 2, nullptr, true);
@@ -314,11 +318,12 @@ void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *g
 
 void Instrument::GraphPage::resized() {
     juce::TabbedComponent* parent = (juce::TabbedComponent*)getParentComponent();
-    if (parent != nullptr) setBounds(30, 1, parent->getWidth() - 29, parent->getHeight() - 2);
+    //if (parent != nullptr) setBounds(30, 1, parent->getWidth() - 29, parent->getHeight() - 2);
+    if (parent != nullptr) setBounds(0, 0, 3500, 3500);// maximum size of the canvas for the nodes.
 }
 
 void Instrument::GraphPage::paint(juce::Graphics &g) {
-    g.fillAll(juce::Colours::white);
+    g.fillAll(GraphPageBackgroundColourID);
 }
 
 /////////////////////////////
@@ -413,10 +418,34 @@ Instrument::AudioMIDISettingClass::AudioMIDISettingClass(juce::AudioDeviceManage
     setContentOwned(settingPage.get(), true);
 }
 
+
 // #####
 // #####
 // ##### AUDIO PROCESSING CALL BACK SEQUENCER.
 // #####
 // #####
 
+void Instrument::BuildTreeAndMakeQueue() {
 
+    // everytime this function is called we delete the previous
+    // priority queue.
+    if (nodeProcessingQueue != nullptr) delete nodeProcessingQueue;
+    nodeProcessingQueue = new PriorityQueue();
+
+    // if there is no node connected to the output node,
+    // do not do anything.
+    // This is not true for the input node.
+    if (!OutputNode->isConnected()) return;
+
+    int bufferSize;
+
+    if (deviceManager.get() != nullptr) {
+        //bufferSize = deviceManager.get()->AudioDeviceSetup.bufferSize;
+    } else {
+        std::cout << "No active audio device!" << std::endl;
+        return; // nothing to do.
+    }
+
+    // We traverse the graph from the back.
+
+}

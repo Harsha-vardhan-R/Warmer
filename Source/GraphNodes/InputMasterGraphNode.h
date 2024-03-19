@@ -21,17 +21,15 @@ public:
                       pos_x,
                       pos_y,
                       120,
-                      350) {
+                      175) {
 
         InputSockets.add(new Socket("Audio IN",
                                     direction::IN));
 
     };
 
-    ~InputMasterGraphNode() override {};
+    void process() override {};
 
-    void paint(juce::Graphics& g) override {
-        paintBasic(g, 0);
-    }
+    ~InputMasterGraphNode() override {};
 
 };

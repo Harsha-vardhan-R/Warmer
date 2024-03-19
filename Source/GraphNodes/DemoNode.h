@@ -14,6 +14,8 @@
 class DemoNode : public GraphNode {
 public :
 
+    void process() override {};
+
     DemoNode(int pos_x, int pos_y);
     ~DemoNode() override {};
 
