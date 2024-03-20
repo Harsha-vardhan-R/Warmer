@@ -17,7 +17,7 @@
     Cannot use the STL std::priority_queue because,
     it does not support updating priority of the elements already in it.
 
-    Technically this is not exactly a PriorityQueue, named it because it does the same thing with some extra features.
+    Technically this is not exactly a PriorityQueue, named it because it does something similar.
 
     ***
     This is NOT designed to add new nodes continuously.
@@ -108,6 +108,13 @@ public:
             elementDependencyMap[node] = node->permDependency;
             ZeroDependentQueue.push(node);
         }
+    }
+
+    // Clears all the containers.
+    void flush() {
+        elementDependencyMap.erase();
+        InitialZeroDependents.clear();
+        while(!ZeroDependentQueue.empty()) ZeroDependentQueue.pop();
     }
 
     // for debugging, data structure becomes useless after this, you need to build again.

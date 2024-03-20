@@ -9,6 +9,10 @@
 */
 
 #pragma once
+
+#include <thread>
+#include <atomic>
+
 #include <JuceHeader.h>
 #include "Modes.h"
 #include "Piano.h"
@@ -93,12 +97,22 @@ public:
     OutputMasterGraphNode* OutputNode;
     std::set<GraphNode*> AllNodes;
 
+    // Called when there is a new connection.
+    void ConfigurationChanged();
+
     /*
      * Takes in the set of all nodes :
      *      sets their audio buffers.
      *      pushes them to the priority queue.
+     *
+     *      Returns true if the tree is valid and the queue is built.
      */
-    void BuildTreeAndMakeQueue();
+    bool BuildTreeAndMakeQueue();
+
+    /*
+     * Called when we completed building the tree and made the queue.
+     */
+    void SynthesizeAudioForConfig();
 
     /////##################################
 
@@ -247,7 +261,10 @@ private:
 
     Mode presentMode;
 
-    // The priority queue we are going to use.
+    // Decides if we should break the present audio processing, set to true when the configuration changes.
+    std::atomic<bool> breakProcessing(false);
+
+    // The priority queue we are going to use.(impl in MyDataStructures.h)
     PriorityQueue* nodeProcessingQueue;
 
     juce::OwnedArray<juce::MidiInput> midiInputs;
