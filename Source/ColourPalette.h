@@ -62,6 +62,11 @@ static auto EditPageBackColourTwoID = juce::Colour(COLOUR).withBrightness(0.92f)
 
 static auto InstrumentDefaultBackColourID = juce::Colour(COLOUR).withBrightness(0.95f);  // F2910A
 
+static auto VolumeLevelBackgroundID = juce::Colours::grey;
+static auto VolumeSliderID = juce::Colours::darkgrey;
+static auto VolumeLevelID = juce::Colours::white;
+static auto VolumeSliderSlitID = juce::Colours::white;
+
 
 
 /*

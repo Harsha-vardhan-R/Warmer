@@ -29,7 +29,7 @@ public :
 
 
 private :
-    double level;
+    float level; // set by the user defaults at 0.6. can be from 0.0 to 1.0.
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VolumeLevel)
 };

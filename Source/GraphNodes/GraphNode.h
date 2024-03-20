@@ -126,7 +126,7 @@ public :
     }
 
     void resized() override {
-        setBounds(getLocalBounds().getX(), getLocalBounds().getY(), UIWidth, UIHeight);
+        setBounds(getX(), getY(), UIWidth, UIHeight);
     }
 
 private:

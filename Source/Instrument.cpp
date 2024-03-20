@@ -425,12 +425,19 @@ Instrument::AudioMIDISettingClass::AudioMIDISettingClass(juce::AudioDeviceManage
 // #####
 // #####
 
-void Instrument::BuildTreeAndMakeQueue() {
+void Instrument::ConfigurationChanged() {
+    if (!OutputNode->isConnected()) return;
+
+    BuildTreeAndMakeQueue();
+    SynthesizeAudioForConfig();
+}
+
+
+bool Instrument::BuildTreeAndMakeQueue() {
 
     // everytime this function is called we delete the previous
     // priority queue.
-    if (nodeProcessingQueue != nullptr) delete nodeProcessingQueue;
-    nodeProcessingQueue = new PriorityQueue();
+    nodeProcessingQueue.flush();
 
     // if there is no node connected to the output node,
     // do not do anything.
@@ -447,5 +454,13 @@ void Instrument::BuildTreeAndMakeQueue() {
     }
 
     // We traverse the graph from the back.
+
+}
+
+void Instrument::SynthesizeAudioForConfig() {
+
+    while (breakProcessing.load()) {
+
+    }
 
 }

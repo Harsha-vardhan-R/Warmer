@@ -47,6 +47,11 @@ public:
         }
     }
 
+    // adding a new connection.
+    void mouseDrag() {
+
+    }
+
     void bound(int posx, int posy, int wid) {
         this->posx = posx;
         this->posy = posy;
