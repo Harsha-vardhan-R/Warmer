@@ -17,9 +17,10 @@ enum SocketDataType {
     MIDI,
     AudioBufferInt,
     AudioBufferFloat,
-    Integer,
+    Integer, // for discrete types in selecting the type of something in a `TypeList`.
     Floating,
-    NULLType, // when there exists no node like this.
+    FloatingVector, // for smooth transitions, is the output from the user
+    NULLType, // when you cannot modulate with any other output.
 };
 
 enum direction {

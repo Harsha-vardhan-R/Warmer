@@ -62,7 +62,18 @@ public:
 
     void drawPopupMenuBackground(juce::Graphics& g, int width, int height) override;
 
+    //void drawTextEditorOutline(juce::Graphics& g, int width, int height, juce::TextEditor& textEditor) override;
+
+    void fillTextEditorBackground(juce::Graphics& g, int width, int height, juce::TextEditor& textEditor) override;
+
+
+    // API for calling from `NumericSliderParameterCtrl`
+    void setMinValue(float value) { minValue = value;}
+    void setMaxValue(float value) { maxValue = value;}
+
 private:
+
+    float minValue = 0.0, maxValue = 1.0;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MyLookAndFeel)
 };

@@ -112,9 +112,9 @@ public:
 
     // Clears all the containers.
     void flush() {
-        elementDependencyMap.erase();
-        InitialZeroDependents.clear();
-        while(!ZeroDependentQueue.empty()) ZeroDependentQueue.pop();
+//        elementDependencyMap.erase();
+//        InitialZeroDependents.erase();
+//        while(!ZeroDependentQueue.empty()) ZeroDependentQueue.pop();
     }
 
     // for debugging, data structure becomes useless after this, you need to build again.

@@ -8,6 +8,9 @@
   ==============================================================================
 */
 
+/*
+ * Collection of GraphNodes to include all at the same time.
+ */
 #pragma once
 
 #include "GraphNode.h"
@@ -16,5 +19,8 @@
 #include "InputMasterGraphNode.h"
 #include "OutputMasterGraphNode.h"
 
+#include "Oscillators/Oscillator.h"
+
+
 // Demo for dev testing
-#include "DemoNode.h"
+//#include "DemoNode.h"

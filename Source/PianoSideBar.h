@@ -14,8 +14,7 @@
 #include "ColourPalette.h"
 
 
-class PianoSideBar  : public juce::Component
-{
+class PianoSideBar  : public juce::Component {
 public:
     PianoSideBar() {}
 

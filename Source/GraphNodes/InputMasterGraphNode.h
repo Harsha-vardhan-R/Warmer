@@ -19,16 +19,24 @@ public:
     InputMasterGraphNode(int pos_x, int pos_y) :
             GraphNode("MIDI IN",
                       pos_x,
-                      pos_y,
-                      120,
-                      175) {
+                      pos_y) {
 
-        InputSockets.add(new Socket("Audio IN",
-                                    direction::IN));
+        OutputSockets.add(new Socket(juce::String("MIDI"), direction::OUT, false));
+        OutputSockets[0]->setOutputType(SocketDataType::MIDI);
 
+        OutputSockets.add(new Socket(juce::String("Pitch Wheel"), direction::OUT, false));
+        OutputSockets[1]->setOutputType(SocketDataType::FloatingVector);
+
+        OutputSockets.add(new Socket(juce::String("Mod Wheel"), direction::OUT, false));
+        OutputSockets[2]->setOutputType(SocketDataType::FloatingVector);
+
+        canBeDeleted = false;
+        resized();
     };
 
     void process() override {};
+
+    void update(double bitRate, int bufferSize) override {}
 
     ~InputMasterGraphNode() override {};
 

@@ -31,6 +31,8 @@
       <FILE id="myVgKU" name="MIDIPianoComponent.h" compile="0" resource="0"
             file="Source/MIDIPianoComponent.h"/>
       <GROUP id="{01B86B6A-B111-8779-01D9-63F373592C3F}" name="GraphNodes">
+        <FILE id="RrUtio" name="ParameterCtrl.h" compile="0" resource="0" file="Source/GraphNodes/ParameterCtrl.h"/>
+        <FILE id="rgo2pm" name="Slider.h" compile="0" resource="0" file="Source/GraphNodes/Slider.h"/>
         <GROUP id="{33CB675E-D569-27B8-6E4C-C01AF0AC6C12}" name="General"/>
         <GROUP id="{A3C4D651-967D-3C09-48F7-E45C42304FE6}" name="Math"/>
         <GROUP id="{3BF01387-906D-E405-94C0-D9574A80B114}" name="Etc"/>

@@ -88,14 +88,18 @@ public:
         Nodes will be represented in the form of a set,
         When there is a connection to the output node and an internal connection changed,
         We call the function `BuildTreeAndMakeQueue` on the nodes, which will :
-            - Eliminate useless nodes.
             - Create Extra buffers for multiple outputs(for in-place processing).
             - Create a priority queue with priorities depending on the dependencies.
-            - Process the audio based on the priority queue and the
+            - Process the audio based on the priority queue and Synthesize the audio.
     */
     InputMasterGraphNode* InputNode;
     OutputMasterGraphNode* OutputNode;
     std::set<GraphNode*> AllNodes;
+
+    // Called from GraphPage when a new node is added.
+    void nodeAdded(GraphNode* newNode) {
+        AllNodes.insert(newNode);
+    }
 
     // Called when there is a new connection.
     void ConfigurationChanged();
@@ -170,7 +174,7 @@ public:
     class GraphPage : public juce::Component {
     public:
         GraphPage();
-        ~GraphPage() override {}
+        ~GraphPage() override;
 
         void paint(juce::Graphics& g) override;
         void resized() override;
@@ -179,7 +183,6 @@ public:
 
         // Will be used as the callback function from the `showMenuAsync` method for the popup menu.
         static void AddNodeCallback(int result, GraphPage* graphPageComponent);
-
 
     private:
         int mid_x, mid_y; // for panning the graph.
@@ -262,7 +265,7 @@ private:
     Mode presentMode;
 
     // Decides if we should break the present audio processing, set to true when the configuration changes.
-    std::atomic<bool> breakProcessing(false);
+    std::atomic<bool> breakProcessing;
 
     // The priority queue we are going to use.(impl in MyDataStructures.h)
     PriorityQueue* nodeProcessingQueue;

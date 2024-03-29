@@ -19,19 +19,20 @@ public:
     OutputMasterGraphNode(int pos_x, int pos_y) :
             GraphNode("AUDIO OUT",
                       pos_x,
-                      pos_y,
-                      120,
-                      160) {
+                      pos_y) {
 
-        last = nullptr;
+        InputSockets.add(new Socket(juce::String("Audio Out"), direction::IN, true));
+        InputSockets[0]->acceptType(SocketDataType::AudioBufferFloat);
 
+        canBeDeleted = false;
+        resized();
     };
 
     ~OutputMasterGraphNode() override {};
 
-    bool isConnected() {
-        return (last != nullptr);
-    }
+    bool isConnected() { return (last != nullptr); }
+
+    void update(double bitRate, int bufferSize) override {}
 
     void process() override {};
 
