@@ -1,5 +1,6 @@
 #include <JuceHeader.h>
 #include "MainComponent.h"
+#include "Instrument.h"
 
 //==============================================================================
 class WarmerApplication  : public juce::JUCEApplication

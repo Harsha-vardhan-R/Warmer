@@ -98,6 +98,7 @@ public:
 
     // Called from GraphPage when a new node is added.
     void nodeAdded(GraphNode* newNode) {
+        if (!newNode) return;
         AllNodes.insert(newNode);
     }
 
@@ -188,7 +189,6 @@ public:
         int mid_x, mid_y; // for panning the graph.
         int zoomValue = 0;
 
-
         std::unique_ptr<juce::PopupMenu> AddNodesPopupMenu;
         // This stores the submenus in an owned array to make the memory management easy.
         juce::OwnedArray<juce::PopupMenu> subMenuArray;
@@ -275,6 +275,8 @@ private:
 
     // Device manager and related stuff.
     std::unique_ptr<juce::AudioDeviceManager> deviceManager;
+
+    bool TreeFeasible = false;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Instrument)

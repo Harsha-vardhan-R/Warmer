@@ -30,7 +30,7 @@ public:
         this->instrument = std::make_unique<Instrument>(getTabBarDepth());
 
         addTab("Play", colour_here, this->instrument.get()->getPlayPage() , true);
-        addTab("Graph", colour_here, this->instrument.get()->getGraphPage() , true);
+        addTab("Graph", colour_here, this->instrument.get()->getGraphPage() , true);// viewport is set as the component.
         addTab("Edit", colour_here, this->instrument.get()->getEditPage() , true);
 
         styles.reset(new MenuComponent());
@@ -41,9 +41,7 @@ public:
         resized();
     }
 
-    ~ModeSwitch() override {
-        instrument.get()->~Instrument();
-    }
+    ~ModeSwitch() override {}
     //+++++++++++++++
     void resized() override {
         setBounds(0, 35, getParentWidth(), getParentHeight()-35);

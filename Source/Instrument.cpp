@@ -146,6 +146,9 @@ void Instrument::Initialize() {
 }
 
 Instrument::~Instrument() {
+    delete nodeProcessingQueue;
+
+    for (GraphNode* i : AllNodes) delete i;
 
     delete InputNode;
     delete OutputNode;
@@ -282,11 +285,12 @@ Instrument::GraphPage::GraphPage() {
     subMenuArray.add(new juce::PopupMenu());
     subMenuArray.add(new juce::PopupMenu());
     subMenuArray.add(new juce::PopupMenu());
+    subMenuArray.add(new juce::PopupMenu());
 
     subMenuArray[0]->addItem(101, "Utility");// like the utility from ableton.
     subMenuArray[0]->addItem(102, "Convolution");
     subMenuArray[0]->addItem(103, "Latency"); // constant lag.
-//    subMenuArray[0]->addItem(104, "Oscillator");
+    subMenuArray[0]->addItem(104, "ADSR");
 
     subMenuArray[1]->addItem(201, "Oscillator");
     subMenuArray[1]->addItem(202, "Custom Oscillator");
@@ -296,22 +300,25 @@ Instrument::GraphPage::GraphPage() {
     subMenuArray[2]->addItem(302, "Delay");
     subMenuArray[2]->addItem(303, "OverDrive");
     subMenuArray[2]->addItem(304, "Saturate");
+    subMenuArray[2]->addItem(305, "Equalizer");
 
-    subMenuArray[3]->addItem(301, "ButterWorth");
-    subMenuArray[3]->addItem(302, "Chebyshev");
-    subMenuArray[3]->addItem(303, "Digital");
+    subMenuArray[3]->addItem(401, "ButterWorth");
+    subMenuArray[3]->addItem(402, "Chebyshev");
+    subMenuArray[3]->addItem(403, "Digital");
 
-    subMenuArray[4]->addItem(401, "Add");
-    subMenuArray[4]->addItem(402, "Subtract");
-    subMenuArray[4]->addItem(403, "FM");
-    subMenuArray[4]->addItem(404, "AM");
-    subMenuArray[4]->addItem(405, "Mix");
-    subMenuArray[4]->addItem(406, "Clamp");
-    subMenuArray[4]->addItem(407, "Invert");
+    subMenuArray[4]->addItem(501, "Add");
+    subMenuArray[4]->addItem(502, "Subtract");
+    subMenuArray[4]->addItem(503, "FM");
+    subMenuArray[4]->addItem(504, "AM");
+    subMenuArray[4]->addItem(505, "Mix");
+    subMenuArray[4]->addItem(506, "Clamp");
+    subMenuArray[4]->addItem(507, "Invert");
 
-    subMenuArray[5]->addItem(501, "MIDI");
-    subMenuArray[5]->addItem(501, "Arpeggiator");
-    subMenuArray[5]->addItem(501, "Polyphony");
+    subMenuArray[5]->addItem(601, "MIDI");
+    subMenuArray[5]->addItem(602, "Arpeggiator");
+    subMenuArray[5]->addItem(603, "Polyphony");
+
+    subMenuArray[6]->addItem(701, "Clone Signal");
 
     AddNodesPopupMenu.get()->addSubMenu("General", *subMenuArray[0]);
     AddNodesPopupMenu.get()->addSubMenu("Oscillators", *subMenuArray[1]);
@@ -319,6 +326,7 @@ Instrument::GraphPage::GraphPage() {
     AddNodesPopupMenu.get()->addSubMenu("Filters", *subMenuArray[3]);
     AddNodesPopupMenu.get()->addSubMenu("Math", *subMenuArray[4]);
     AddNodesPopupMenu.get()->addSubMenu("MIDI", *subMenuArray[5]);
+    AddNodesPopupMenu.get()->addSubMenu("Etc", *subMenuArray[6]);
 
     styles.reset(new MyLookAndFeel());
     AddNodesPopupMenu.get()->setLookAndFeel(styles.get());
@@ -330,12 +338,7 @@ Instrument::GraphPage::GraphPage() {
     resized();
 }
 
-Instrument::GraphPage::~GraphPage() {
-//    for (GraphNode* ptr : Instrument::getInstance()->AllNodes) {
-//        //removeChildComponent(ptr);
-//        delete ptr;
-//    }
-}
+Instrument::GraphPage::~GraphPage() {}
 
 void Instrument::GraphPage::mouseDown(const juce::MouseEvent& event) {
     if (event.mods.isRightButtonDown()) {
@@ -347,30 +350,24 @@ void Instrument::GraphPage::mouseDown(const juce::MouseEvent& event) {
 
 void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *graphPageComponent) {
 
+    GraphNode* temp;
+
     if (result == 201) {
-        GraphNode* temp = new Oscillator(graphPageComponent->lastMouseDownPosition.getX(),
+        temp = new Oscillator(graphPageComponent->lastMouseDownPosition.getX(),
                               graphPageComponent->lastMouseDownPosition.getY());
-        Instrument::getInstance()->nodeAdded(temp);
-        graphPageComponent->addAndMakeVisible(temp);
-        return;
     } else {
         std::cout << "Returned option from Graph page menu is not handled in the AddNodeCallBack, Option : " << result
                   << "\n";
     }
 
-//    if (!temp) {
-//        Instrument::getInstance()->nodeAdded(temp);
-//        graphPageComponent->addAndMakeVisible(temp);
-//    } else {
-//        std::cout << "Not added the new node due to some nullptr issues" << "\n";
-//    }
-
+    Instrument::getInstance()->nodeAdded(temp);
+    graphPageComponent->addAndMakeVisible(temp);
 }
 
 void Instrument::GraphPage::resized() {
     juce::TabbedComponent* parent = (juce::TabbedComponent*)getParentComponent();
     //if (parent != nullptr) setBounds(30, 1, parent->getWidth() - 29, parent->getHeight() - 2);
-    if (parent != nullptr) setBounds(0, 0, 3500, 3500);// maximum size of the canvas for the nodes.
+    if (parent != nullptr) setBounds(0, 0, 4000, 5500);// maximum size of the canvas for the nodes.
 }
 
 void Instrument::GraphPage::paint(juce::Graphics &g) {
@@ -476,15 +473,17 @@ Instrument::AudioMIDISettingClass::AudioMIDISettingClass(juce::AudioDeviceManage
 // #####
 
 void Instrument::ConfigurationChanged() {
-    // if there is already a thread running `SynthesizeAudioForConfig` this stops it.
+    // if there is already a thread running `SynthesizeAudioForConfig` this should stop it.
     breakProcessing.store(true);
 
     if (!OutputNode->isConnected()) return;
 
-    if (BuildTreeAndMakeQueue()) {
+    std::thread spawnThreadTree([this]() { BuildTreeAndMakeQueue(); });
+    spawnThreadTree.join();
+
+    if (this->TreeFeasible) {// if the tree is successfully built, start synthesizing with an individual thread.
         breakProcessing.store(false);
-        // if the tree is successfully built, start synthesizing with an individual thread.
-        std::thread spawnThread([this]() { SynthesizeAudioForConfig(); });
+        std::thread spawnThreadAudio([this]() { SynthesizeAudioForConfig(); });
     }
 
 }
@@ -494,12 +493,15 @@ bool Instrument::BuildTreeAndMakeQueue() {
 
     // everytime this function is called we delete the previous
     // priority queue.
-//    nodeProcessingQueue.flush();
+    nodeProcessingQueue->flush();
 
     // if there is no node connected to the output node,
     // do not do anything.
     // This is not true for the input node.
-    if (!OutputNode->isConnected()) return false;
+    if (!OutputNode->isConnected()) {
+        TreeFeasible = false;
+        return false;
+    }
 
     int bufferSize;
 
@@ -507,27 +509,42 @@ bool Instrument::BuildTreeAndMakeQueue() {
         //bufferSize = deviceManager.get()->AudioDeviceSetup.bufferSize;
     } else {
         std::cout << "No active audio device!" << std::endl;
+        TreeFeasible = false;
         return false; // nothing to do.
     }
 
     // We traverse the graph from the back.
-//    for (auto i : AllNodes) i->update(); // This is where the nodes should be setting their permDependency.
+    for (auto i : AllNodes) {
+        if (!i->allGood()) {
+            TreeFeasible = false;
+            return false; // if the node says it is not good :)
+        }
+//        i->update(); // This is where the nodes should be setting their permDependency.
+    }
 
 
+    TreeFeasible = true;
     return true;
 
 }
 
+static int MAX_THREADS = 8;
+
 void Instrument::SynthesizeAudioForConfig() {
 
-    while (breakProcessing.load() == true) {
-
-
-
-        // if the process is done, play the audio and
-        if (nodeProcessingQueue->done()) {
-
-        }
-    }
+//    std::atomic<int> RunningThreads;
+//    RunningThreads.store(0);
+//
+//    while (breakProcessing.load()) {
+//
+//        if (!nodeProcessingQueue->isEmpty() && (RunningThreads.load() < MAX_THREADS)) {
+//            std::thread NodeProcess(nodeProcessingQueue->pop()->process());
+//        }
+//
+//        // if the process is done, play the audio and
+//        if (nodeProcessingQueue->done()) {
+//
+//        }
+//    }
 
 }

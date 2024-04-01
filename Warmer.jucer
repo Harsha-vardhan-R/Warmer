@@ -40,8 +40,6 @@
         <GROUP id="{0CB8FAA1-8283-E03A-7C60-B3FB4E618C01}" name="Math"/>
         <GROUP id="{1AFE2380-7FF2-7311-890A-F156092A7B12}" name="Oscillators"/>
         <FILE id="W6ZIlu" name="Collection.h" compile="0" resource="0" file="Source/GraphNodes/Collection.h"/>
-        <FILE id="zwPNdt" name="DemoNode.cpp" compile="1" resource="0" file="Source/GraphNodes/DemoNode.cpp"/>
-        <FILE id="r907lL" name="DemoNode.h" compile="0" resource="0" file="Source/GraphNodes/DemoNode.h"/>
         <FILE id="mzF0Zm" name="GraphNode.h" compile="0" resource="0" file="Source/GraphNodes/GraphNode.h"/>
         <FILE id="BsFAAV" name="InputMasterGraphNode.h" compile="0" resource="0"
               file="Source/GraphNodes/InputMasterGraphNode.h"/>

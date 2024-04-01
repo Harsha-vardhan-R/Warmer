@@ -95,7 +95,7 @@ public :
         return true;
     }
 
-    static void deleteNodeCallback() {
+    static void deleteNodeCallback(int result, GraphNode* graphNodeInstance) {
 
     }
 
@@ -105,10 +105,11 @@ public :
             // Show context menu
             juce::PopupMenu menu;
             menu.addItem(1, "Delete Node");
-            //menu.showMenuAsync(juce::PopupMenu::Options(),
-                               //juce::ModalCallbackFunction::forComponent(deleteNodeCallback, this));
+            menu.showMenuAsync(juce::PopupMenu::Options(),
+                               juce::ModalCallbackFunction::forComponent(deleteNodeCallback, this));
         } else {
             lastMouseDownPosition = event.getPosition();
+            resized();
         }
     }
 
@@ -133,40 +134,25 @@ public :
         g.setColour(GraphNodeHeadingTextID);
         g.drawText(name, topTextArea.toFloat(), juce::Justification::centred);
 
-        juce::Rectangle<int> area;
-
-        // the sockets are going to be at this position : i->setBounds(0, 30+(index*50), 7, 7); and  i->setBounds(UIWidth-7, 30+(index*50), 7, 7);
-
-        g.setColour(juce::Colours::white);
-
-        int index = 0;
-        // Write the names of the sockets.
-
-        int start = UIWidth/2;
-        int wid = UIWidth/2;
-        if (InputSockets.size() == 0) {
-            start = 15;
-            wid = UIWidth-30;
-        }
-
-        for (auto i : OutputSockets) {
-            area.setBounds(start, 30+(index*25), wid-10, 15);
-            g.drawText(i->name, area.toFloat(), juce::Justification::centredRight);
-            i->repaint();
-            index++;
-        }
-
-        // Write the names of the sockets.
-        for (auto i : InputSockets) {
-            area.setBounds(10, 30+(index*50), UIWidth, 15);
-            g.drawText(i->name, area.toFloat(), juce::Justification::centredLeft);
-            i->repaint();
-            index++;
-        }
-
     }
 
-    virtual ~GraphNode() override {}
+    // sets all the sockets in both input and output socket arrays to
+    // addAndMakeVisible
+    void makeAllSocketsVisible() {
+        resized(); // set the bounds.
+
+        // draw the sockets.
+        for (Socket* i : InputSockets) {
+            addAndMakeVisible(i);
+            i->update();
+        }
+        for (Socket* i : OutputSockets) {
+            addAndMakeVisible(i);
+            i->update();
+        }
+    }
+
+    ~GraphNode() override {}
 
     // Abstraction for the node to make necessary updates for the present configuration.
     virtual void update(double bitRate, int bufferSize) {}
@@ -181,27 +167,23 @@ public :
     }
 
     void resized() override {
-
-        if (InputSockets.size() == 0 || OutputSockets.size() == 0) {
-            UIWidth = 120; // if one of the side is empty.
-        } else {
-            UIWidth = 120;
-        }
-
+        UIWidth = 120;
         UIHeight = 35+(InputSockets.size()*50 + OutputSockets.size()*25); // each socket is given 50px in height.
 
         int index = 0;
         // setting the bounds for each socket.
         // output sockets are displayed at the top, followed by input sockets.
         for (auto i : OutputSockets) {
-            i->setBounds(UIWidth-5, 30+(index*25), 5, 5);
+            i->setBounds(0, 30+(index*20), UIWidth, 20);
             index++;
         }
 
         for (auto i : InputSockets) {
-            i->setBounds(0, 30+(index*50), 5, 5);
-            juce::Rectangle<int> bound(0, 30+(index*50)+15, getWidth(), 35);
-            i->setParameterCtrlBounds(bound.reduced(2));
+            if (OutputSockets.size() == 0) {
+                i->setBounds(0, (index*50)+30, UIWidth, 50);
+            } else {
+                i->setBounds(0, (index*50), UIWidth, 50);
+            }
             index++;
         }
 
@@ -224,27 +206,3 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GraphNode)
 };
-
-//// BASIC STRUCTURE OF A NODE
-
-//class ClassName : public GraphNode {
-//public:
-//
-//    ClassName(int pos_x, int pos_y) : GraphNode(juce::String("OSCILLATOR", pos_x, pos_y)) {
-//
-//    }
-//
-//    void process() override {
-//          ##
-//    }
-//
-//    void update(double bitRate, int bufferSize) override {
-//          ##
-//    }
-//
-//    ~ClassName() override ();
-//
-//private:
-//
-//
-//};

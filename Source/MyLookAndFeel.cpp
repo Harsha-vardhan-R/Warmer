@@ -111,20 +111,20 @@ void MyLookAndFeel::drawPopupMenuBackground(juce::Graphics &g, int width, int he
     g.setColour(MenuBackgroundID);
     g.fillAll();
 }
-
-void MyLookAndFeel::fillTextEditorBackground(juce::Graphics& g, int width, int height, juce::TextEditor& textEditor) {
-    juce::Rectangle<int> bounds(0, 0, width, height);
-
-    // Calculate the value position based on the text editor's current value
-    float value = textEditor.getText().getFloatValue();
-    float fraction = (value - minValue) / (maxValue - maxValue);
-
-    g.fillAll(MenuBackgroundID);
-
-    g.setColour(MenuMouseOverColourID);
-    g.fillRect(0, 0, (int)((float)width*fraction), bounds.getHeight());
-
-    g.setColour(juce::Colours::darkgrey);
-    g.drawText(juce::String(value), bounds, juce::Justification::centred);
-
-}
+//
+//void MyLookAndFeel::fillTextEditorBackground(juce::Graphics& g, int width, int height, juce::TextEditor& textEditor) {
+//    juce::Rectangle<int> bounds(0, 0, width, height);
+//
+//    // Calculate the value position based on the text editor's current value
+//    float value = textEditor.getText().getFloatValue();
+//    float fraction = (value - minValue) / (maxValue - maxValue);
+//
+//    g.fillAll(MenuBackgroundID);
+//
+//    g.setColour(MenuMouseOverColourID);
+//    g.fillRect(0, 0, (int)((float)width*fraction), bounds.getHeight());
+//
+//    g.setColour(juce::Colours::darkgrey);
+//    g.drawText(juce::String(value), bounds, juce::Justification::centred);
+//
+//}

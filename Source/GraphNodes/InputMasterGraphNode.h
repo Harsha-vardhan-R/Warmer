@@ -31,6 +31,7 @@ public:
         OutputSockets[2]->setOutputType(SocketDataType::FloatingVector);
 
         canBeDeleted = false;
+        makeAllSocketsVisible();
         resized();
     };
 
@@ -38,6 +39,6 @@ public:
 
     void update(double bitRate, int bufferSize) override {}
 
-    ~InputMasterGraphNode() override {};
+    ~InputMasterGraphNode() {};
 
 };

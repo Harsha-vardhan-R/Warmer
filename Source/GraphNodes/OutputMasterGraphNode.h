@@ -25,10 +25,11 @@ public:
         InputSockets[0]->acceptType(SocketDataType::AudioBufferFloat);
 
         canBeDeleted = false;
+        makeAllSocketsVisible();
         resized();
     };
 
-    ~OutputMasterGraphNode() override {};
+    ~OutputMasterGraphNode() {};
 
     bool isConnected() { return (last != nullptr); }
 

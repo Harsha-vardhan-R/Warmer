@@ -14,6 +14,7 @@
 #include "InputOutputTypesForSokets.h"
 #include "ParameterCtrl.h"
 
+
 //==============================================================================
 /*
 */
@@ -36,10 +37,6 @@ public:
         this->name = name;
         this->dir = dir;
         this->isMust = isMust;
-
-        parameterController.reset(nullptr);
-
-        setBounds(0, 0, 5, 5);
     }
 
     // Be careful while using this,
@@ -50,13 +47,12 @@ public:
         return (TypesAccepted.size() == 0);
     }
 
-    // called from resize in Graph node.
-    void setParameterCtrlBounds(juce::Rectangle<int> bound) {
-        if (parameterController.get() == nullptr) return;
-        parameterController.get()->setBoundForCtlr(bound);
+    // If the parameter control is set this will update.
+    void update() {
+        parameterController.setBounds(0, 15, getWidth(), 35);
+        parameterController.update();
+        addAndMakeVisible(&parameterController);
     }
-
-    ~Socket() override {}
 
     // if the node is on the input side then, this will return
     // a pointer to the node it is from.
@@ -74,17 +70,16 @@ public:
     }
 
     void paint (juce::Graphics& g) override {
-        g.fillAll(juce::Colours::red);
-    }
-
-    //deleting the socket connection.
-    void mouseDown(const juce::MouseEvent& event) override {
-        if (event.mods.isRightButtonDown()) { // check if the connection is present.
-            // Show context menu
-//            juce::PopupMenu menu;
-//            menu.addItem(1, "Delete Connection");
-            //menu.showMenuAsync(juce::PopupMenu::Options(),
-            //juce::ModalCallbackFunction::forComponent(deleteNodeCallback, this));
+        // Small square
+        g.setColour(juce::Colours::black);
+        if (dir == direction::IN) {
+            g.fillRect(0, 5, 5, 5);
+            juce::Rectangle<int> bound(10, 0, getWidth()-10, 15);
+            g.drawText(name, bound, juce::Justification::centredLeft);
+        } else {
+            g.fillRect(getWidth()-5, 5, 5, 5);
+            juce::Rectangle<int> bound(0, 0, getWidth()-10, 15);
+            g.drawText(name, bound, juce::Justification::centredRight);
         }
     }
 
@@ -92,35 +87,17 @@ public:
     // #### MOST OF THESE FUNCTIONS ARE MEANT TO BE USED ONLY BY dir `IN` Sockets. ####
     //
     void addMenuParameterControl() {
-        if (parameterController.get() != nullptr) {
-            std::cout << "Resetting parameter control type is not allowed" << "\n";
-            return;
-        }
-
-        parameterController.reset(new MenuListParameterCtrl());
+        parameterController.createNewMenu();
     }
     //
     void addSliderParameterControl(float from, float to, float default_) {
-        if (parameterController.get() != nullptr) {
-            std::cout << "Resetting parameter control type is not allowed" << "\n";
-            return;
-        }
-
-        parameterController.reset(new NumericSliderParameterCtrl(from, to, default_));
+        parameterController.createTextEditor(from, to, default_);
     }
 
     // If the parameter control is set to MenuListParameterCtrl, this is used to add new types of menu options.
     // else it is not going to change anything and there is no reason to use this method.
     void addMenuItem(juce::String name) {
-
-        MenuListParameterCtrl* control = dynamic_cast<MenuListParameterCtrl*>(parameterController.get());
-
-        if (control == nullptr) {
-            std::cout << "The parameter control is not a menu type, return" << "\n";
-            return;
-        }
-
-        control->addItemToList(name);
+        parameterController.addItemToList(name);
     }
 
     // setting the type of an output node,
@@ -135,8 +112,31 @@ public:
         type = a;
     }
 
+    //deleting the socket connection.
+    void mouseDown(const juce::MouseEvent& event) override {
+        if (event.mods.isRightButtonDown()) { // check if the connection is present.
+            // Show context menu
+//            juce::PopupMenu menu;
+//            menu.addItem(1, "Delete Connection");
+            //menu.showMenuAsync(juce::PopupMenu::Options(),
+            //juce::ModalCallbackFunction::forComponent(deleteNodeCallback, this));
+        } else {
+            lastMousePosition = event.getPosition();
+        }
+    }
+
     // adding a new connection.
-    void mouseDrag() {
+    void mouseDrag(const juce::MouseEvent& event) override {
+        if (dir == direction::IN) return;
+
+//        drawLine((float)getWidth()-2.0, 8.0, (float)event.getX(), (float)event.getY());
+
+    }
+
+    // adding a new connection.
+    void mouseUp(const juce::MouseEvent& event) override {
+        if (dir == direction::IN) return;
+
 
     }
 
@@ -147,10 +147,27 @@ public:
     bool isMust;
 
 private:
+
+    // Helper function that draws connections.
+    // soc_one will be the from.
+    void makeConnection(void* soc_two) {
+        Socket* casted_socket = static_cast<Socket*>(soc_two);
+
+        // if the casting was successful.
+        if (casted_socket) {
+            if (casted_socket->dir == direction::OUT) return;
+            // TODO: check for loops
+
+        }
+    }
+
+
     bool isConnected = false;
     void* from = nullptr, *to = nullptr;
 
-    std::unique_ptr<ParameterCtrl> parameterController;
+    ParameterCtrl parameterController;
+
+    juce::Point<int> lastMousePosition;
 
     // Only set for Output nodes.
     SocketDataType type = NULLType;
@@ -158,3 +175,7 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Socket)
 };
+
+
+
+

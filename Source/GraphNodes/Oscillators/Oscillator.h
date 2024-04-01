@@ -17,6 +17,10 @@ public:
 
     Oscillator(int pos_x, int pos_y) : GraphNode(juce::String("OSCILLATOR"), pos_x, pos_y) {
 
+        // Output wave.
+        OutputSockets.add(new Socket(juce::String("Signal"), direction::OUT, true));
+        OutputSockets[0]->setOutputType(SocketDataType::AudioBufferFloat);
+
         // Type of the basic wave shape.
         InputSockets.add(new Socket(juce::String("Wave Shape"), direction::IN, false));
         InputSockets[0]->addMenuParameterControl();
@@ -34,16 +38,15 @@ public:
         InputSockets.add(new Socket(juce::String("Amplitude"), direction::IN, false));
         InputSockets[2]->acceptType(SocketDataType::Floating);
         InputSockets[2]->acceptType(SocketDataType::AudioBufferFloat);
+        InputSockets[2]->addSliderParameterControl(0.0, 1.0, 0.5);
 
         // Phase.
         InputSockets.add(new Socket(juce::String("Phase"), direction::IN, false));
         InputSockets[3]->acceptType(SocketDataType::Floating);
         InputSockets[3]->acceptType(SocketDataType::AudioBufferFloat);
+        InputSockets[3]->addSliderParameterControl(0.0, 360.0, 0.0);
 
-        // Output wave.
-        OutputSockets.add(new Socket(juce::String("Signal"), direction::OUT, true));
-        OutputSockets[0]->setOutputType(SocketDataType::AudioBufferFloat);
-
+        makeAllSocketsVisible();
         resized();
     }
 
@@ -55,7 +58,7 @@ public:
 
     }
 
-    ~Oscillator() override {};
+    ~Oscillator() {};
 
 private:
 
