@@ -9,7 +9,6 @@
 */
 
 #pragma once
-#include <JuceHeader.h>
 #include "../GraphNode.h"
 
 class Oscillator : public GraphNode {
@@ -50,17 +49,19 @@ public:
         resized();
     }
 
-    void process() override {
-//        float waveType = InputSockets[0]->get
+    void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) override {
+//        midiBuffer = *midiMessages;
     }
 
-    void update(double bitRate, int bufferSize) override {
+    void prepareToPlay(double sampleRate, int estimatedSamplesPerBlock) override {}
+    void releaseResources() override {}
+    void reset() override {}
 
-    }
 
     ~Oscillator() {};
 
 private:
 
+    juce::MidiBuffer midiBuffer;
 
 };

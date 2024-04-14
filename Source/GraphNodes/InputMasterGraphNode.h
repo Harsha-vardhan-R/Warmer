@@ -10,8 +10,6 @@
 
 #pragma once
 #include "GraphNode.h"
-#include "Socket.h"
-#include "InputOutputTypesForSokets.h"
 
 class InputMasterGraphNode : public GraphNode {
 public:
@@ -35,9 +33,12 @@ public:
         resized();
     };
 
-    void process() override {};
 
-    void update(double bitRate, int bufferSize) override {}
+    void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) override {}
+
+    void prepareToPlay(double sampleRate, int estimatedSamplesPerBlock) override {}
+    void releaseResources() override {}
+    void reset() override {}
 
     ~InputMasterGraphNode() {};
 

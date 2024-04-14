@@ -94,12 +94,71 @@ public:
     */
     InputMasterGraphNode* InputNode;
     OutputMasterGraphNode* OutputNode;
-    std::set<GraphNode*> AllNodes;
+
+    // returns component at the position in the Graph Page
+    Socket* getComponentInGraphPage(juce::Point<float> p) {
+        return dynamic_cast<Socket*>(graphPage.get()->getComponentAt(p));
+    }
 
     // Called from GraphPage when a new node is added.
     void nodeAdded(GraphNode* newNode) {
         if (!newNode) return;
-        AllNodes.insert(newNode);
+        GraphPage* casted = (GraphPage*)(graphPage.get());
+        casted->AllNodes.insert(newNode);
+        casted->addAndMakeVisible(newNode);
+    }
+
+    // Called from a GraphNode instance when it is deleted.
+    void nodeDeleted(GraphNode* nodePointer) {
+        GraphPage* casted = (GraphPage*)(graphPage.get());
+        // related connections will be erased while destructing the sockets.
+        casted->AllNodes.erase(nodePointer);
+        delete nodePointer;
+    }
+
+    // making the connection visible as soon as it is formed,
+    // if the connection isn't successful it will be deleted in the socket,
+    // child will be automatically removed.
+    void connectionInst(Connection* newConnection, juce::Line<int> l) {
+        GraphPage* casted = (GraphPage*)(graphPage.get());
+        casted->connectionInit(newConnection, l);
+    }
+
+    void connectionInitFail() {
+        GraphPage* casted = (GraphPage*)(graphPage.get());
+        casted->connectionInitFail();
+    }
+
+    // calls similar function in graph page to change the connection `Line`.
+    void connectionPositionUpdated(Connection* connectionPointer,
+                                   juce::Line<int> newLinePosition) {
+        GraphPage* casted = (GraphPage*)(graphPage.get());
+        casted->updateConnectionLine(connectionPointer, newLinePosition);
+    }
+
+    void connectionAdded(Connection* newConnection) {
+        GraphPage* casted = (GraphPage*)(graphPage.get());
+        casted->connectionAdded(newConnection);
+        //ConfigurationChanged();
+    }
+
+    void connectionRemoved(Connection* connectionObjPointer) {
+        GraphPage* casted = (GraphPage*)(graphPage.get());
+        casted->connectionRemoved(connectionObjPointer);
+        //ConfigurationChanged();
+    }
+
+
+    // starts playing audio from the configuration.
+    void startAudioProcessingGraph() {
+        if (auto* audioDevice = deviceManager.get()->getCurrentAudioDevice()) {
+            double sampleRate = audioDevice->getCurrentSampleRate();
+            int maximumExpectedSamplesPerBlock = audioDevice->getCurrentBufferSizeSamples();
+            audioGraph.prepareToPlay(sampleRate, maximumExpectedSamplesPerBlock);
+        } else {
+            // there is no current audio device
+            std::cout << "No current audio device available!" << "\n";
+        }
     }
 
     // Called when there is a new connection.
@@ -182,12 +241,73 @@ public:
 
         void mouseDown(const juce::MouseEvent& event) override;
 
+        Connection* temp = nullptr;
+        juce::Line<int> p;
+
+        void connectionInit(Connection* n, juce::Line<int> position);
+
+        void connectionInitFail();
+
+        // add new connection, object is created elsewhere,
+        // we take ownership in abstraction.
+        void connectionAdded(Connection* newConnection);
+
+        // delete this connection and erase it from screen.
+        void connectionRemoved(Connection* connectionPointer);
+
+        // updates the position of the connection line, called from socket from graph node
+        // when node is dragged.
+        void updateConnectionLine(Connection* connectionPointer, juce::Line<int> newLine);
+
+        // draws all the connections.
+        void drawConnections(juce::Graphics& g);
+
+
+        std::set<GraphNode*> AllNodes;
+        // keeping track of all the Connections that are present till now..
+        std::set<Connection*> AllConnections;
+        // stores the Connection* to it's line position.
+        // used to draw and update positions.
+        std::unordered_map<Connection*, juce::Line<int>> ConnectionToLineMap;
+
+
+
         // Will be used as the callback function from the `showMenuAsync` method for the popup menu.
+        // that shows what nodes can be added.
         static void AddNodeCallback(int result, GraphPage* graphPageComponent);
 
+        // called from the
+//        void connectTheseSockets(Socket* node1, Socket* node2) {
+//            std::cout << "Connect : " << node1 << " with : " << node2 << "\n";
+//        }
+
+        juce::Component* getBackground() {
+            return componentBackground.get();
+        }
+
     private:
+
+        class BackGroundGraphPageCanvas : public juce::Component {
+        public:
+
+            BackGroundGraphPageCanvas();
+
+            void paint(juce::Graphics& g) override ;
+            void resized() override;
+
+        private:
+
+            JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BackGroundGraphPageCanvas)
+        };
+
         int mid_x, mid_y; // for panning the graph.
         int zoomValue = 0;
+
+        // this is basically like a background that stays there for the colour,
+        // as redrawing the connections on this is expensive(fillAll),
+        // we use another transparent component over it that is used to contain,
+        // the connections and the nodes.
+        std::unique_ptr<juce::Component> componentBackground;
 
         std::unique_ptr<juce::PopupMenu> AddNodesPopupMenu;
         // This stores the submenus in an owned array to make the memory management easy.
@@ -197,6 +317,7 @@ public:
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GraphPage)
     };
+
 
     // Will contain the paint methods for the page, the data what to show will be in the parent(in hierarchy) class.
     class PlayPage : public juce::Component {
@@ -263,6 +384,10 @@ private:
     std::unique_ptr<juce::Viewport> viewport;
 
     Mode presentMode;
+
+    // AudioProcessingGraph that contains the AudioProcessors i.e the GraphNodes.
+    juce::AudioProcessorGraph audioGraph;
+
 
     // Decides if we should break the present audio processing, set to true when the configuration changes.
     std::atomic<bool> breakProcessing;

@@ -55,7 +55,8 @@ Instrument::Instrument(int tabWidth) {
     playPage.reset(new Instrument::PlayPage());
 
     viewport.reset(new juce::Viewport());
-    viewport.get()->setViewedComponent(graphPage.get(), false);
+    GraphPage* casted = (GraphPage*)graphPage.get();
+    viewport.get()->setViewedComponent(casted->getBackground(), false);
 
     nodeProcessingQueue = new PriorityQueue();
 
@@ -139,16 +140,18 @@ void Instrument::listenFromAllMIDIInputs() {
 
 // TODO : ask to save changes, before replacing.
 void Instrument::Initialize() {
+    audioGraph.releaseResources();
     // Just replacing all the changed pages to new ones.
-//    editPage.get() = *(new Instrument::EditPage());
-//    graphPage.get() = *(new Instrument::GraphPage());
-//    playPage.get() = *(new Instrument::PlayPage());
+    // because of unique pointers, the previous pages will get deleted automatically.
+    editPage.reset(new Instrument::EditPage());
+    graphPage.reset(new Instrument::GraphPage());
+    playPage.reset(new Instrument::PlayPage());
+
+//    for (GraphNode* i : AllNodes) delete i;
 }
 
 Instrument::~Instrument() {
     delete nodeProcessingQueue;
-
-    for (GraphNode* i : AllNodes) delete i;
 
     delete InputNode;
     delete OutputNode;
@@ -268,13 +271,15 @@ void Instrument::EditPage::createCanvasButtonClicked() {
 
 // +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
 void Instrument::InstrumentCanvas::paint(juce::Graphics &g) {
-    g.fillAll(juce::Colours::blueviolet);
+    g.fillAll(juce::Colours::aquamarine);
 }
 
 //////////////////////////////
 /////// GRAPH PAGE ///////////
 //////////////////////////////
 Instrument::GraphPage::GraphPage() {
+    componentBackground.reset(new BackGroundGraphPageCanvas());
+    componentBackground.get()->resized();
 
     // Creating and adding the menus.
     AddNodesPopupMenu.reset(new juce::PopupMenu());
@@ -331,6 +336,8 @@ Instrument::GraphPage::GraphPage() {
     styles.reset(new MyLookAndFeel());
     AddNodesPopupMenu.get()->setLookAndFeel(styles.get());
 
+    componentBackground.get()->addAndMakeVisible(this);
+
     // Adding the initial nodes.
     addAndMakeVisible(Instrument::instancePtr->InputNode);
     addAndMakeVisible(Instrument::instancePtr->OutputNode);
@@ -338,7 +345,10 @@ Instrument::GraphPage::GraphPage() {
     resized();
 }
 
-Instrument::GraphPage::~GraphPage() {}
+Instrument::GraphPage::~GraphPage() {
+    for (GraphNode* i : AllNodes) delete i;
+//    for (Connection* i : AllConnections) delete i;
+}
 
 void Instrument::GraphPage::mouseDown(const juce::MouseEvent& event) {
     if (event.mods.isRightButtonDown()) {
@@ -358,6 +368,7 @@ void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *g
     } else {
         std::cout << "Returned option from Graph page menu is not handled in the AddNodeCallBack, Option : " << result
                   << "\n";
+        return;
     }
 
     Instrument::getInstance()->nodeAdded(temp);
@@ -365,13 +376,68 @@ void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *g
 }
 
 void Instrument::GraphPage::resized() {
-    juce::TabbedComponent* parent = (juce::TabbedComponent*)getParentComponent();
-    //if (parent != nullptr) setBounds(30, 1, parent->getWidth() - 29, parent->getHeight() - 2);
-    if (parent != nullptr) setBounds(0, 0, 4000, 5500);// maximum size of the canvas for the nodes.
+    // setting the height from parent(componentBackground(BackGroundGraphPageCanvas) here)
+    setBounds(0, 0 , getParentWidth(), getParentHeight());
 }
 
 void Instrument::GraphPage::paint(juce::Graphics &g) {
-    g.fillAll(GraphPageBackgroundColourID);
+    drawConnections(g);
+}
+
+void Instrument::GraphPage::connectionInit(Connection *n, juce::Line<int> p) {
+    temp = n;
+    this->p = p;
+    repaint();
+}
+
+void Instrument::GraphPage::connectionInitFail() {
+    temp = nullptr;
+    repaint();
+}
+
+void Instrument::GraphPage::connectionRemoved(Connection *connectionPointer) {
+    // TODO : need to find a way to adjust the bounding here.
+    AllConnections.erase(connectionPointer);
+    ConnectionToLineMap.erase(connectionPointer);
+    repaint();
+}
+
+void Instrument::GraphPage::updateConnectionLine(Connection *connectionPointer, juce::Line<int> newLine) {
+    ConnectionToLineMap[connectionPointer] = newLine;
+    repaint();
+}
+
+void Instrument::GraphPage::drawConnections(juce::Graphics &g) {
+    g.setColour(juce::Colours::black);
+
+    if (temp) g.drawLine(p.toFloat(), 2);
+    // draw all the connections with 2px width.
+    for (auto& pair : ConnectionToLineMap) {
+        juce::Line<int>& line = pair.second;
+        g.drawLine(line.toFloat(), 2);
+    }
+}
+
+void Instrument::GraphPage::connectionAdded(Connection *newConnection) {
+    temp = nullptr;
+
+    AllConnections.insert(newConnection);
+    juce::Line<int> temp(0, 0, 0, 0);
+
+    ConnectionToLineMap[newConnection] = temp;
+    repaint();
+}
+
+Instrument::GraphPage::BackGroundGraphPageCanvas::BackGroundGraphPageCanvas() {
+    resized();
+}
+
+void Instrument::GraphPage::BackGroundGraphPageCanvas::paint(juce::Graphics &g) {
+    g.fillAll(juce::Colours::whitesmoke);
+}
+
+void Instrument::GraphPage::BackGroundGraphPageCanvas::resized() {
+    setBounds(0, 0, 4000, 5500);// maximum size of the canvas for the nodes.
 }
 
 /////////////////////////////
@@ -474,17 +540,18 @@ Instrument::AudioMIDISettingClass::AudioMIDISettingClass(juce::AudioDeviceManage
 
 void Instrument::ConfigurationChanged() {
     // if there is already a thread running `SynthesizeAudioForConfig` this should stop it.
-    breakProcessing.store(true);
+//    breakProcessing.store(true);
+//
+//    if (!OutputNode->isConnected()) return;
+//
+//    std::thread spawnThreadTree([this]() { BuildTreeAndMakeQueue(); });
+//    spawnThreadTree.join();
+//
+//    if (this->TreeFeasible) {// if the tree is successfully built, start synthesizing with an individual thread.
+//        breakProcessing.store(false);
+//        std::thread spawnThreadAudio([this]() { SynthesizeAudioForConfig(); });
+//    }
 
-    if (!OutputNode->isConnected()) return;
-
-    std::thread spawnThreadTree([this]() { BuildTreeAndMakeQueue(); });
-    spawnThreadTree.join();
-
-    if (this->TreeFeasible) {// if the tree is successfully built, start synthesizing with an individual thread.
-        breakProcessing.store(false);
-        std::thread spawnThreadAudio([this]() { SynthesizeAudioForConfig(); });
-    }
 
 }
 
@@ -514,13 +581,13 @@ bool Instrument::BuildTreeAndMakeQueue() {
     }
 
     // We traverse the graph from the back.
-    for (auto i : AllNodes) {
-        if (!i->allGood()) {
-            TreeFeasible = false;
-            return false; // if the node says it is not good :)
-        }
-//        i->update(); // This is where the nodes should be setting their permDependency.
-    }
+//    for (auto i : AllNodes) {
+//        if (!i->allGood()) {
+//            TreeFeasible = false;
+//            return false; // if the node says it is not good :)
+//        }
+////        i->update(); // This is where the nodes should be setting their permDependency.
+//    }
 
 
     TreeFeasible = true;

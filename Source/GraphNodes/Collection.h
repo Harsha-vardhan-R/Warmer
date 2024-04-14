@@ -21,6 +21,5 @@
 
 #include "Oscillators/Oscillator.h"
 
-
 // Demo for dev testing
 //#include "DemoNode.h"
