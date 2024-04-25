@@ -17,7 +17,7 @@
 
 /*
     Contains the code to manage the bar and component that is used to switch between modes, like `Play`, `Graph` and `Edit` mode.
-    This component lies below `instrumentAndPresetSelector`
+    This component lies below `instrument-And-PresetSelector`
 */
 class ModeSwitch final : public juce::TabbedComponent {
 public:
@@ -41,7 +41,9 @@ public:
         resized();
     }
 
-    ~ModeSwitch() override {}
+    ~ModeSwitch() override {
+        setLookAndFeel(nullptr);
+    }
     //+++++++++++++++
     void resized() override {
         setBounds(0, 35, getParentWidth(), getParentHeight()-35);

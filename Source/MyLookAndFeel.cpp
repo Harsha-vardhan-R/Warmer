@@ -111,6 +111,8 @@ void MyLookAndFeel::drawPopupMenuBackground(juce::Graphics &g, int width, int he
     g.setColour(MenuBackgroundID);
     g.fillAll();
 }
+
+
 //
 //void MyLookAndFeel::fillTextEditorBackground(juce::Graphics& g, int width, int height, juce::TextEditor& textEditor) {
 //    juce::Rectangle<int> bounds(0, 0, width, height);

@@ -22,7 +22,25 @@ std::vector<GraphNode*> GraphNode::getDependencies() {
     return output;
 }
 
+
+std::set<juce::AudioProcessor*> GraphNode::getDependents() {
+    std::set<juce::AudioProcessor*> output;
+
+    for (auto i : OutputSockets) {
+        for (Socket* j : i->to) {
+            juce::AudioProcessor* socketsParent = dynamic_cast<juce::AudioProcessor*>(j->getParentComponent());
+            if (socketsParent) output.insert(socketsParent);
+            else std::cout << "This to pointer is not a node : " << this->getName();
+        }
+    }
+
+    return output;
+}
+
+
 GraphNode::GraphNode(juce::String name, int pos_x, int pos_y) {
+    setLookAndFeel(&style);
+
     this->name = name;
 
     UIWidth = 0;
@@ -36,16 +54,24 @@ GraphNode::GraphNode(juce::String name, int pos_x, int pos_y) {
     menu.addItem(1, "Delete Node");
 
     resized();
+    repaint();
 }
 
 // returns true if all the Input Sockets that are `isMust` are connected.
 bool GraphNode::allGood() {
-        for (auto i : InputSockets) {
-            // if it is a must but not connected we are going to return false.
-            if (i->isMust && !(i->isThisConnected())) {
-                return false;
-            }
+    for (auto i : InputSockets) {
+        // if it is a must but not connected we are going to return false.
+        if (i->isMust && !(i->isThisConnected())) {
+            return false;
         }
+    }
+
+    for (auto i : OutputSockets) {
+        // if it is a must but not connected we are going to return false.
+        if (i->isMust && !(i->isThisConnected())) {
+            return false;
+        }
+    }
 
     return true;
 }
@@ -84,6 +110,7 @@ void GraphNode::mouseDrag(const juce::MouseEvent& event) {
         i->repaintConnection();
     }
 
+
 }
 
 void GraphNode::deleteAllConnectionsToAndFromNode() {
@@ -111,7 +138,6 @@ void GraphNode::paintBasic(juce::Graphics& g) {
 
     g.setColour(GraphNodeHeadingTextID);
     g.drawText(name, topTextArea.toFloat(), juce::Justification::centred);
-
 }
 
 // sets all the sockets in both input and output socket arrays to
@@ -157,7 +183,9 @@ void GraphNode::resized() {
     setSize(UIWidth, UIHeight);
 }
 
-GraphNode::~GraphNode() {}
+GraphNode::~GraphNode() {
+    setLookAndFeel(nullptr);
+}
 
 // loading and saving of presets.
 void GraphNode::getStateInformation(juce::MemoryBlock& destData) {

@@ -116,7 +116,6 @@ public:
 
     ~Socket() override;
 
-
     std::set<Socket*> to;
 
 private:
@@ -125,8 +124,6 @@ private:
 
     bool isConnected = false;
     Socket* from = nullptr;
-
-
 
     int numberOfSocketsConnectedTo = 0;
 

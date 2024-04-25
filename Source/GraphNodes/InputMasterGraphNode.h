@@ -23,16 +23,15 @@ public:
         OutputSockets[0]->setOutputType(SocketDataType::MIDI);
 
         OutputSockets.add(new Socket(juce::String("Pitch Wheel"), direction::OUT, false));
-        OutputSockets[1]->setOutputType(SocketDataType::FloatingVector);
+        OutputSockets[1]->setOutputType(SocketDataType::AudioBufferFloatSingle);
 
         OutputSockets.add(new Socket(juce::String("Mod Wheel"), direction::OUT, false));
-        OutputSockets[2]->setOutputType(SocketDataType::FloatingVector);
+        OutputSockets[2]->setOutputType(SocketDataType::AudioBufferFloatSingle);
 
         canBeDeleted = false;
         makeAllSocketsVisible();
         resized();
     };
-
 
     void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) override {}
 

@@ -33,9 +33,8 @@ MasterComponent::MasterComponent(int upperComponent, int otherComponentCumulativ
 }
 
 MasterComponent::~MasterComponent() {}
-
 void MasterComponent::paint(juce::Graphics &g) {
-    g.fillAll(juce::Colour(0xff262b2b));
+//    g.fillAll(juce::Colour(0xff262b2b));
 }
 
 void MasterComponent::resized() {

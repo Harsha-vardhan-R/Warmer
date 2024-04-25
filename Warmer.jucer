@@ -36,7 +36,6 @@
         <FILE id="ZJzcx3" name="Connection.h" compile="0" resource="0" file="Source/GraphNodes/Connection.h"/>
         <FILE id="CRjcEt" name="Socket.cpp" compile="1" resource="0" file="Source/GraphNodes/Socket.cpp"/>
         <FILE id="RrUtio" name="ParameterCtrl.h" compile="0" resource="0" file="Source/GraphNodes/ParameterCtrl.h"/>
-        <FILE id="rgo2pm" name="Slider.h" compile="0" resource="0" file="Source/GraphNodes/Slider.h"/>
         <GROUP id="{33CB675E-D569-27B8-6E4C-C01AF0AC6C12}" name="General"/>
         <GROUP id="{A3C4D651-967D-3C09-48F7-E45C42304FE6}" name="Math"/>
         <GROUP id="{3BF01387-906D-E405-94C0-D9574A80B114}" name="Etc"/>

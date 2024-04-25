@@ -9,51 +9,54 @@
 */
 
 #pragma once
-#include "GraphNodes/GraphNode.h"
+#include "GraphNodes/Collection.h"
 
 /*
-    Contains my implementation of a Priority Queue.
-
-    Cannot use the STL std::priority_queue because,
-    it does not support updating priority of the elements already in it.
-
-    Technically this is not exactly a PriorityQueue, named it because it does something similar.
 
     ***
     This is NOT designed to add new nodes continuously.
-    you are meant to add only before calling the pop and init.
 
     A normal use would be like:
         -> `push` all the wanted nodes.
-       /-> use `poll' to return 0 dependent nodes.
-      | -> update nodes dependency.
-      | -> use `init` to go to the initial state (technically this takes linear time , but in practical applications it is mostly constant time).
-      | -> go to point 2 ->\
-      \____________________/
+        -> use `sort`, to topo-sort the elements.
+        -> process the nodes one by one until it reaches end repeat this process again.
    ***
 */
 
-class PriorityQueue {
+class PriorityQueue //: public juce::AudioProcessor
+        {
 public:
 
-    PriorityQueue() {
-//        ZeroDependentQueue = new std::queue<GraphNode*>();
-//        elementDependencyMap = new std::unordered_map<GraphNode*, int>();
-//        InitialZeroDependents = new std::vector<GraphNode*>();
-        totalNodesToProcess = 0;
-    }
+    PriorityQueue() {}
 
     ~PriorityQueue() { /* We are NOT deleting the nodes within the data structure with it */ }
 
+    double sampleRate = 0.0, sampleSize = 0.0;
+
+    void setBufferSizeAndRate(double sampleRate, int estimatedSamplesPerBlock) {
+        this->sampleRate = sampleRate;
+        this->sampleSize = estimatedSamplesPerBlock;
+    }
+
     // Insert an element. O(1)
-    void push(GraphNode* node) {
-        if (node->permDependency == 0) {
-            InitialZeroDependents.push_back(node);
-            ZeroDependentQueue.push(node);
-        } else {
-            elementDependencyMap[node] = node->permDependency;
-        }
+    void push(juce::AudioProcessor* node) {
+        bunchOfNodes.insert(node);
         totalNodesToProcess++;
+    }
+
+    juce::AudioProcessor* MIDI_IN = nullptr;
+
+    void setInputNode(InputMasterGraphNode* node) {
+        MIDI_IN = (juce::AudioProcessor*)node;
+        totalNodesToProcess++;
+    }
+
+    // calls prepare to play on all the nodes,
+    // useful when there are no connections changed but sample rate or size changed.
+    void prepare() {
+        for (auto i : bunchOfNodes) {
+            i->prepareToPlay(sampleRate, sampleSize);
+        }
     }
 
     // returns true if the ZeroDependencyQueue is empty.
@@ -64,7 +67,7 @@ public:
     // to check for all nodes popped, use `done()` method.
     //O(1)
     bool isEmpty() {
-        return (ZeroDependentQueue.empty());
+        return (sortedNodes.size() == 0);
     }
 
     // Returns true if the nodes are popped.
@@ -73,69 +76,137 @@ public:
         return (totalNodesToProcess == 0);
     }
 
-    // pop's the element from the queue with zero dependencies and returns it, if the queue is empty it crashes.
-    // unsafe , use only after checking if the queue is empty.
-    // O(1)
-    GraphNode* pop() {
-        auto front = ZeroDependentQueue.front();
-        ZeroDependentQueue.pop();
-        totalNodesToProcess--;
-        return front;
-    }
-
-    // Returns the top(most priority) node does not pop it.
-    // O(1)
-    // you do not need this method for normal usage, because the elements popped are guaranteed to have 0 dependents.
-    GraphNode* top() {
-        return ZeroDependentQueue.front();
-    }
-
-    // init : goes to the initial state before any pop.
-    void init() {
-        for (GraphNode* i : InitialZeroDependents) ZeroDependentQueue.push(i);
-        totalNodesToProcess = elementDependencyMap.size()+InitialZeroDependents.size();
-    }
-
-    // decreases the value of a node by one in the hash map, if the nodes dependencies become 0 it gets pushed to
-    // the queue where it is popped when the pop method is called.
-    // if the node is not present it will be created leading to undefined behaviour. so always
-    // make sure you know the node actually exists in the map.
-    void update(GraphNode* node) {
-        elementDependencyMap[node] -= 1;
-
-        if (elementDependencyMap[node] == 0) {
-            // update the node's dependencies for the next call.
-            elementDependencyMap[node] = node->permDependency;
-            ZeroDependentQueue.push(node);
+    bool checkAllGood() {
+        for (auto i : bunchOfNodes) {
+            bool b = ((GraphNode*)i)->allGood();
+            if (!b) return false;
         }
+
+        return true;
+    }
+
+
+    bool sort() {
+
+        if (MIDI_IN == nullptr) return false;
+
+        std::unordered_map<juce::AudioProcessor*, std::set<juce::AudioProcessor*>> AdjList;
+        std::unordered_map<juce::AudioProcessor*, int> indegree;  // In-degree counter for each node
+        std::queue<juce::AudioProcessor*> zeroDependencyQueue;    // Queue for nodes with zero dependencies
+
+        if (!checkAllGood()) return false;
+
+        // Prepare the Adjacent List and in-degree for each node
+        for (auto i : bunchOfNodes) {
+            AdjList[i] = ((GraphNode*)i)->getDependents();
+            indegree[i] = 0;
+        }
+
+        // Calculate in-degree for all nodes based on AdjList
+        for (auto& [node, dependents] : AdjList) {
+            for (auto dependent : dependents) {
+                if (!indegree.count(dependent)) {
+                    std::cout << dependent << " is not present in the map, How??, dependent of : " << node->getName() << "\n";
+                }
+                indegree[dependent]++;
+            }
+        }
+
+        // If 0 in-degree, we can process them in any order.
+        for (auto& [node, degree] : indegree) {
+            if (degree == 0) {
+                zeroDependencyQueue.push(node);
+            }
+        }
+
+        // because this is not in the AdjList, we have to do this manually.
+        sortedNodes.push_back(MIDI_IN);
+        for (auto i : ((GraphNode*)MIDI_IN)->getDependents()) {
+            indegree[i]--;
+            if (indegree[i] == 0) {
+                zeroDependencyQueue.push(i);
+            }
+        }
+
+        // Topological sort
+        while (!zeroDependencyQueue.empty()) {
+            auto currentNode = zeroDependencyQueue.front();
+            zeroDependencyQueue.pop();
+            sortedNodes.push_back(currentNode);  // Add current node to sorted list
+
+            // Reduce the in-degree of adjacent nodes by 1.
+            for (auto dependent : AdjList[currentNode]) {
+                indegree[dependent]--;
+                if (indegree[dependent] == 0) {
+                    zeroDependencyQueue.push(dependent);
+                }
+            }
+        }
+
+        for (auto i : sortedNodes) {
+            std::cout << i->getName() << "\n";
+        }
+
+
+        if (sortedNodes.size() != bunchOfNodes.size()+1) {
+            sortedNodes.clear();
+            return false;
+        }
+
+        return true;  // No cycle
+    }
+
+
+    std::vector<juce::AudioProcessor*> getTopoSortedNodes() {
+        return sortedNodes;
     }
 
     // Clears all the containers.
     void flush() {
-//        elementDependencyMap.erase();
-//        InitialZeroDependents.erase();
-//        while(!ZeroDependentQueue.empty()) ZeroDependentQueue.pop();
+        sortedNodes.clear();
+        bunchOfNodes.clear();
     }
 
     // for debugging, data structure becomes useless after this, you need to build again.
     void debugDump() {
         std::cout << "Elements in Queue : " << "\n";
-        while (!ZeroDependentQueue.empty()) {
-            std::cout << ZeroDependentQueue.front()->name << "\n";
-            ZeroDependentQueue.pop();
-        }
-        std::cout << "Elements in Map : " << "\n";
-        for (auto i : elementDependencyMap) {
-            std::cout << i.first << i.second << "\n";
+        for (auto i : sortedNodes) {
+            std::cout << i << " ";
         }
     }
 
+    std::vector<juce::AudioProcessor*> sortedNodes;
+    std::set<juce::AudioProcessor*> bunchOfNodes;
+
+
+//    virtual void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) {}
+//
+//
+//
+//    // overriding function from juce::AudioProcessor //
+//    virtual void prepareToPlay(double sampleRate, int estimatedSamplesPerBlock) {}
+//    virtual void releaseResources() {}
+//    virtual void reset() {}
+//
+//    // loading and saving of presets.
+//    void getStateInformation(juce::MemoryBlock& destData) override {}
+//    void setStateInformation(const void* data, int sizeInBytes) override {}
+//    ///|=========================================|
+//    // Virtual functions that have their definitions empty.
+//    const juce::String getName() const override { return juce::String("The greater good"); }
+//    double getTailLengthSeconds() const override { return 0.0; }
+//    bool acceptsMidi() const override { return true; }
+//    bool producesMidi() const override {return false; }
+//    juce::AudioProcessorEditor* createEditor() override { return nullptr; }
+//    bool hasEditor() const override { return false; }
+//    int getNumPrograms() override { return 1; }
+//    int getCurrentProgram() override { return 0; }
+//    void setCurrentProgram(int index) override {}
+//    const juce::String getProgramName(int index) override { return juce::String("Warmer"); }
+//    void changeProgramName(int index, const juce::String& newName) override {}
+
 private:
 
-    // underlying data structures.
-    std::queue<GraphNode*> ZeroDependentQueue;
-    std::unordered_map<GraphNode*, int> elementDependencyMap; // Stores the dependencies for the present iteration.
-    std::vector<GraphNode*> InitialZeroDependents;
 
     int totalNodesToProcess;
 

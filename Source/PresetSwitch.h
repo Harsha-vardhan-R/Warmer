@@ -62,10 +62,12 @@ public:
         instrumentSelect.get()->addItem(instrumentName, instrument_number_count);
     }
 
-    ~PresetSwitch() override {};
+    ~PresetSwitch() override {
+        setLookAndFeel(nullptr);
+    };
 
     void paint(juce::Graphics& g) override {
-        g.fillAll(juce::Colour(0xffeee3e7));
+        g.fillAll(WheelComponentBackgroundID);
     };
 
     void resized() override {

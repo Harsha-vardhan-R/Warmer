@@ -34,6 +34,18 @@ public:
         juce::Rectangle<int> popupBounds(0, 0, width, height);
         g.fillAll(MenuBackgroundID);
     }
+
+    void drawPopupMenuItem (juce::Graphics& g,
+                                           const juce::Rectangle<int>& area,
+                                           bool isSeparator,
+                                           bool isActive,
+                                           bool isHighlighted,
+                                           bool isTicked,
+                                           bool hasSubMenu,
+                                           const juce::String& text,
+                                           const juce::String& shortcutKeyText,
+                                           const juce::Drawable* icon,
+                                           const juce::Colour* textColourToUse) override;
     void drawMenuBarItem (juce::Graphics& g,
                           int width,
                           int height,
@@ -43,21 +55,6 @@ public:
                           bool isMenuOpen,
                           bool isMouseOverBar,
                           juce::MenuBarComponent& menuBar) override;
-    void drawPopupMenuItem (juce::Graphics& g,
-                            const juce::Rectangle<int>& area,
-                            bool isSeparator,
-                            bool isActive,
-                            bool isHighlighted,
-                            bool isTicked,
-                            bool hasSubMenu,
-                            const juce::String& text,
-                            const juce::String& shortcutKeyText,
-                            const juce::Drawable* icon,
-                            const juce::Colour* textColourToUse) override;
-    //================================
-    // look and feel but to be used in other classes.
-
-    // ++++++++++++++ COMBO BOX STYLES ++++++++++++++
     void drawComboBox ( juce::Graphics& g,
                         int width,
                         int height,

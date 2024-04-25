@@ -14,7 +14,6 @@
 class OutputMasterGraphNode : public GraphNode {
 public:
 
-    GraphNode* last;
 
     OutputMasterGraphNode(int pos_x, int pos_y) :
             GraphNode("AUDIO OUT",
@@ -33,10 +32,9 @@ public:
 
     ~OutputMasterGraphNode() {};
 
-    bool isConnected() { return (last != nullptr); }
+    bool isConnected() { return (InputSockets[0]->isThisConnected()); }
 
     void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) override {}
-
     void prepareToPlay(double sampleRate, int estimatedSamplesPerBlock) override {}
     void releaseResources() override {}
     void reset() override {}

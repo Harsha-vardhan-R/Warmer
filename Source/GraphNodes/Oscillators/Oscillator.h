@@ -23,15 +23,16 @@ public:
         // Type of the basic wave shape.
         InputSockets.add(new Socket(juce::String("Wave Shape"), direction::IN, false));
         InputSockets[0]->addMenuParameterControl();
-        InputSockets[0]->addMenuItem("SINE");
-        InputSockets[0]->addMenuItem("SQUARE");
-        InputSockets[0]->addMenuItem("TRIANGLE");
-        InputSockets[0]->addMenuItem("SAW");
+        InputSockets[0]->addMenuItem("None");
+        InputSockets[0]->addMenuItem("Sine");
+        InputSockets[0]->addMenuItem("Square");
+        InputSockets[0]->addMenuItem("Triangle");
+        InputSockets[0]->addMenuItem("Saw-tooth");
 
         // frequency.
         InputSockets.add(new Socket(juce::String("Frequency"), direction::IN, false));
         InputSockets[1]->acceptType(SocketDataType::MIDI);
-        InputSockets[1]->addSliderParameterControl(0.0, 20000.0, 300.0); // frequency range.
+        InputSockets[1]->addSliderParameterControl(0.0, 20000.0, 150.0); // frequency range.
 
         // Amplitude.
         InputSockets.add(new Socket(juce::String("Amplitude"), direction::IN, false));

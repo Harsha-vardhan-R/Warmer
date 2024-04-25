@@ -15,11 +15,9 @@
 // Types of an input you can send into the input of a node.
 enum SocketDataType {
     MIDI,
-    AudioBufferInt,
     AudioBufferFloat,
-    Integer, // for discrete types in selecting the type of something in a `TypeList`.
+    AudioBufferFloatSingle, // a single channel audio buffer created by things such as ADSR etc...
     Floating,
-    FloatingVector, // for smooth transitions, is the output from the user
     NULLType, // when you cannot modulate with any other output.
 };
 

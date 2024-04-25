@@ -15,6 +15,101 @@
 #include "Socket.h"
 
 
+class EmptyLookAndFeel : public juce::LookAndFeel_V4 {
+public:
+
+    EmptyLookAndFeel() {
+        setColour(juce::Slider::ColourIds::backgroundColourId, GraphSliderBackgroundID);
+        setColour(juce::Slider::ColourIds::thumbColourId, GraphSliderThumbID);
+        setColour(juce::Slider::ColourIds::trackColourId, GraphSliderOutlineID);
+        setColour(juce::Slider::ColourIds::textBoxTextColourId, GraphSliderTextID);
+
+        setColour(juce::ComboBox::ColourIds::backgroundColourId, MenuBackgroundID);
+        setColour(juce::ComboBox::ColourIds::textColourId, textColourID);
+        setColour(juce::ComboBox::ColourIds::arrowColourId, ComboBoxArrowColourID);
+    }
+
+    void drawComboBox(juce::Graphics &g, int width, int height, bool isButtonDown, int buttonX, int buttonY,
+                                     int buttonW, int buttonH, juce::ComboBox& box) override {
+        g.setColour(GraphSliderOutlineID);
+        g.drawRoundedRectangle(box.getLocalBounds().toFloat() ,3.0f, 2.0);
+        g.setColour(MenuMouseOverColourID);
+        g.fillRoundedRectangle(box.getLocalBounds().reduced(2).toFloat(), 3.0f);
+
+        juce::Path arrow;
+        float arrowDimen = 5;
+        float arrowX = width - 15; // X position of the arrow
+        float arrowY = (height - arrowDimen) / 2; // Y position of the arrow
+
+        if (box.isPopupActive()) {
+            arrow.addTriangle(arrowX + (arrowDimen * 0.5f) + 1, arrowY,
+                              arrowX, arrowY + arrowDimen,
+                              arrowX + arrowDimen + 2, arrowY + arrowDimen);
+        } else {
+            arrow.addTriangle(arrowX, arrowY,
+                              arrowX + arrowDimen + 2, arrowY,
+                              arrowX + (arrowDimen * 0.5f) + 1, arrowY + arrowDimen);
+        }
+
+        g.setColour(ComboBoxArrowColourID);
+        g.fillPath(arrow);
+    }
+
+    void drawPopupMenuItem (juce::Graphics& g,
+                                           const juce::Rectangle<int>& area,
+                                           bool isSeparator,
+                                           bool isActive,
+                                           bool isHighlighted,
+                                           bool isTicked,
+                                           bool hasSubMenu,
+                                           const juce::String& text,
+                                           const juce::String& shortcutKeyText,
+                                           const juce::Drawable* icon,
+                                           const juce::Colour* textColourToUse) override {
+
+        juce::Rectangle<int> highLight(area.getX() + 3, area.getY(), area.getWidth() - 6 , area.getHeight());
+        juce::Rectangle<int> aligner(area.getX() + 15, area.getY(), area.getWidth() , area.getHeight());
+
+        auto width = area.getWidth();
+
+
+        if (isSeparator) {
+            g.setColour(SeparatorColourID);
+            juce::Rectangle<int> sepLine(area.getX()+3, area.getCentreY(), area.getWidth()-6, 1);
+            g.fillRect(sepLine);
+            return;
+        } else if (isHighlighted) {
+            g.setColour(MenuMouseOverColourID);
+            g.fillRoundedRectangle(highLight.toFloat(), 3.0f);
+            g.setColour(SelectedTabTextColourID);
+        } else {
+            g.setColour(IdleTabTextColourID);
+        }
+
+        // Draw a side arrow if there is a submenu.
+        if (hasSubMenu) {
+            juce::Path arrow;
+            arrow.addTriangle( width - 12,  6,
+                               width - 6,  10,
+                               width - 12,  14);
+            g.setColour(ComboBoxArrowColourID);
+            g.fillPath(arrow);
+        }
+
+        g.drawText(text, aligner, juce::Justification::centredLeft);
+
+    }
+
+    void drawPopupMenuBackground(juce::Graphics &g, int width, int height) override {
+        g.setColour(MenuBackgroundID);
+        g.fillAll();
+    }
+
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EmptyLookAndFeel)
+};
+
+
 // Class that all the nodes inherit.
 class GraphNode : public juce::Component,
                   public juce::AudioProcessor {
@@ -22,19 +117,6 @@ public :
 
     // Name of the node(shown at the top)
     juce::String name;
-
-    /*
-       PermDependency.
-       This is the dependency that is given at the time of building the tree,
-       will not be updated with the calls.
-    */
-    int permDependency;
-
-
-    /*
-     * This is the dependency that will be updated based on the number of processed nodes.(not used for now)
-     */
-    int dependency;
 
     /*
      * Returns a vector of dependent nodes.
@@ -96,6 +178,9 @@ public :
 
     void resized() override;
 
+    // returns a vector of values that contains all the nodes this is output to.
+    std::set<juce::AudioProcessor*> getDependents();
+
 
     ~GraphNode() override;
 
@@ -126,6 +211,7 @@ public :
 
 
     ///|=========================================|
+    // Virtual functions that have their definitions empty.
     const juce::String getName() const override;
 
     double getTailLengthSeconds() const override;
@@ -153,6 +239,9 @@ public :
     bool canBeDeleted;
 
 private:
+
+    EmptyLookAndFeel style;
+
     juce::Point<int> lastMouseDownPosition;
 
     // locking from other Node's process.

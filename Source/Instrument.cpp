@@ -39,7 +39,7 @@ int MIDI_TO_MINE[113] = {
         48, 135, 49, 136, 50
 };
 
-// Please do not mess up this thing's order.
+// Please do not mess with the order of statements.
 Instrument::Instrument(int tabWidth) {
     Instrument::instancePtr = this;
 
@@ -58,7 +58,6 @@ Instrument::Instrument(int tabWidth) {
     GraphPage* casted = (GraphPage*)graphPage.get();
     viewport.get()->setViewedComponent(casted->getBackground(), false);
 
-    nodeProcessingQueue = new PriorityQueue();
 
     deviceManager.reset(new juce::AudioDeviceManager());
     deviceManager.get()->initialise(2, 2, nullptr, true);
@@ -68,6 +67,8 @@ Instrument::Instrument(int tabWidth) {
 
     // Setting up for the MIDI listening.
     auto midiDevicesHere = juce::MidiInput::getAvailableDevices();
+
+    nodeProcessingQueue.setInputNode(InputNode);
 
     // Create and add MidiInput objects to the owned array
     for (const auto& device : midiDevicesHere) {
@@ -80,12 +81,15 @@ Instrument::Instrument(int tabWidth) {
         }
     }
 
-    std::cout << "Available Devices : " << "\n";
-    for (auto i : midiInputs) {
-        std::cout << i->getName() << "\n";
-    }
+//    std::cout << "Available Devices : " << "\n";
+//    for (auto i : midiInputs) {
+//        std::cout << i->getName() << "\n";
+//    }
 
     breakProcessing.store(false);
+
+    // adding the node processingQ as a call back.
+//    deviceManager.get()->addAudioCallback(&nodeProcessingQueue);
 
     resized();
 }
@@ -151,10 +155,15 @@ void Instrument::Initialize() {
 }
 
 Instrument::~Instrument() {
-    delete nodeProcessingQueue;
+    isBeingDestructed = true;
+
+    nodeProcessingQueue.flush();
 
     delete InputNode;
-    delete OutputNode;
+
+//    deviceManager.get()->removeAudioCallback(&nodeProcessingQueue);
+
+//    delete OutputNode;
 }
 
 void Instrument::paint(juce::Graphics& g) {}
@@ -323,7 +332,7 @@ Instrument::GraphPage::GraphPage() {
     subMenuArray[5]->addItem(602, "Arpeggiator");
     subMenuArray[5]->addItem(603, "Polyphony");
 
-    subMenuArray[6]->addItem(701, "Clone Signal");
+    subMenuArray[6]->addItem(701, "Single Signal"); // takes in an audio buffer and sends out only one side of it.
 
     AddNodesPopupMenu.get()->addSubMenu("General", *subMenuArray[0]);
     AddNodesPopupMenu.get()->addSubMenu("Oscillators", *subMenuArray[1]);
@@ -338,16 +347,24 @@ Instrument::GraphPage::GraphPage() {
 
     componentBackground.get()->addAndMakeVisible(this);
 
+//    AllNodes.insert((GraphNode*)Instrument::instancePtr->InputNode);
+    AllNodes.insert((GraphNode*)Instrument::instancePtr->OutputNode);
+
     // Adding the initial nodes.
     addAndMakeVisible(Instrument::instancePtr->InputNode);
     addAndMakeVisible(Instrument::instancePtr->OutputNode);
+
+
+    repaintArea.setBounds(0, 0, 0, 0);
 
     resized();
 }
 
 Instrument::GraphPage::~GraphPage() {
     for (GraphNode* i : AllNodes) delete i;
-//    for (Connection* i : AllConnections) delete i;
+    // connections will be automatically deleted while destructing nodes(sockets).
+    // for (Connection* i : AllConnections) delete i;
+    AddNodesPopupMenu.get()->setLookAndFeel(nullptr);
 }
 
 void Instrument::GraphPage::mouseDown(const juce::MouseEvent& event) {
@@ -381,17 +398,28 @@ void Instrument::GraphPage::resized() {
 }
 
 void Instrument::GraphPage::paint(juce::Graphics &g) {
-    drawConnections(g);
+//    drawConnections(g);
+    g.setColour(juce::Colours::darkgrey);
+
+    if (temp) {
+        g.drawLine(p.toFloat(), 1);
+    }
+
+    for (const auto& pair : ConnectionToLineMap) {
+        g.drawLine(pair.second.toFloat(), 1);
+    }
 }
 
 void Instrument::GraphPage::connectionInit(Connection *n, juce::Line<int> p) {
     temp = n;
     this->p = p;
-    repaint();
+    updateRepaintArea(p);
+    repaint(repaintArea);
 }
 
 void Instrument::GraphPage::connectionInitFail() {
     temp = nullptr;
+    updateRepaintArea();
     repaint();
 }
 
@@ -399,22 +427,82 @@ void Instrument::GraphPage::connectionRemoved(Connection *connectionPointer) {
     // TODO : need to find a way to adjust the bounding here.
     AllConnections.erase(connectionPointer);
     ConnectionToLineMap.erase(connectionPointer);
+    updateRepaintArea();
     repaint();
 }
 
 void Instrument::GraphPage::updateConnectionLine(Connection *connectionPointer, juce::Line<int> newLine) {
     ConnectionToLineMap[connectionPointer] = newLine;
-    repaint();
+    updateRepaintArea(newLine);
+    repaint(repaintArea);
 }
 
-void Instrument::GraphPage::drawConnections(juce::Graphics &g) {
-    g.setColour(juce::Colours::black);
+void Instrument::GraphPage::updateRepaintArea() {
 
-    if (temp) g.drawLine(p.toFloat(), 2);
-    // draw all the connections with 2px width.
-    for (auto& pair : ConnectionToLineMap) {
-        juce::Line<int>& line = pair.second;
-        g.drawLine(line.toFloat(), 2);
+    int minX = 5000;
+    int minY = 5000;
+    int maxX = 0;
+    int maxY = 0;
+
+    for (auto [ connection , line ] : ConnectionToLineMap) {
+        minX = std::min(minX, std::min(line.getStartX(), line.getEndX()));
+        minY = std::min(minY, std::min(line.getStartY(), line.getEndY()));
+        maxX = std::max(maxX, std::max(line.getStartX(), line.getEndX()));
+        maxY = std::max(maxY, std::max(line.getStartY(), line.getEndY()));
+    }
+
+    repaintArea.setBounds(minX, minY, maxX-minX, maxY-minY);
+
+}
+
+void Instrument::GraphPage::updateRepaintArea(Connection *connection) {
+
+    auto line = ConnectionToLineMap[connection];
+
+    int minX, minY, maxX, maxY;
+
+    minX = std::min(repaintArea.getX(), std::min(line.getStartX(), line.getEndX()));
+    minY = std::min(repaintArea.getY(), std::min(line.getStartY(), line.getEndY()));
+    maxX = std::max(repaintArea.getX()+repaintArea.getWidth(), std::max(line.getStartX(), line.getEndX()));
+    maxY = std::max(repaintArea.getY()+repaintArea.getHeight(), std::max(line.getStartY(), line.getEndY()));
+
+    repaintArea.setBounds(minX, minY, maxX-minX, maxY-minY);
+
+}
+
+void Instrument::GraphPage::updateRepaintArea(juce::Line<int>& line) {
+
+    int minX, minY, maxX, maxY;
+
+    minX = std::min(repaintArea.getX(), std::min(line.getStartX(), line.getEndX()));
+    minY = std::min(repaintArea.getY(), std::min(line.getStartY(), line.getEndY()));
+    maxX = std::max(repaintArea.getX()+repaintArea.getWidth(), std::max(line.getStartX(), line.getEndX()));
+    maxY = std::max(repaintArea.getY()+repaintArea.getHeight(), std::max(line.getStartY(), line.getEndY()));
+
+    repaintArea.setBounds(minX, minY, maxX-minX, maxY-minY);
+
+}
+
+//void Instrument::GraphPage::drawConnections(juce::Graphics &g) {
+//    g.setColour(juce::Colours::darkgrey);
+//
+//    if (temp) g.drawLine(p.toFloat(), 1);
+//    // draw all the connections with 2px width.
+//    for (auto& pair : ConnectionToLineMap) {
+//        juce::Line<int>& line = pair.second;
+//        g.drawLine(line.toFloat(), 1);
+//    }
+//}
+
+void Instrument::GraphPage::drawConnections(juce::Graphics &g) {
+    g.setColour(juce::Colours::darkgrey);
+
+    if (temp) {
+        g.drawLine(p.toFloat(), 1);
+    }
+
+    for (const auto& pair : ConnectionToLineMap) {
+        g.drawLine(pair.second.toFloat(), 1);
     }
 }
 
@@ -425,6 +513,8 @@ void Instrument::GraphPage::connectionAdded(Connection *newConnection) {
     juce::Line<int> temp(0, 0, 0, 0);
 
     ConnectionToLineMap[newConnection] = temp;
+    updateRepaintArea();
+
     repaint();
 }
 
@@ -478,6 +568,7 @@ void Instrument::handleIncomingMidiMessage(juce::MidiInput* source, const juce::
 
     auto PianoComponent = (Piano*)Instrument::VoidPointerToPianoComponent;
     auto comp = (Wheels*)Instrument::VoidPointerToWheelComponent;
+    int change = 0;
 
     if (message.isNoteOn()) {
         int noteNumber = message.getNoteNumber();
@@ -490,6 +581,7 @@ void Instrument::handleIncomingMidiMessage(juce::MidiInput* source, const juce::
             PianoComponent->overlayPainter.get()->WhiteKeyDown(midi_);
         }
 
+        change = 1;
     } else if (message.isNoteOff()) {
         int noteNumber = message.getNoteNumber();
         int midi_ = MIDI_TO_MINE[noteNumber];
@@ -499,12 +591,14 @@ void Instrument::handleIncomingMidiMessage(juce::MidiInput* source, const juce::
         } else if (midi_ > -1) {
             PianoComponent->overlayPainter.get()->WhiteKeyUp(midi_);
         }
+
+        change = 1;
     } else if (message.isPitchWheel() && std::rand()%15 == 0) {
         if (comp == nullptr) return;
         comp->setPitchWheel((float)(message.getPitchWheelValue()/128));
     }
 
-    PianoComponent->overlayPainter.get()->repaint();
+    if (change) PianoComponent->overlayPainter.get()->repaint();
 }
 
 
@@ -532,26 +626,26 @@ Instrument::AudioMIDISettingClass::AudioMIDISettingClass(juce::AudioDeviceManage
 }
 
 
-// #####
-// #####
-// ##### AUDIO PROCESSING CALL BACK SEQUENCER.
-// #####
-// #####
 
 void Instrument::ConfigurationChanged() {
+
+    // this is because while destructing nodes,
+    // it destructs the connections, which in turn trigger the connectionRemoved,
+    // which calls configuration changed.
+    if (isBeingDestructed) return;
+
     // if there is already a thread running `SynthesizeAudioForConfig` this should stop it.
-//    breakProcessing.store(true);
-//
-//    if (!OutputNode->isConnected()) return;
-//
-//    std::thread spawnThreadTree([this]() { BuildTreeAndMakeQueue(); });
-//    spawnThreadTree.join();
-//
+    breakProcessing.store(true);
+
+    // we cannot thread this because if a node is deleted WHILE, this is running,
+    // the program most probably crashes.
+    TreeFeasible = BuildTreeAndMakeQueue();
+    std::cout << "from tree builder " << TreeFeasible << "\n";
+
 //    if (this->TreeFeasible) {// if the tree is successfully built, start synthesizing with an individual thread.
 //        breakProcessing.store(false);
 //        std::thread spawnThreadAudio([this]() { SynthesizeAudioForConfig(); });
 //    }
-
 
 }
 
@@ -560,58 +654,53 @@ bool Instrument::BuildTreeAndMakeQueue() {
 
     // everytime this function is called we delete the previous
     // priority queue.
-    nodeProcessingQueue->flush();
+    nodeProcessingQueue.flush();
 
     // if there is no node connected to the output node,
     // do not do anything.
     // This is not true for the input node.
     if (!OutputNode->isConnected()) {
-        TreeFeasible = false;
         return false;
     }
 
-    int bufferSize;
+    double bufferSize, bufferRate;
 
-    if (deviceManager.get() != nullptr) {
-        //bufferSize = deviceManager.get()->AudioDeviceSetup.bufferSize;
+    if (deviceManager.get()) {
+        bufferSize = deviceManager.get()->getAudioDeviceSetup().bufferSize;
+        bufferRate = deviceManager.get()->getAudioDeviceSetup().sampleRate;
     } else {
         std::cout << "No active audio device!" << std::endl;
-        TreeFeasible = false;
         return false; // nothing to do.
     }
 
-    // We traverse the graph from the back.
-//    for (auto i : AllNodes) {
-//        if (!i->allGood()) {
-//            TreeFeasible = false;
-//            return false; // if the node says it is not good :)
-//        }
-////        i->update(); // This is where the nodes should be setting their permDependency.
-//    }
+    std::cout << bufferRate << " " << bufferSize << "\n";
 
+    nodeProcessingQueue.setBufferSizeAndRate(bufferRate, bufferSize);
 
-    TreeFeasible = true;
+    std::cout << "all nodes size : " << (((GraphPage*)graphPage.get())->AllNodes).size() << "\n";
+
+    for (juce::AudioProcessor* i : ((GraphPage*)graphPage.get())->AllNodes) {
+        nodeProcessingQueue.push(i);
+    }
+
+    nodeProcessingQueue.prepare();
+
+    TreeFeasible = nodeProcessingQueue.sort();
+
+    if (!TreeFeasible) return false;
+
+    std::vector<juce::AudioProcessor*> lis = nodeProcessingQueue.getTopoSortedNodes();
+
+    std::cout << "List of nodes : " << "\n";
+
+    std::cout << "length of sorted list : " << lis.size() << "\n";
+
     return true;
-
 }
 
-static int MAX_THREADS = 8;
 
 void Instrument::SynthesizeAudioForConfig() {
 
-//    std::atomic<int> RunningThreads;
-//    RunningThreads.store(0);
-//
-//    while (breakProcessing.load()) {
-//
-//        if (!nodeProcessingQueue->isEmpty() && (RunningThreads.load() < MAX_THREADS)) {
-//            std::thread NodeProcess(nodeProcessingQueue->pop()->process());
-//        }
-//
-//        // if the process is done, play the audio and
-//        if (nodeProcessingQueue->done()) {
-//
-//        }
-//    }
+
 
 }

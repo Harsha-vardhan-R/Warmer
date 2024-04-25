@@ -187,6 +187,8 @@ void MenuComponent::drawTabButton(juce::TabBarButton& button,
                                                                       button.getLocalBounds().getCentreX(),
                                                                       button.getLocalBounds().getCentreY());
     g.addTransform(transform);
+    
+    if (button.isFrontTab()) { g.setColour(juce::Colours::orange); }
     g.drawText(button.getButtonText(), button.getLocalBounds().reduced(-15), juce::Justification::centred);
 
 }

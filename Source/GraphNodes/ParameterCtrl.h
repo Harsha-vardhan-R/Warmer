@@ -27,7 +27,8 @@
 
 
 // invisible container that contains other controls.
-class ParameterCtrl : public juce::Component {
+class ParameterCtrl : public juce::Component,
+                      private juce::Slider::Listener {
 public:
 
     ParameterCtrl() {
@@ -42,7 +43,9 @@ public:
     // and because floating points can have precision errors better to compare with a greater than or less than
     // rather than equals to if you mean to return a integer.
     float getValue() {
-        return 0.0; // TODO
+        if (sliderFloat.get()) return sliderFloat.get()->getValue();
+        else if (menuList.get()) return (float)menuList.get()->getSelectedId();
+        return -1.0;
     };
 
     int getType() {
@@ -72,7 +75,14 @@ public:
             return;
         }
 
-        textEditor.reset(new juce::TextEditor);
+        sliderFloat.reset(new juce::Slider());
+        sliderFloat.get()->setRange(from, to, 0.01);
+        sliderFloat.get()->setValue(val);
+//        textEditor.setTextBoxStyle(juce::Slider::TextBoxLeft, false, 80, 20);
+        sliderFloat.get()->setSliderStyle(juce::Slider::LinearBar);
+        sliderFloat.get()->addListener(this);
+        sliderFloat.get()->setNumDecimalPlacesToDisplay(2);
+
         this->from = from;
         this->to = to;
         this->value = val;
@@ -89,10 +99,17 @@ public:
             addAndMakeVisible(menuList.get());
             // do not ask me if you did not even add one option, dude.
             menuList.get()->setSelectedItemIndex(1, juce::sendNotificationSync);
-        } else if (textEditor.get()) {
-            textEditor.get()->setBounds(getLocalBounds().reduced(4));
-            addAndMakeVisible(textEditor.get());
-            textEditor.get()->setText(juce::String(value));
+        } else if (sliderFloat.get()) {
+            sliderFloat.get()->setBounds(getLocalBounds().reduced(4));
+            addAndMakeVisible(sliderFloat.get());
+            sliderFloat.get()->setValue(value);
+        }
+    }
+
+    void sliderValueChanged(juce::Slider* slider) override {
+        if (sliderFloat.get() == slider) {
+            float value = sliderFloat.get()->getValue();
+            slider->setValue(value, juce::NotificationType::dontSendNotification);
         }
     }
 
@@ -100,8 +117,6 @@ public:
     void lock() { mutex.lock(); }
 
     void unlock() { mutex.unlock(); }
-
-
 
     void paint(juce::Graphics& g) override {}
     void resized() override {}
@@ -127,7 +142,7 @@ private:
     // the resolution of changing will be of the buffer size, but connecting to an external node or an UI item will
     // give a smooth change in the controls - this is how it is designed to work, NOT a BUG.
     // value is always floating.
-    std::unique_ptr<juce::TextEditor> textEditor;
+    std::unique_ptr<juce::Slider> sliderFloat;
     float from, to, value;
 
 

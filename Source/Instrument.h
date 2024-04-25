@@ -19,6 +19,8 @@
 #include "GraphNodes/Collection.h"
 #include "MyDataStructures.h"
 
+#include<climits>
+
 
 /*
     Contains all the functions related to Instrument.
@@ -95,6 +97,7 @@ public:
     InputMasterGraphNode* InputNode;
     OutputMasterGraphNode* OutputNode;
 
+
     // returns component at the position in the Graph Page
     Socket* getComponentInGraphPage(juce::Point<float> p) {
         return dynamic_cast<Socket*>(graphPage.get()->getComponentAt(p));
@@ -139,26 +142,13 @@ public:
     void connectionAdded(Connection* newConnection) {
         GraphPage* casted = (GraphPage*)(graphPage.get());
         casted->connectionAdded(newConnection);
-        //ConfigurationChanged();
+        ConfigurationChanged();
     }
 
     void connectionRemoved(Connection* connectionObjPointer) {
         GraphPage* casted = (GraphPage*)(graphPage.get());
         casted->connectionRemoved(connectionObjPointer);
-        //ConfigurationChanged();
-    }
-
-
-    // starts playing audio from the configuration.
-    void startAudioProcessingGraph() {
-        if (auto* audioDevice = deviceManager.get()->getCurrentAudioDevice()) {
-            double sampleRate = audioDevice->getCurrentSampleRate();
-            int maximumExpectedSamplesPerBlock = audioDevice->getCurrentBufferSizeSamples();
-            audioGraph.prepareToPlay(sampleRate, maximumExpectedSamplesPerBlock);
-        } else {
-            // there is no current audio device
-            std::cout << "No current audio device available!" << "\n";
-        }
+        ConfigurationChanged();
     }
 
     // Called when there is a new connection.
@@ -270,16 +260,24 @@ public:
         // used to draw and update positions.
         std::unordered_map<Connection*, juce::Line<int>> ConnectionToLineMap;
 
+        // dirty region that expands or contracts based on the present lines,
+        // because drawing everything is way too expensive.
+        juce::Rectangle<int> repaintArea;
+
+        // called when a new node is added or removed, updates the repaintArea rectangle.
+        void updateRepaintArea();
+
+        // updates the repaint area based only for one connection
+        void updateRepaintArea(Connection* connection);
+
+        // for instances.
+        void updateRepaintArea(juce::Line<int>& l);
 
 
         // Will be used as the callback function from the `showMenuAsync` method for the popup menu.
         // that shows what nodes can be added.
         static void AddNodeCallback(int result, GraphPage* graphPageComponent);
 
-        // called from the
-//        void connectTheseSockets(Socket* node1, Socket* node2) {
-//            std::cout << "Connect : " << node1 << " with : " << node2 << "\n";
-//        }
 
         juce::Component* getBackground() {
             return componentBackground.get();
@@ -291,6 +289,8 @@ public:
         public:
 
             BackGroundGraphPageCanvas();
+            ~BackGroundGraphPageCanvas() {}
+
 
             void paint(juce::Graphics& g) override ;
             void resized() override;
@@ -338,7 +338,9 @@ public:
     class AudioMIDISettingClass : public juce::DocumentWindow {
     public:
         AudioMIDISettingClass(juce::AudioDeviceManager&);
-        ~AudioMIDISettingClass() override {}
+        ~AudioMIDISettingClass() override {
+            settingPage.get()->setLookAndFeel(nullptr);
+        }
 
         void closeButtonPressed() override {
             Instrument::getInstance()->refreshMIDIDevices();
@@ -368,7 +370,6 @@ public:
         return this->playPage.get();
     }
 
-
 private:
     bool isCanvasPresent;
     std::unique_ptr<juce::Component> Canvas;
@@ -393,7 +394,7 @@ private:
     std::atomic<bool> breakProcessing;
 
     // The priority queue we are going to use.(impl in MyDataStructures.h)
-    PriorityQueue* nodeProcessingQueue;
+    PriorityQueue nodeProcessingQueue;
 
     juce::OwnedArray<juce::MidiInput> midiInputs;
     std::unique_ptr<juce::DocumentWindow> AudioMIDISettingsJUCE;
@@ -402,6 +403,9 @@ private:
     std::unique_ptr<juce::AudioDeviceManager> deviceManager;
 
     bool TreeFeasible = false;
+
+    // if the instrument class is being destructed.
+    bool isBeingDestructed = false;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Instrument)

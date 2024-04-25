@@ -16,7 +16,7 @@
 // cool aqua blue : 0xFF6DF1CC
 // cool peach : E3FFC3
 
-#define COLOUR 0xFFF1EAFF
+#define COLOUR 0xFFE3E1D9
 
 static auto textColourID = juce::Colours::darkgrey;
 static auto textSelectedColourID = juce::Colours::black;
@@ -45,9 +45,6 @@ static auto WheelBackgroundID = juce::Colour(0x88FFD5E5).withBrightness(0.75f); 
 static auto WheelSliderBackgroundID = juce::Colours::grey; // F2910A
 static auto WheelSliderLineBackgroundID = juce::Colours::white;
 
-static auto GraphNodeBackgroundColourID = juce::Colours::grey;
-static auto GraphNodeHeadingTextID = juce::Colours::white;
-static auto GraphNodeHeadingColourID = juce::Colours::darkgrey;
 
 static auto GraphNodeMIDIColourID = juce::Colour(COLOUR).withBrightness(0.93f);  // F2910A
 static auto GraphNodeAudioBufferIntColourID = juce::Colour(COLOUR).withBrightness(0.91f);  // F2910A
@@ -67,7 +64,15 @@ static auto VolumeSliderID = juce::Colours::darkgrey;
 static auto VolumeLevelID = juce::Colours::white;
 static auto VolumeSliderSlitID = juce::Colours::white;
 
+// node colours.
+static auto GraphNodeBackgroundColourID = juce::Colour(COLOUR);
+static auto GraphNodeHeadingTextID = juce::Colours::lightgrey;
+static auto GraphNodeHeadingColourID = juce::Colour(COLOUR).withBrightness(0.6);
 
+static auto GraphSliderBackgroundID = juce::Colour(COLOUR);
+static auto GraphSliderThumbID = juce::Colours::grey;
+static auto GraphSliderOutlineID = juce::Colours::darkgrey;
+static auto GraphSliderTextID = juce::Colours::black;
 
 /*
 // E1F0DA e1f0da

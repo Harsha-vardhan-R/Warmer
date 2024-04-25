@@ -24,7 +24,7 @@ Socket::Socket(juce::String name, direction dir, bool isMust) {
 
 void Socket::paint(juce::Graphics &g)  {
     // Small square
-    g.setColour(juce::Colours::black);
+    g.setColour(juce::Colours::darkgrey);
 
     // one for input socket and other for output socket check.
     if (TypesAccepted.size() || type != SocketDataType::NULLType) {
@@ -49,9 +49,9 @@ juce::Point<int> Socket::getPivotPos() {
     TopLeft += getPosition();
 
     if (dir == direction::IN) {
-        TopLeft += juce::Point(0, 7);
+        TopLeft += juce::Point(0, 8);
     } else {
-        TopLeft += juce::Point(getWidth()-2, 7);
+        TopLeft += juce::Point(getWidth(), 8);
     }
 
     return TopLeft;
@@ -75,7 +75,7 @@ void Socket::update() {
 }
 
 void *Socket::getPrevNode() {
-    return nullptr;
+    return (void*)(from->getParentComponent());
 }
 
 void Socket::addMenuParameterControl() {
@@ -101,7 +101,7 @@ void Socket::setOutputType(SocketDataType a) {
 
 void Socket::repaintConnection() {
 
-    if (connectionPointer) {
+    if (isConnected) {
         // if the connectionPointer is not NULL,
         // fro and to should NOT be NULL.
         if (dir == direction::IN) {
@@ -127,11 +127,18 @@ void Socket::deleteConnections() {
     if (dir == direction::IN) {
         deleteSocketCallBack(1, this);
     } else {
-        for (auto it = to.begin(); it != to.end(); ++it) {
-            Socket* casted = dynamic_cast<Socket*>(*it);
-            if (casted) deleteSocketCallBack(1, casted);
-            else std::cout << "Gotcha" << "\n";
+//        repaintConnection();
+        // this is because we are interfering with this to from another socket,
+        // we NEED to do this.
+        std::queue<Socket*> tempStore;
+        for (Socket* it : to) { tempStore.push(it); }
+
+        while (!tempStore.empty()) {
+            Socket* it = tempStore.front(); tempStore.pop();
+            if (it) deleteSocketCallBack(1, it);
         }
+
+        to.clear();
     }
 }
 
@@ -140,15 +147,14 @@ void Socket::deleteSocketCallBack(int result, Socket* thisInstance) {
     if (thisInstance == nullptr || thisInstance->dir == direction::OUT) return;
 
     if (result && thisInstance->isConnected) {// delete has the result 1, refactor if more options.
-        std::cout << "called : " << thisInstance << "\n";
         thisInstance->isConnected = false;
         thisInstance->from = nullptr;
         Connection* casted = (Connection*)thisInstance->connectionPointer;
         if (casted) {
             ((Socket*)casted->getFromSocket())->deletedThisConnectionFrom(thisInstance);
+            Instrument::getInstance()->connectionRemoved(thisInstance->connectionPointer);
+            delete thisInstance->connectionPointer;
         }
-        Instrument::getInstance()->connectionRemoved(thisInstance->connectionPointer);
-//        if (thisInstance->connectionPointer) delete thisInstance->connectionPointer;
         thisInstance->connectionPointer = nullptr;
         thisInstance->to.clear();
     }
@@ -157,11 +163,12 @@ void Socket::deleteSocketCallBack(int result, Socket* thisInstance) {
 
 void Socket::deletedThisConnectionFrom(Socket *thatSocket) {
     if (dir == direction::IN) return; // this should not happen.
-
     to.erase(thatSocket);
     numberOfSocketsConnectedTo--;
-    isConnected = false;
-    if (to.empty()) from = nullptr;
+    if (to.empty()) {
+        from = nullptr;
+        isConnected = false;
+    }
     connectionPointer = nullptr;
 }
 
@@ -187,7 +194,7 @@ void Socket::mouseDrag(const juce::MouseEvent &event) {
     if (dir == direction::IN) return;
 
     // anything except the AudioBuffer output can be connected to multiple input sockets.
-    if (type == SocketDataType::AudioBufferFloat && isConnected) return;
+//    if (type == SocketDataType::AudioBufferFloat && isConnected) return;
 
     // create a new connection if it was null before.
     if (newConnection) {// getRelToGlobal(event.getPosition()).toFloat()
@@ -208,6 +215,7 @@ void Socket::connected(Socket *otherPointer, Connection* connection) {
     // (it can be multiple to's some time)
     if (dir == direction::IN) {
         from = otherPointer;
+        to.clear();
         to.insert(this);
     } else {
         from = this;
@@ -215,10 +223,13 @@ void Socket::connected(Socket *otherPointer, Connection* connection) {
     }
 
     numberOfSocketsConnectedTo++;
-
+    Instrument::getInstance()->connectionAdded(connection);
+    repaintConnection();
 }
 
-Socket::~Socket() {}
+Socket::~Socket() {
+    deleteConnections();
+}
 
 void Socket::mouseUp(const juce::MouseEvent &event) {
     // out to out is not accepted.
@@ -240,15 +251,11 @@ void Socket::mouseUp(const juce::MouseEvent &event) {
                                          (void*)this,
                                          (void*)ComponentUnderMouse->getParentComponent(),
                                          (void*)ComponentUnderMouse);
-        Instrument::getInstance()->connectionAdded(newConnection);
 
         // This with that, that with this.
         connected(ComponentUnderMouse, newConnection);
         ComponentUnderMouse->connected(this, newConnection);
-
         newConnection = nullptr;
-
-        repaintConnection();
     } else { // if the dynamic cast returned a nullptr.
         // if anything of it did not work out, delete the node and act line nothing ever happened.
         Instrument::getInstance()->connectionInitFail();
