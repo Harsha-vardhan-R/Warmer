@@ -217,13 +217,15 @@ void Socket::connected(Socket *otherPointer, Connection* connection) {
         from = otherPointer;
         to.clear();
         to.insert(this);
+
+        // this is the last function call that happens after a connection is confirmed.
+        Instrument::getInstance()->connectionAdded(connection);
     } else {
         from = this;
         to.insert(otherPointer);
     }
 
     numberOfSocketsConnectedTo++;
-    Instrument::getInstance()->connectionAdded(connection);
     repaintConnection();
 }
 
@@ -235,8 +237,7 @@ void Socket::mouseUp(const juce::MouseEvent &event) {
     // out to out is not accepted.
     if (!newConnection) return;
 
-    Socket* ComponentUnderMouse = Instrument::getInstance()->
-            getComponentInGraphPage(getRelToGlobal(event.getPosition()));
+    Socket* ComponentUnderMouse = Instrument::getInstance()->getComponentInGraphPage(getRelToGlobal(event.getPosition()));
 
     // at this point the component we got is an Input Socket,
     // now we need to check if it accepts the type given out by the
@@ -247,14 +248,15 @@ void Socket::mouseUp(const juce::MouseEvent &event) {
         ComponentUnderMouse->dir == direction::IN &&
         ComponentUnderMouse->accepts(type) &&
         !ComponentUnderMouse->isConnected) {
-        newConnection->confirmConnection((void*)getParentComponent(),
-                                         (void*)this,
-                                         (void*)ComponentUnderMouse->getParentComponent(),
-                                         (void*)ComponentUnderMouse);
+        newConnection->confirmConnection(static_cast<void*>(getParentComponent()),
+                                         static_cast<void*>(this),
+                                         static_cast<void*>(ComponentUnderMouse->getParentComponent()),
+                                         static_cast<void*>(ComponentUnderMouse));
 
         // This with that, that with this.
         connected(ComponentUnderMouse, newConnection);
         ComponentUnderMouse->connected(this, newConnection);
+
         newConnection = nullptr;
     } else { // if the dynamic cast returned a nullptr.
         // if anything of it did not work out, delete the node and act line nothing ever happened.

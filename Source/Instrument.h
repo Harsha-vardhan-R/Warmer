@@ -12,14 +12,16 @@
 
 #include <thread>
 #include <atomic>
+#include <climits>
 
 #include <JuceHeader.h>
+
 #include "Modes.h"
 #include "Piano.h"
 #include "GraphNodes/Collection.h"
 #include "MyDataStructures.h"
 
-#include<climits>
+
 
 
 /*
@@ -82,6 +84,12 @@ public:
     void setMode(Mode mode);
 
 
+    // function called when setting the volume.
+    void setAudioDeviceVolume(float val) {
+        nodeProcessingQueue.setVolumeLevel(val);
+    }
+
+
     /////##################################
     /// DATA STRUCTURES
     /////##################################
@@ -97,7 +105,6 @@ public:
     InputMasterGraphNode* InputNode;
     OutputMasterGraphNode* OutputNode;
 
-
     // returns component at the position in the Graph Page
     Socket* getComponentInGraphPage(juce::Point<float> p) {
         return dynamic_cast<Socket*>(graphPage.get()->getComponentAt(p));
@@ -109,6 +116,7 @@ public:
         GraphPage* casted = (GraphPage*)(graphPage.get());
         casted->AllNodes.insert(newNode);
         casted->addAndMakeVisible(newNode);
+		nodeProcessingQueue.push(newNode);
     }
 
     // Called from a GraphNode instance when it is deleted.
@@ -116,6 +124,7 @@ public:
         GraphPage* casted = (GraphPage*)(graphPage.get());
         // related connections will be erased while destructing the sockets.
         casted->AllNodes.erase(nodePointer);
+		nodeProcessingQueue.remove(nodePointer);
         delete nodePointer;
     }
 
@@ -161,7 +170,7 @@ public:
      *
      *      Returns true if the tree is valid and the queue is built.
      */
-    bool BuildTreeAndMakeQueue();
+    bool updateTreeParams();
 
     /*
      * Called when we completed building the tree and made the queue.
@@ -315,6 +324,8 @@ public:
         std::unique_ptr<juce::LookAndFeel_V4> styles;
         juce::Point<int> lastMouseDownPosition;
 
+        Instrument* instrumentClassPointer;
+
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GraphPage)
     };
 
@@ -394,6 +405,7 @@ private:
     std::atomic<bool> breakProcessing;
 
     // The priority queue we are going to use.(impl in MyDataStructures.h)
+	// this will always be in the first place of the topo sorted node list.
     PriorityQueue nodeProcessingQueue;
 
     juce::OwnedArray<juce::MidiInput> midiInputs;

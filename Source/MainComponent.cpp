@@ -24,9 +24,7 @@ MainComponent::MainComponent() {
 
 }
 
-MainComponent::~MainComponent() {
-
-}
+MainComponent::~MainComponent() {}
 
 void MainComponent::paint (juce::Graphics& g) {}
 

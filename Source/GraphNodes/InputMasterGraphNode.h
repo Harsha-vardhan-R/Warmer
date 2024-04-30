@@ -35,7 +35,7 @@ public:
 
     void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) override {}
 
-    void prepareToPlay(double sampleRate, int estimatedSamplesPerBlock) override {}
+
     void releaseResources() override {}
     void reset() override {}
 

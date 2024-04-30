@@ -28,11 +28,13 @@
 
 // invisible container that contains other controls.
 class ParameterCtrl : public juce::Component,
-                      private juce::Slider::Listener {
+                      private juce::Slider::Listener,
+                      private juce::ComboBox::Listener {
 public:
 
     ParameterCtrl() {
         setVisible(false);
+        valueAtomic.store(0.0);
     }
 
     ~ParameterCtrl() override {};
@@ -43,9 +45,7 @@ public:
     // and because floating points can have precision errors better to compare with a greater than or less than
     // rather than equals to if you mean to return a integer.
     float getValue() {
-        if (sliderFloat.get()) return sliderFloat.get()->getValue();
-        else if (menuList.get()) return (float)menuList.get()->getSelectedId();
-        return -1.0;
+        return valueAtomic.load();
     };
 
     int getType() {
@@ -59,7 +59,12 @@ public:
         }
 
         menuList.reset(new juce::ComboBox);
+        menuList.get()->addListener(this);
         parameterType = 1;
+    }
+
+    void comboBoxChanged (juce::ComboBox* comboBoxThatHasChanged) override {
+        valueAtomic.store(comboBoxThatHasChanged->getSelectedId());
     }
 
     void addItemToList(juce::String name) {
@@ -107,10 +112,8 @@ public:
     }
 
     void sliderValueChanged(juce::Slider* slider) override {
-        if (sliderFloat.get() == slider) {
-            float value = sliderFloat.get()->getValue();
-            slider->setValue(value, juce::NotificationType::dontSendNotification);
-        }
+        float value = sliderFloat.get()->getValue();
+        valueAtomic.store(value);
     }
 
     // lock and unlock while reading the values.
@@ -123,6 +126,9 @@ public:
 
 
 private:
+
+    // set from the callbacks and read from get value.
+    std::atomic<float> valueAtomic;
     // This is to lock this when others are reading or setting it.
     std::mutex mutex;
 

@@ -32,10 +32,10 @@ public:
 
     ~OutputMasterGraphNode() {};
 
-    bool isConnected() { return (InputSockets[0]->isThisConnected()); }
+    bool allGood() { return (InputSockets[0]->isThisConnected()); }
 
     void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) override {}
-    void prepareToPlay(double sampleRate, int estimatedSamplesPerBlock) override {}
+
     void releaseResources() override {}
     void reset() override {}
 

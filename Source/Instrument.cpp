@@ -50,6 +50,8 @@ Instrument::Instrument(int tabWidth) {
     InputNode = new InputMasterGraphNode(100, 300);
     OutputNode = new OutputMasterGraphNode(1300, 300);
 
+    nodeProcessingQueue.setInputNode(InputNode);
+
     editPage.reset(new Instrument::EditPage());
     graphPage.reset(new Instrument::GraphPage());
     playPage.reset(new Instrument::PlayPage());
@@ -68,7 +70,7 @@ Instrument::Instrument(int tabWidth) {
     // Setting up for the MIDI listening.
     auto midiDevicesHere = juce::MidiInput::getAvailableDevices();
 
-    nodeProcessingQueue.setInputNode(InputNode);
+    // nodeProcessingQueue.setInputNode(InputNode);
 
     // Create and add MidiInput objects to the owned array
     for (const auto& device : midiDevicesHere) {
@@ -89,7 +91,8 @@ Instrument::Instrument(int tabWidth) {
     breakProcessing.store(false);
 
     // adding the node processingQ as a call back.
-//    deviceManager.get()->addAudioCallback(&nodeProcessingQueue);
+    deviceManager.get()->addAudioCallback(&nodeProcessingQueue);
+
 
     resized();
 }
@@ -111,7 +114,7 @@ void Instrument::refreshMIDIDevices() {
             midiInputs.add(std::move(midiInput));
         }
     }
-
+	
     std::cout << "Listening From : " << "\n";
     for (auto i : midiInputs) {
         std::cout << i->getName() << "\n";
@@ -123,6 +126,8 @@ void Instrument::listenFromAllMIDIInputs() {
     while (midiInputs.size() != 0) {
         midiInputs.remove(0);
     }
+
+
 
     // Setting up for the MIDI listening.
     auto midiDevicesHere = juce::MidiInput::getAvailableDevices();
@@ -140,6 +145,8 @@ void Instrument::listenFromAllMIDIInputs() {
     for (auto i : midiInputs) {
         std::cout << i->getName() << "\n";
     }
+
+    
 }
 
 // TODO : ask to save changes, before replacing.
@@ -347,8 +354,12 @@ Instrument::GraphPage::GraphPage() {
 
     componentBackground.get()->addAndMakeVisible(this);
 
+    instrumentClassPointer = Instrument::getInstance();
+
+    instrumentClassPointer->nodeProcessingQueue.push(static_cast<GraphNode*>(instrumentClassPointer->OutputNode));
+
 //    AllNodes.insert((GraphNode*)Instrument::instancePtr->InputNode);
-    AllNodes.insert((GraphNode*)Instrument::instancePtr->OutputNode);
+    AllNodes.insert(static_cast<GraphNode*>(instrumentClassPointer->OutputNode));
 
     // Adding the initial nodes.
     addAndMakeVisible(Instrument::instancePtr->InputNode);
@@ -425,6 +436,11 @@ void Instrument::GraphPage::connectionInitFail() {
 
 void Instrument::GraphPage::connectionRemoved(Connection *connectionPointer) {
     // TODO : need to find a way to adjust the bounding here.
+
+    GraphNode* f = static_cast<GraphNode*>(connectionPointer->fromNode);
+    GraphNode* t = static_cast<GraphNode*>(connectionPointer->toNode);
+    instrumentClassPointer->nodeProcessingQueue.connectionRemoved(f, t);
+
     AllConnections.erase(connectionPointer);
     ConnectionToLineMap.erase(connectionPointer);
     updateRepaintArea();
@@ -515,6 +531,14 @@ void Instrument::GraphPage::connectionAdded(Connection *newConnection) {
     ConnectionToLineMap[newConnection] = temp;
     updateRepaintArea();
 
+    GraphNode* f = static_cast<GraphNode*>(newConnection->fromNode);
+    GraphNode* t = static_cast<GraphNode*>(newConnection->toNode);
+
+//    for (auto i : AllNodes) std::cout << "actual" << i << "\n";
+//    std::cout << f << " " << t << "\n";
+
+	instrumentClassPointer->nodeProcessingQueue.newConnection(f, t);
+
     repaint();
 }
 
@@ -602,7 +626,6 @@ void Instrument::handleIncomingMidiMessage(juce::MidiInput* source, const juce::
 }
 
 
-
 Instrument::AudioMIDISettingClass::AudioMIDISettingClass(juce::AudioDeviceManager& deviceManager) : DocumentWindow("Audio/MIDI Settings",
                                                                             ButtonOutlineColourID,
                                                                             DocumentWindow::closeButton) {
@@ -629,39 +652,16 @@ Instrument::AudioMIDISettingClass::AudioMIDISettingClass(juce::AudioDeviceManage
 
 void Instrument::ConfigurationChanged() {
 
-    // this is because while destructing nodes,
-    // it destructs the connections, which in turn trigger the connectionRemoved,
-    // which calls configuration changed.
-    if (isBeingDestructed) return;
 
-    // if there is already a thread running `SynthesizeAudioForConfig` this should stop it.
-    breakProcessing.store(true);
-
-    // we cannot thread this because if a node is deleted WHILE, this is running,
-    // the program most probably crashes.
-    TreeFeasible = BuildTreeAndMakeQueue();
-    std::cout << "from tree builder " << TreeFeasible << "\n";
-
-//    if (this->TreeFeasible) {// if the tree is successfully built, start synthesizing with an individual thread.
-//        breakProcessing.store(false);
-//        std::thread spawnThreadAudio([this]() { SynthesizeAudioForConfig(); });
-//    }
 
 }
 
 
-bool Instrument::BuildTreeAndMakeQueue() {
+bool Instrument::updateTreeParams() {
 
     // everytime this function is called we delete the previous
     // priority queue.
     nodeProcessingQueue.flush();
-
-    // if there is no node connected to the output node,
-    // do not do anything.
-    // This is not true for the input node.
-    if (!OutputNode->isConnected()) {
-        return false;
-    }
 
     double bufferSize, bufferRate;
 
@@ -676,24 +676,6 @@ bool Instrument::BuildTreeAndMakeQueue() {
     std::cout << bufferRate << " " << bufferSize << "\n";
 
     nodeProcessingQueue.setBufferSizeAndRate(bufferRate, bufferSize);
-
-    std::cout << "all nodes size : " << (((GraphPage*)graphPage.get())->AllNodes).size() << "\n";
-
-    for (juce::AudioProcessor* i : ((GraphPage*)graphPage.get())->AllNodes) {
-        nodeProcessingQueue.push(i);
-    }
-
-    nodeProcessingQueue.prepare();
-
-    TreeFeasible = nodeProcessingQueue.sort();
-
-    if (!TreeFeasible) return false;
-
-    std::vector<juce::AudioProcessor*> lis = nodeProcessingQueue.getTopoSortedNodes();
-
-    std::cout << "List of nodes : " << "\n";
-
-    std::cout << "length of sorted list : " << lis.size() << "\n";
 
     return true;
 }

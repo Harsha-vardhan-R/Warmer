@@ -23,15 +23,11 @@ std::vector<GraphNode*> GraphNode::getDependencies() {
 }
 
 
-std::set<juce::AudioProcessor*> GraphNode::getDependents() {
-    std::set<juce::AudioProcessor*> output;
+std::set<GraphNode*> GraphNode::getDependents() {
+    std::set<GraphNode*> output;
 
     for (auto i : OutputSockets) {
-        for (Socket* j : i->to) {
-            juce::AudioProcessor* socketsParent = dynamic_cast<juce::AudioProcessor*>(j->getParentComponent());
-            if (socketsParent) output.insert(socketsParent);
-            else std::cout << "This to pointer is not a node : " << this->getName();
-        }
+        for (Socket* j : i->to) output.insert(static_cast<GraphNode*>(j->getParentComponent()));
     }
 
     return output;

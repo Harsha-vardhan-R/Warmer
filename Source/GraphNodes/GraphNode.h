@@ -123,6 +123,9 @@ public :
      */
     std::vector<GraphNode*> getDependencies();
 
+    // returns a vector of values that contains all the nodes this is output to.
+    std::set<GraphNode*> getDependents();
+
     /*
         Does this node need an Audio buffer.
         This will be set to true in the constructor of the respective node.
@@ -151,7 +154,7 @@ public :
     GraphNode(juce::String name, int pos_x, int pos_y);
 
     // returns true if all the Input Sockets that are `isMust` are connected.
-    bool allGood();
+    virtual bool allGood();
 
     static void deleteNodeCallback(int result, GraphNode* graphNodeInstance);
 
@@ -178,8 +181,6 @@ public :
 
     void resized() override;
 
-    // returns a vector of values that contains all the nodes this is output to.
-    std::set<juce::AudioProcessor*> getDependents();
 
 
     ~GraphNode() override;
@@ -192,9 +193,21 @@ public :
 //    void releaseResources() override {}
 //    void reset() override {}
 
+    double sampleRate, int estimatedSamplesPerBlock;
+
+
+    // called after the prepareToPlay is called,
+    // use it if you want to configure more things after
+    // setting the bufferSize and rate.
+    virtual void prepare() {}
 
     // Pure virtual functions from the juce::AudioProcessor.
-    virtual void prepareToPlay(double sampleRate, int estimatedSamplesPerBlock) = 0;
+    void prepareToPlay(double sampleRate, int estimatedSamplesPerBlock) {
+        this->sampleRate = sampleRate;
+        this->estimatedSamplesPerBlock = estimatedSamplesPerBlock;
+        prepare();
+    }
+
     virtual void releaseResources() = 0;
     virtual void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) = 0;
     virtual void reset() = 0;
@@ -237,6 +250,13 @@ public :
     // +++++++++++++++++++++++
 
     bool canBeDeleted;
+
+
+
+	// select process processBlock function callback based on the current configuration,
+	// this is called from user defined places, used because we update the topo sorted
+	// in real time, so we will be calling this multiple times.
+	virtual void setProcessBlockCallback() {}
 
 private:
 

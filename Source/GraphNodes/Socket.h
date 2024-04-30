@@ -31,6 +31,13 @@ public:
 
     juce::String name;
 
+    // gets the value from the parameter ctrl,
+    // or if connected from the previous socket.
+    // not to be called on output sockets.
+    float getValue() {
+        return parameterController.getValue();
+    }
+
     // isMust must be connected or else the queue will not be built.
     // for example an empty input for audio signal will stop the whole process.
     Socket( juce::String name,

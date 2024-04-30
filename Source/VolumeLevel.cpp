@@ -10,37 +10,42 @@
 
 #include "VolumeLevel.h"
 #include "ColourPalette.h"
+#include "Instrument.h"
 
 
 
 VolumeLevel::VolumeLevel() {
     VolumeLevel::instance = this;
-    level = 0.6;
 
-    resized();
+    volumeSlider.setRange(0.0, 1.1224, 0.001);
+    volumeSlider.setSliderStyle(juce::Slider::LinearBar);
+    // Hide the text box
+    volumeSlider.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 0, 0);
+    addAndMakeVisible(&volumeSlider);
+
+    volumeSlider.setColour(juce::Slider::textBoxTextColourId, juce::Colours::darkmagenta);
+    volumeSlider.setColour(juce::Slider::thumbColourId, juce::Colours::lightcoral);
+    volumeSlider.setColour(juce::Slider::trackColourId, juce::Colours::lightgrey);
+
+    volumeSlider.textFromValueFunction = [](double value) {
+        float dbValue = juce::Decibels::gainToDecibels(value) * 12.0f; // Adjust for decibel range
+        return "Gain : " + juce::String(dbValue, 2) + " dB";
+    };
+
+    // Add listener to handle value changes
+    volumeSlider.addListener(this);
+    volumeSlider.setValue(1.0);
+
 }
 
-void VolumeLevel::paint(juce::Graphics& g) {
-    g.setColour(VolumeLevelBackgroundID);
-    juce::Rectangle<float> levelArea(0, 12, getWidth(), getHeight()-24);
-    g.fillRect(levelArea);
-    // Draw the present level here.
-    // slider.
-    int center = level*0.99*getWidth();
-
-    // draw the slider with size 4 px width.
-    g.setColour(VolumeSliderID);
-    g.fillRoundedRectangle(center-3, 8, 7, getHeight()-16, 2.0f);
-    g.setColour(VolumeSliderSlitID);
-    g.drawRect(center, 10, 1, getHeight()-20);
-
+void VolumeLevel::sliderValueChanged(juce::Slider *slider) {
+    if (slider == &volumeSlider) {
+        Instrument::getInstance()->setAudioDeviceVolume(slider->getValue());
+    }
 }
 
-void VolumeLevel::resized() {
-    //setBounds(this->offset, 0, getParentWidth()*0.1, getParentHeight());
-}
 
-void *VolumeLevel::getInstance() {
+void* VolumeLevel::getInstance() {
     if (instance != nullptr) {
         return (void*)VolumeLevel::instance;
     }
@@ -49,4 +54,11 @@ void *VolumeLevel::getInstance() {
     std::cout << "Isinstance() called before creating, in the VolumeLevel Class" << std::endl;
     h = *b;
     return nullptr;
+}
+
+void VolumeLevel::paint(juce::Graphics &g) {}
+
+void VolumeLevel::resized() {
+    volumeSlider.setBounds(getLocalBounds());
+    volumeSlider.getTextFromValue(volumeSlider.getValue());
 }
