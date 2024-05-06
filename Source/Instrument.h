@@ -164,18 +164,10 @@ public:
     void ConfigurationChanged();
 
     /*
-     * Takes in the set of all nodes :
-     *      sets their audio buffers.
-     *      pushes them to the priority queue.
-     *
-     *      Returns true if the tree is valid and the queue is built.
+     * Sets the new audio parameters like sampleSize and rate for the
+     * nodeProcessingQueue.
      */
     bool updateTreeParams();
-
-    /*
-     * Called when we completed building the tree and made the queue.
-     */
-    void SynthesizeAudioForConfig();
 
     /////##################################
 

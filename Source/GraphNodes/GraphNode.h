@@ -126,21 +126,14 @@ public :
     // returns a vector of values that contains all the nodes this is output to.
     std::set<GraphNode*> getDependents();
 
-    /*
-        Does this node need an Audio buffer.
-        This will be set to true in the constructor of the respective node.
-        set with caution as this will be used when creating the priority queue.
-    */
-    bool needsAudioBuffer;
+    // returns the Nodes that are dependent on the AudioBuffer that is written on by this node,
+    // if none exist we are going to return an empty vector.
+    std::set<GraphNode*> getAudioBufferDependencies();
 
-    /*
-        the inplace buffer this has to modify when processing.
-        nullptr if it does not need a buffer.
-    */
-    juce::AudioBuffer<float>* inplaceAudioBuffer;
 
     int zoomLevel;
     juce::OwnedArray<Socket> InputSockets;
+    // YOU CAN HAVE AT-MOST ONE SOCKET OF THE TYPE SocketDataType::AudioBufferFloat
     juce::OwnedArray<Socket> OutputSockets;
 
     // The dimensions will be decided by the number of sockets.
@@ -193,24 +186,52 @@ public :
 //    void releaseResources() override {}
 //    void reset() override {}
 
-    double sampleRate, int estimatedSamplesPerBlock;
+    // the function callback pointer that is
 
-
-    // called after the prepareToPlay is called,
-    // use it if you want to configure more things after
-    // setting the bufferSize and rate.
-    virtual void prepare() {}
+    double sampleRate;
+    int estimatedSamplesPerBlock;
 
     // Pure virtual functions from the juce::AudioProcessor.
     void prepareToPlay(double sampleRate, int estimatedSamplesPerBlock) {
         this->sampleRate = sampleRate;
         this->estimatedSamplesPerBlock = estimatedSamplesPerBlock;
-        prepare();
     }
 
+    // called while destructing the node,
+    // be very careful with shared data from the nodes.
     virtual void releaseResources() = 0;
-    virtual void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) = 0;
+
+    // this function is never used , we call the function called `processGraphNode`, to process the node.
+    void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) {}
+
+    // called after the prepareToPlay is called,
+    // use it if you want to configure more things after
+    // setting the bufferSize and rate.
+    //======
+    // this should be used to set the call-back function pointer and the respective data that is,
+    // needed for the respective callback function to work.
+    //======
+    // you basically manage the data while creating and removing a connection.
+    // This function will be called every time a connection is added or removed from
+    // any og the sockets connected to this
+    //=====
+    // the audio buffer that needs to get written will get the
     virtual void reset() = 0;
+
+
+    juce::AudioBuffer<float>* bufferToWritePointer;
+    // set false if this node does not send out an audio buffer as an output.
+    bool needAudioBuffer = true;
+
+
+    void setToWriteAudioBuffer(juce::AudioBuffer<float>* b) { bufferToWritePointer = b; }
+
+    // the master function that is called from the AudioThread fo each audio buffer,
+    // Make sure anything you access from this function is either thread synchronised,
+    // or you are 100% sure that it is not going to be accessed from any other thread.
+    //
+    // The connection has all the stuff you just need, just ask it.
+    virtual void processGraphNode() = 0;
 
     // loading and saving of presets.
     void getStateInformation(juce::MemoryBlock& destData) override;
@@ -251,12 +272,6 @@ public :
 
     bool canBeDeleted;
 
-
-
-	// select process processBlock function callback based on the current configuration,
-	// this is called from user defined places, used because we update the topo sorted
-	// in real time, so we will be calling this multiple times.
-	virtual void setProcessBlockCallback() {}
 
 private:
 

@@ -33,6 +33,21 @@ std::set<GraphNode*> GraphNode::getDependents() {
     return output;
 }
 
+std::set<GraphNode*> GraphNode::getAudioBufferDependencies() {
+    std::set<GraphNode*> output;
+
+    // we return the set of nodes connected to the first socket of
+    // the type AudioBufferFloat in OutputSockets.
+    for (Socket* i : OutputSockets) {
+        if (i->getOutputType() == SocketDataType::AudioBufferFloat) {
+            for (Socket *j: i->to) output.insert(static_cast<GraphNode*>(j->getParentComponent()));
+            break;
+        }
+    }
+
+    return output;
+}
+
 
 GraphNode::GraphNode(juce::String name, int pos_x, int pos_y) {
     setLookAndFeel(&style);
@@ -45,7 +60,7 @@ GraphNode::GraphNode(juce::String name, int pos_x, int pos_y) {
     setBounds(pos_x, pos_y, UIWidth, UIHeight);
 
     canBeDeleted = true; // for all the nodes by default, will be set to false in the input and output nodes.
-    needsAudioBuffer = true; // set to false in required nodes.
+
 
     menu.addItem(1, "Delete Node");
 

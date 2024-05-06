@@ -14,7 +14,7 @@
 class Oscillator : public GraphNode {
 public:
 
-    Oscillator(int pos_x, int pos_y) : GraphNode(juce::String("OSCILLATOR"), pos_x, pos_y) {
+    Oscillator(int pos_x, int pos_y) : GraphNode(juce::String("Oscillator"), pos_x, pos_y) {
 
         // Output wave.
         OutputSockets.add(new Socket(juce::String("Signal"), direction::OUT, true));
@@ -52,18 +52,13 @@ public:
         resized();
     }
 
-    void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) override {
-        float freq = InputSockets[1]->getValue();
-        std::cout << freq << "\n";
-    }
-
-    void prepare() override {
+    void processGraphNode() override {
 
     }
+
 
     void releaseResources() override {}
     void reset() override {}
-
 
     ~Oscillator() {};
 

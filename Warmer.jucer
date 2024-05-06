@@ -44,7 +44,7 @@
           <FILE id="WOFlmM" name="addSignal.h" compile="0" resource="0" file="Source/GraphNodes/Math/addSignal.h"/>
         </GROUP>
         <GROUP id="{1AFE2380-7FF2-7311-890A-F156092A7B12}" name="Oscillators">
-          <FILE id="a0kdVG" name="SampleSound.h" compile="0" resource="0" file="Source/GraphNodes/Oscillators/SampleSound.h"/>
+          <FILE id="holr2W" name="Noise.h" compile="0" resource="0" file="Source/GraphNodes/Noise.h"/>
         </GROUP>
         <FILE id="W6ZIlu" name="Collection.h" compile="0" resource="0" file="Source/GraphNodes/Collection.h"/>
         <FILE id="mzF0Zm" name="GraphNode.h" compile="0" resource="0" file="Source/GraphNodes/GraphNode.h"/>

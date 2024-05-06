@@ -59,13 +59,19 @@ Instrument::Instrument(int tabWidth) {
     viewport.reset(new juce::Viewport());
     GraphPage* casted = (GraphPage*)graphPage.get();
     viewport.get()->setViewedComponent(casted->getBackground(), false);
+    //viewport.get()->setScrollOnDragMode(juce::Viewport::ScrollOnDragMode::nonHover);
 
 
+    // Initiating and setting the setup for AudioDeviceSetup.
     deviceManager.reset(new juce::AudioDeviceManager());
-    deviceManager.get()->initialise(2, 2, nullptr, true);
+    deviceManager.get()->initialise(0, 2, nullptr, true);
+
 
     AudioMIDISettingsJUCE = std::make_unique<Instrument::AudioMIDISettingClass>(*deviceManager.get());
     AudioMIDISettingsJUCE.get()->closeButtonPressed();
+    // AudioDevice Setup done.
+
+
 
     // Setting up for the MIDI listening.
     auto midiDevicesHere = juce::MidiInput::getAvailableDevices();
@@ -93,6 +99,8 @@ Instrument::Instrument(int tabWidth) {
     // adding the node processingQ as a call back.
     deviceManager.get()->addAudioCallback(&nodeProcessingQueue);
 
+    // setting the buffer rate and size for the first time.
+    updateTreeParams();
 
     resized();
 }
@@ -162,13 +170,15 @@ void Instrument::Initialize() {
 }
 
 Instrument::~Instrument() {
+    nodeProcessingQueue.processingStop();
+    deviceManager.get()->removeAudioCallback(&nodeProcessingQueue);
+
     isBeingDestructed = true;
 
     nodeProcessingQueue.flush();
 
     delete InputNode;
 
-//    deviceManager.get()->removeAudioCallback(&nodeProcessingQueue);
 
 //    delete OutputNode;
 }
@@ -312,28 +322,31 @@ Instrument::GraphPage::GraphPage() {
     subMenuArray[0]->addItem(102, "Convolution");
     subMenuArray[0]->addItem(103, "Latency"); // constant lag.
     subMenuArray[0]->addItem(104, "ADSR");
+    subMenuArray[0]->addItem(105, "LFO");
 
     subMenuArray[1]->addItem(201, "Oscillator");
     subMenuArray[1]->addItem(202, "Custom Oscillator");
     subMenuArray[1]->addItem(203, "Wave-table Oscillator");
+    subMenuArray[1]->addItem(203, "Noise");
 
     subMenuArray[2]->addItem(301, "Reverb");
     subMenuArray[2]->addItem(302, "Delay");
-    subMenuArray[2]->addItem(303, "OverDrive");
+    subMenuArray[2]->addItem(303, "Distortion");
     subMenuArray[2]->addItem(304, "Saturate");
     subMenuArray[2]->addItem(305, "Equalizer");
+    subMenuArray[2]->addItem(306, "Analog-ify");
+    subMenuArray[2]->addItem(307, "Amplify");
 
     subMenuArray[3]->addItem(401, "ButterWorth");
     subMenuArray[3]->addItem(402, "Chebyshev");
     subMenuArray[3]->addItem(403, "Digital");
 
-    subMenuArray[4]->addItem(501, "Add");
+    subMenuArray[4]->addItem(501, "Add & Mul");
     subMenuArray[4]->addItem(502, "Subtract");
     subMenuArray[4]->addItem(503, "FM");
-    subMenuArray[4]->addItem(504, "AM");
-    subMenuArray[4]->addItem(505, "Mix");
-    subMenuArray[4]->addItem(506, "Clamp");
-    subMenuArray[4]->addItem(507, "Invert");
+    subMenuArray[4]->addItem(504, "Mix");
+    subMenuArray[4]->addItem(505, "Clamp");
+    subMenuArray[4]->addItem(506, "Invert");
 
     subMenuArray[5]->addItem(601, "MIDI");
     subMenuArray[5]->addItem(602, "Arpeggiator");
@@ -390,9 +403,15 @@ void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *g
 
     GraphNode* temp;
 
+    int pos_x = graphPageComponent->lastMouseDownPosition.getX();
+    int pos_y = graphPageComponent->lastMouseDownPosition.getY();
+
     if (result == 201) {
-        temp = new Oscillator(graphPageComponent->lastMouseDownPosition.getX(),
-                              graphPageComponent->lastMouseDownPosition.getY());
+        temp = new Oscillator(pos_x, pos_y);
+    } else if (result == 203) {
+        temp = new Noise(pos_x, pos_y);
+    } else if (result == 0) {
+        /* DO NOTHING */
     } else {
         std::cout << "Returned option from Graph page menu is not handled in the AddNodeCallBack, Option : " << result
                   << "\n";
@@ -439,7 +458,8 @@ void Instrument::GraphPage::connectionRemoved(Connection *connectionPointer) {
 
     GraphNode* f = static_cast<GraphNode*>(connectionPointer->fromNode);
     GraphNode* t = static_cast<GraphNode*>(connectionPointer->toNode);
-    instrumentClassPointer->nodeProcessingQueue.connectionRemoved(f, t);
+
+    if (!instrumentClassPointer->isBeingDestructed) instrumentClassPointer->nodeProcessingQueue.connectionRemoved(f, t);
 
     AllConnections.erase(connectionPointer);
     ConnectionToLineMap.erase(connectionPointer);
@@ -652,8 +672,6 @@ Instrument::AudioMIDISettingClass::AudioMIDISettingClass(juce::AudioDeviceManage
 
 void Instrument::ConfigurationChanged() {
 
-
-
 }
 
 
@@ -680,9 +698,3 @@ bool Instrument::updateTreeParams() {
     return true;
 }
 
-
-void Instrument::SynthesizeAudioForConfig() {
-
-
-
-}

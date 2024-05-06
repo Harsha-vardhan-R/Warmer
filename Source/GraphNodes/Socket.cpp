@@ -99,6 +99,10 @@ void Socket::setOutputType(SocketDataType a) {
     type = a;
 }
 
+SocketDataType Socket::getOutputType() {
+    return type;
+}
+
 void Socket::repaintConnection() {
 
     if (isConnected) {
@@ -156,6 +160,7 @@ void Socket::deleteSocketCallBack(int result, Socket* thisInstance) {
             delete thisInstance->connectionPointer;
         }
         thisInstance->connectionPointer = nullptr;
+        thisInstance->addAndMakeVisible(thisInstance->parameterController);
         thisInstance->to.clear();
     }
 
@@ -194,13 +199,13 @@ void Socket::mouseDrag(const juce::MouseEvent &event) {
     if (dir == direction::IN) return;
 
     // anything except the AudioBuffer output can be connected to multiple input sockets.
-//    if (type == SocketDataType::AudioBufferFloat && isConnected) return;
+    // if (type == SocketDataType::AudioBufferFloat && isConnected) return;
 
     // create a new connection if it was null before.
     if (newConnection) {// getRelToGlobal(event.getPosition()).toFloat()
         juce::Line<int> temp(this->getPivotPos(), getRelToGlobal(event.getPosition()).toInt());
         Instrument::getInstance()->connectionInst(newConnection, temp);
-//        print_Line(temp);
+    // print_Line(temp);
     } else {
         newConnection = new Connection();
     }
@@ -212,22 +217,62 @@ void Socket::connected(Socket *otherPointer, Connection* connection) {
     connectionPointer = connection;
 
     // nothing to set for output node here.
-    // (it can be multiple to's some time)
+    // (it can be multiple to`s some time)
     if (dir == direction::IN) {
         from = otherPointer;
         to.clear();
         to.insert(this);
+        removeChildComponent(&parameterController);
 
-        // this is the last function call that happens after a connection is confirmed.
+        // this is the last function call that happens after a connection is confirmed in this class.
         Instrument::getInstance()->connectionAdded(connection);
     } else {
         from = this;
         to.insert(otherPointer);
+//        connection->setConnectionParams(type, 0, 0);
     }
 
     numberOfSocketsConnectedTo++;
     repaintConnection();
 }
+
+
+
+//''''''''''''
+// API API API API API API API : PAIN-KILLERS
+float Socket::getValue() {
+    // if it is connected we get the value from the previous node,
+    // else we just return what the value in parameter control is.
+    if (connectionPointer) return connectionPointer->getFloatValue();
+    else return parameterController.getValue();
+}
+
+juce::AudioBuffer<float> *Socket::getBufferPointer() {
+    if (connectionPointer) return connectionPointer->getBufferPointer();
+    return nullptr; // this is left for debugging, normally you should ensure
+    // not to have this function called in the callback in the templated function
+    // for the particular case called in the `processGraphNode`.
+}
+
+juce::MidiBuffer *Socket::getMidiMessage() {
+    if (connectionPointer) return connectionPointer->midiMessagePointer;
+    return nullptr;
+}
+
+
+void Socket::setFloatValue(float f) {
+    for (Socket* i : to) i->connectionPointer->setFloatValue(f);
+}
+
+void Socket::setBufferPointer(juce::AudioBuffer<float> *bufferPointer) {
+    for (Socket* i : to) i->connectionPointer->setBufferPointer(bufferPointer);
+}
+
+void Socket::setMidiMessagePointer(juce::MidiBuffer *midiMessagePointer) {
+    for (Socket* i : to) i->connectionPointer->setMidiMessagePointer(midiMessagePointer);
+}
+
+// +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
 
 Socket::~Socket() {
     deleteConnections();

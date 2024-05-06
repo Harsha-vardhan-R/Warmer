@@ -23,7 +23,7 @@ VolumeLevel::VolumeLevel() {
     volumeSlider.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 0, 0);
     addAndMakeVisible(&volumeSlider);
 
-    volumeSlider.setColour(juce::Slider::textBoxTextColourId, juce::Colours::darkmagenta);
+    volumeSlider.setColour(juce::Slider::textBoxTextColourId, juce::Colours::darkgrey);
     volumeSlider.setColour(juce::Slider::thumbColourId, juce::Colours::lightcoral);
     volumeSlider.setColour(juce::Slider::trackColourId, juce::Colours::lightgrey);
 

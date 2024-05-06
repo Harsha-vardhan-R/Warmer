@@ -20,6 +20,7 @@
 #include "OutputMasterGraphNode.h"
 
 #include "Oscillators/Oscillator.h"
+#include "Oscillators/Noise.h"
 
 // Demo for dev testing
 //#include "DemoNode.h"

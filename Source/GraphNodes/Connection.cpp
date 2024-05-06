@@ -21,6 +21,12 @@ void Connection::confirmConnection(void* fromNode, void* fromSocket, void* toNod
     this->toSocket = toSocket;
 }
 
+void Connection::setConnectionParams(SocketDataType outType, int arg1, int arg2) {
+    this->connectionType = outType;
+    this->arg1 = arg1;
+    this->arg2 = arg2;
+}
+
 void* Connection::getFromNode() { return fromNode; }
 void* Connection::getToNode() { return toNode; }
 

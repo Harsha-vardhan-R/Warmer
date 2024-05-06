@@ -60,6 +60,7 @@ public:
 
         menuList.reset(new juce::ComboBox);
         menuList.get()->addListener(this);
+        valueAtomic.store(0.0);
         parameterType = 1;
     }
 
@@ -124,6 +125,9 @@ public:
     void paint(juce::Graphics& g) override {}
     void resized() override {}
 
+    int parameterType = -1; // means nothing.
+    // ^ 1 for menu and two for the text input.
+
 
 private:
 
@@ -132,8 +136,7 @@ private:
     // This is to lock this when others are reading or setting it.
     std::mutex mutex;
 
-    int parameterType = -1; // means nothing.
-    // ^ 1 for menu and two for the text input.
+
 
     // THE MENU
     // basically a list of values from which one can be selected.

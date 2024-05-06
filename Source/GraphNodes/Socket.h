@@ -31,12 +31,23 @@ public:
 
     juce::String name;
 
+
+    // +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+    // API calls used from the GraphNode while processing.
+    // set and get sets and gets the
+
     // gets the value from the parameter ctrl,
     // or if connected from the previous socket.
     // not to be called on output sockets.
-    float getValue() {
-        return parameterController.getValue();
-    }
+    float getValue();
+    juce::AudioBuffer<float>* getBufferPointer();
+    juce::MidiBuffer* getMidiMessage();
+
+    // set value to all the connections this socket is connected to.
+    void setFloatValue(float f);
+    void setBufferPointer(juce::AudioBuffer<float>* bufferPointer);
+    void setMidiMessagePointer(juce::MidiBuffer* midiMessagePointer);
+
 
     // isMust must be connected or else the queue will not be built.
     // for example an empty input for audio signal will stop the whole process.
@@ -84,6 +95,9 @@ public:
     // this is the type that is checked against the set of input types that can be
     // accepted from an input node.
     void setOutputType(SocketDataType a);
+
+    SocketDataType getOutputType();
+
 
     juce::PopupMenu menu;
 
