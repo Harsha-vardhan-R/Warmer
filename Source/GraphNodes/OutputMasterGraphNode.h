@@ -40,13 +40,16 @@ public:
         float* outputChannelOneData = outputChannelData[0];
         float* outputChannelTwoData = outputChannelData[1];
 
-        for (int i = 0; i < estimatedSamplesPerBlock; ++i) {
+        for (int i = 0; i < readBuff->getNumSamples();  i += 2) {
             outputChannelOneData[i] = channelOneData[i]*volumeLevel;
+            outputChannelOneData[i+1] = channelOneData[i+1]*volumeLevel;
+
+            outputChannelTwoData[i] = channelTwoData[i]*volumeLevel;
+            outputChannelTwoData[i+1] = channelTwoData[i+1]*volumeLevel;
         }
 
-        for (int i = 0; i < estimatedSamplesPerBlock; ++i) {
-            outputChannelTwoData[i] = channelTwoData[i]*volumeLevel;
-        }
+//        std::cout << readBuff->getRMSLevel(0, 0, readBuff->getNumSamples()) << " " << readBuff->getRMSLevel(1, 0, readBuff->getNumSamples()) << "\n";
+
 
     }
 
@@ -54,7 +57,7 @@ public:
 
     bool allGood() { return (InputSockets[0]->isThisConnected()); }
 
-    // this will not be called.
+
     void processGraphNode() override {}
 
     void releaseResources() override {}

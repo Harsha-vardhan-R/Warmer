@@ -11,7 +11,7 @@
 #pragma once
 #include "GraphNodes/Collection.h"
 #include <random>
-
+#include <chrono>
 
 /*
 
@@ -60,24 +60,45 @@ public:
     };
 
 
+    // will be true if the callback function is still running,
+    // used for manual synchronisation.
+    // by inside callback we mean after the pause statement to the end of the method.
+    // this is to know we are not processing any nodes, because we edit their configurations from the GUI
+    // thread.
+    std::atomic<bool> insideCallback;
+
+
+
+
+
     void processingStart() {
         play.store(1);
         std::cout << "Playing" << "\n";
     }
 
+    // This function sets the ply atomic variable to false,
+    // which fills the output buffers with size zero, so we do not hear anything.
+    // ** IMPORTANT **
+    // this function also waits till all the graph nodes are processed,
+    // for the current callback (variable play being false is guaranteed to stop processing the
+    // nodes for the callback but this call back may still be processing nodes so we wait till this completes).
     void processingStop() {
         play.store(0);
-        std::cout << "Pausing" << "\n";
+        std::cout << "Pausing, and waiting..." << "\n";
+        while (insideCallback.load()); // infinite loop until we are not inside the callback,
+        // processing nodes, now it is safe to delete nodes and such.
     }
-
 
     linkedNode* headLinkedNode = nullptr;
 
     PriorityQueue() {
         play.store(0);
+        insideCallback.store(false);
     }
 
     ~PriorityQueue() {
+        insideCallback.store(false);
+
         processingStop();
         /* We are NOT deleting the nodes within the data structure with it,
            but we are deleting the nodes that we created here, `linkedNode`s */
@@ -96,24 +117,72 @@ public:
     double sampleRate = 0.0, sampleSize = 0.0;
 
     void setBufferSizeAndRate(double sampleRate, int estimatedSamplesPerBlock) {
-        // TODO : if this is called while processing we need to also take care of the,
-        // audio buffers that we gave to the nodes as pointers because of changed estimatedSamplesPerBlock.
-        this->sampleRate = sampleRate;
-        this->sampleSize = estimatedSamplesPerBlock;
+
+        processingStop();
+
+        // we need to delete and make new buffers only if the number of samples in each
+        // block is changed.
+        if (this->sampleSize != estimatedSamplesPerBlock) {
+            std::queue<juce::AudioBuffer<float>*> audioBuffersToDelete;
+
+            for (auto i : bunchOfBuffers) {
+                audioBuffersToDelete.push(i);
+            }
+
+            bunchOfBuffers.clear();
+
+            // we can just delete all the buffers now,
+            // as we are sure the nodes are not being processed. (check out `processingStop`)
+            while(!audioBuffersToDelete.empty()) {
+                juce::AudioBuffer<float>* temp = audioBuffersToDelete.front();
+                audioBuffersToDelete.pop();
+                delete temp;
+            }
+
+            this->sampleRate = sampleRate;
+            this->sampleSize = estimatedSamplesPerBlock;
+
+            prepare();
+
+            setBuffersToNodes();
+
+            resetAll();
+        } else if (this->sampleRate != sampleRate) {
+            this->sampleRate = sampleRate;
+
+            prepare();
+
+            // we need not set buffers as the number of samples in a block
+            // did not change.
+
+            resetAll();
+        }
+
+        if (checkAllGood()) processingStart();
+
     }
 
-    // Insert an element. O(1)
+    // Insert an Graph Node. O(1)
     void push(GraphNode* nodeGraph) {
-        // create and insert a node at the end of the linked list.
-        linkedNode* temp = new linkedNode(nodeGraph, head->nextNode);
+        processingStop();
 
-        // the tail is never going to be null;
-        head->nextNode = temp;
+        linkedNode* tm;
 
-        if (!temp->nextNode) tail = temp;
+        if (head) { // put it after the head.
+            linkedNode* temp = new linkedNode(nodeGraph, head->nextNode);
+            head->nextNode = temp;
+            tm = temp;
+        } else {
+            head = new linkedNode(nodeGraph, nullptr);
+            tm = head;
+        }
+
+        if (!tm->nextNode) tail = tm;
 
         totalNodesToProcess++;
         bunchOfNodes.insert(nodeGraph);
+
+        if (checkAllGood()) processingStart();
 	}
 
     // Insert an element. O(1)
@@ -125,38 +194,59 @@ public:
 
     // O(n)
 	void remove(GraphNode* node) {
+        processingStop();
 
         bunchOfNodes.erase(node);
 
 		// search and remove from the linked list,
 		// do not delete the node data, it will be done in the Instrument.h "nodeDeleted"
+        // here we delete the linkedNode associated with the nodePointer.
 		linkedNode* current = head;
+        linkedNode* prev = nullptr;
 
-		while (current && current->nextNode->nodePointer == node) {
-			current = current->nextNode;
-		}
+        // start searching for the node, stop when the node is found and is in the variable current.
+        while (current && current->nodePointer != node) {
+            prev = current;
+            current = current->nextNode;
+        }
 
-		// remove the node, we have it's previous node.
-		linkedNode* toDelete = current->nextNode;
-		current->nextNode = current->nextNode->nextNode;
-
-        // if the last node is deleted.
-        if (!current->nextNode) {
-            tail = current;
+        if (current) {
+            // the node to remove is not the first node.
+            if (prev) {
+                linkedNode* temp = current;
+                prev->nextNode = current->nextNode;
+                delete temp;
+                if (!prev->nextNode) tail = prev;
+            } else {
+                linkedNode* temp = current;
+                head = current->nextNode;
+                delete temp;
+                if (!head->nextNode) tail = head;
+            }
+        } else {
+            std::cout << "WARNING : The node you are trying to remove does not exist in the processing list" << "\n";
         }
 
         totalNodesToProcess--;
 
-        delete toDelete;
+        setBuffersToNodes();
+
+        resetAll();
+
+        if (checkAllGood()) processingStart();
 	}
 
     GraphNode* MIDI_IN = nullptr;
+    GraphNode* AUDIO_OUT = nullptr;
 
-
+    // called to put the MIDI_IN in 1st position.
     void setInputNode(InputMasterGraphNode* node) {
         MIDI_IN = static_cast<GraphNode*>(node);
-        head = new linkedNode(node);
-        tail = head;
+        totalNodesToProcess++;
+    }
+
+    void setOutputNode(OutputMasterGraphNode* nodePointer) {
+        AUDIO_OUT = static_cast<GraphNode*>(nodePointer);
         totalNodesToProcess++;
     }
 
@@ -185,6 +275,8 @@ public:
         return (totalNodesToProcess == 0);
     }
 
+
+    // checks if every node in the bunch of nodes has isMust sockets connected.
     bool checkAllGood() {
         for (auto i : bunchOfNodes) {
             bool b = ((GraphNode*)i)->allGood();
@@ -201,71 +293,66 @@ public:
     // manually created and deleted.
     std::set<juce::AudioBuffer<float>*> bunchOfBuffers;
 
-
     bool newConnection(GraphNode *from, GraphNode *to) {
+
+        if (!from || !to) {
+            std::cout << "Null pointers passed as arguments in PriorityQueue::newConnection" << "\n";
+            return false;
+        }
+
+        std::cout << "from : " << from << ", to : " << to << "\n";
+
         processingStop();
-
-
-		if (!checkAllGood()) return false;
-
-        // we call this only when the connections change only on the affected nodes.
-        // this will call the reset function internally, it also sets the callback function.
-        // for the process GraphNode also.
-        from->prepareToPlay(sampleRate, sampleSize);
-        to->prepareToPlay(sampleRate, sampleSize);
 
 		// here we need to make sure that the `from` node is before the `to` node.
 		// we can put the `from` just before node and the order will still be valid.
 
         // TODO : refactor variable names and remove this scope.
-        {
-            // start checking for the first node.
-            linkedNode *current;
-            linkedNode *prev = head;
+        // start checking for the first node.
+        linkedNode *current = head;
+        linkedNode *prev = nullptr;
 
-            current = head;
+        while (current) {
 
-            int found = 0;
-            while (current) {
-                // if the `from` node is before to node,
-                // they are already in order.
-                if (current->nodePointer == from) break;
+            // if the `from` node is found first.
+            if (current->nodePointer == from) break;
 
-                // if the `to` node is found first, we are going to set the `from` node,
-                // just after the `from` node.
-                if (current->nodePointer == to) {
+            // if the `to` node is found first, we are going to set the `from` node,
+            // just after the `from` node.
+            if (current->nodePointer == to) {
 
-                    // if the `from` is not found but to is found that means,
-                    // our immediate next node can never be a null-pointer because `from` SHOULD be present in the graph.
-                    linkedNode *temp = current;
+                // store the pointer to the `to` node.
+                linkedNode *temp = current;
 
-                    // to also can never be the head, as it is always the first node.
-                    // so prev will never be nullptr at this place.
-                    prev->nextNode = current->nextNode;
+                if (prev) prev->nextNode = current->nextNode;
+                else head = current->nextNode;
 
-                    // now search for the `from` node which will be present at some point after the
-                    // `to` node.
+                // now search for the `from` node which will be present at some point after the
+                // `to` node, if from is found the current will be set to the linkedNode containing `from`.
+                current = current->nextNode;
+                while (current && current->nodePointer != from) {
                     current = current->nextNode;
-                    while (current && current->nodePointer != from) {
-                        current = current->nextNode;
-                    }
+                }
 
+                // we found `from`
+                if (current) {
                     // now the current is set to the `from` node.
                     // we set the `temp`(to) to be immediate next node after the `from`.
                     temp->nextNode = current->nextNode;
                     current->nextNode = temp;
-
-                    // edge case if the `from` node is at the tail.
-                    // this should not happen(AUDIO OUT is always the last), but in case.
-                    if (!temp->nextNode) tail = temp;
-
-                    break;
+                } else {
+                    std::cout << "From node not found in PriorityQueue::newConnection, this should not happen" << "\n";
                 }
 
-                prev = current;
-                current = current->nextNode;
+                // edge case if the `from` node is at the tail.
+                // this should not happen(AUDIO OUT is always the last), but in case.
+                if (!temp->nextNode) tail = temp;
+
+                break;
             }
 
+            prev = current;
+            current = current->nextNode;
         }
 
         setBuffersToNodes();
@@ -274,7 +361,8 @@ public:
 
         debugDump();
 
-        processingStart();
+        if (checkAllGood()) processingStart();
+
         return true;
     }
 
@@ -297,6 +385,8 @@ public:
         level.store(val);
     }
 
+    // Returns if the nodes are al good and can be processed,
+    // also stops the processing if that is not the case.
     bool connectionRemoved(GraphNode *from, GraphNode *to) {
 
         processingStop();
@@ -306,10 +396,11 @@ public:
 
         // call the update function pointers for the nodes on each pointer,
         // so it will be triggered for both input and output connections.
-        from->prepareToPlay(sampleRate, sampleSize);
-        to->prepareToPlay(sampleRate, sampleSize);
+        from->reset();
+        to->reset();
 
         processingStart();
+
         // else continue
         return true;
     }
@@ -329,14 +420,19 @@ public:
 
 
         // if there are any left-over buffers.
-        // we never delete the buffers in between so for an instance the maximum number of buffers will be
+        // we never delete the buffers in between (exception : changing the number of samples in each block)
+        // execution so for an instance the maximum number of buffers will be
         // the maximum of buffers that are needed for the configuration that took the max amount of unique buffers.
         //
         // after every connection we will set the audio buffers,
-        // may look inefficient, but still coming up ith better ideas.
+        // may look inefficient, but still coming up with better ideas.
+        // I have a dumb solution but i'm pretty sure it will deviate far from optimised path when
+        // adding connections in a certain way, but this surely works for all the cases.
         for (auto i : bunchOfBuffers) {
             dependencieFreedBuffers.push(i);
         }
+
+        if (!checkAllGood()) return;
 
 
         while (current) {
@@ -352,10 +448,20 @@ public:
 
                 juce::AudioBuffer<float>* temp = dependencieFreedBuffers.front();
                 dependencieFreedBuffers.pop();
-                // we give this buffer to the GraphNode.
+
+                // we give this buffer that we just popped to the GraphNode.
                 currentNode->setToWriteAudioBuffer(temp);
 
+                // we cannot reuse this buffer unless all the buffer dependencies to it get
+                // processed.
+                //
+                // and the dependentCountMap kind of holds the number of dependencies for this
+                // current buffer.
                 for (GraphNode* i : currentNode->getAudioBufferDependencies()) {
+                    // this hash map stores the
+                    // node -> a set of all the buffers it needs to get processed.
+                    // the set will keep on increasing if the node is getting modulated from different
+                    // other outputs.
                     nodeToDependentBufferMap[i].insert(temp);
                     dependentCountMap[temp]++;
                 }
@@ -367,6 +473,8 @@ public:
 
                 for (auto i : nodeToDependentBufferMap[currentNode]) {
                     dependentCountMap[i]--;
+
+                    // this node can be used, all it's dependencies are processed.
                     if (dependentCountMap[i] == 0) dependencieFreedBuffers.push(i);
                 }
 
@@ -377,6 +485,7 @@ public:
             current = current->nextNode;
         }
     }
+
     // this is used while loading a configuration,
     // as loading an instrument will be really slow if
     bool sort() {
@@ -444,19 +553,13 @@ public:
             return false;
         }
 
-        // now create the linked-list of the processing order based on this sorted vector.
-        // we obviously have the first node as the MIDI_IN
-        // which should be set before calling this sort function.
-        if (head) recr_delete(head);
 
-        {
-            linkedNode *current = new linkedNode(MIDI_IN);
-            head = current;
-            // starting from 1 because at zero we will always have MIDI_IN, that we already inserted.
-            for (int i = 1; i < sortedNodes.size(); ++i, current = current->nextNode) {
-                current->nextNode = new linkedNode(sortedNodes[i]);
-                tail = current->nextNode;
-            }
+        linkedNode *current = new linkedNode(MIDI_IN);
+        head = current;
+        // starting from 1 because at zero we will always have MIDI_IN, that we already inserted.
+        for (int i = 1; i < sortedNodes.size(); ++i, current = current->nextNode) {
+            current->nextNode = new linkedNode(sortedNodes[i]);
+            tail = current->nextNode;
         }
 
         setBuffersToNodes();
@@ -489,7 +592,7 @@ public:
 
     void recrPrint(linkedNode* node) {
         if (node) {
-            std::cout << node->nodePointer->name << "\n";
+            std::cout << node->nodePointer->name << ", Pointer value : " << node->nodePointer << "\n";
             recrPrint(node->nextNode);
         }
     }
@@ -502,6 +605,9 @@ public:
     // METHODS FOR AUDIO DEVICE IO CALLBACK.
     // ======================================
 
+
+
+
     // +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
     // The main callback function that is called by the device manager in a very high priority thread,
     // this processes all the nodes in order and copies the data in to the output buffer that is going to get played back.
@@ -512,29 +618,37 @@ public:
                                             int numSamples,
                                             const juce::AudioIODeviceCallbackContext& context ) override {
 
+//        auto start = std::chrono::high_resolution_clock::now();
 //        std::cout << "reached" << "\n";
+
         // if we are paused, fill it with 0's.
         // you can remove the callback, but this is very inexpensive so not a problem.
         if (!play.load()) {
-            for (int channel = 0; channel < numOutputChannels; ++channel) {
-                std::fill(outputChannelData[channel], outputChannelData[channel] + numSamples, 0.0f);
-            }
+            juce::AudioBuffer<float> buffer (outputChannelData, numOutputChannels, numSamples);
+            buffer.clear();
             return;
         }
 
-        float l = level.load();
+
+        insideCallback.store(true);
 
         // Process all the nodes in the list.
         linkedNode* current = head;
-        // we process all the nodes except the last one.
-        while (current->nextNode) {
+        // we process all the nodes
+        while (current) {
             current->nodePointer->processGraphNode();
             current = current->nextNode;
         }
 
         // this output node takes in output channel data and the loudness level.
         // it basically copies the buffer multiplied with the loudness level.
-        ((OutputMasterGraphNode*)tail->nodePointer)->processGraphNodeOutput(outputChannelData, l);
+        ((OutputMasterGraphNode*)AUDIO_OUT)->processGraphNodeOutput(outputChannelData, level.load());
+
+//        auto end = std::chrono::high_resolution_clock::now();
+//        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+//        std::cout << "Execution time: " << duration.count() << " microseconds" << numSamples << std::endl;
+
+        insideCallback.store(false);
 
     }
 

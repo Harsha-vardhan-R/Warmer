@@ -42,6 +42,7 @@
         <GROUP id="{CE01C247-5900-81D6-45B7-58D0664EE63B}" name="Filters"/>
         <GROUP id="{0CB8FAA1-8283-E03A-7C60-B3FB4E618C01}" name="Math">
           <FILE id="WOFlmM" name="addSignal.h" compile="0" resource="0" file="Source/GraphNodes/Math/addSignal.h"/>
+          <FILE id="hVvSlm" name="ClampSignal.h" compile="0" resource="0" file="Source/GraphNodes/Math/ClampSignal.h"/>
         </GROUP>
         <GROUP id="{1AFE2380-7FF2-7311-890A-F156092A7B12}" name="Oscillators">
           <FILE id="holr2W" name="Noise.h" compile="0" resource="0" file="Source/GraphNodes/Noise.h"/>

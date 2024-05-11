@@ -51,6 +51,7 @@ Instrument::Instrument(int tabWidth) {
     OutputNode = new OutputMasterGraphNode(1300, 300);
 
     nodeProcessingQueue.setInputNode(InputNode);
+    nodeProcessingQueue.setOutputNode(OutputNode);
 
     editPage.reset(new Instrument::EditPage());
     graphPage.reset(new Instrument::GraphPage());
@@ -69,8 +70,6 @@ Instrument::Instrument(int tabWidth) {
 
     AudioMIDISettingsJUCE = std::make_unique<Instrument::AudioMIDISettingClass>(*deviceManager.get());
     AudioMIDISettingsJUCE.get()->closeButtonPressed();
-    // AudioDevice Setup done.
-
 
 
     // Setting up for the MIDI listening.
@@ -88,11 +87,6 @@ Instrument::Instrument(int tabWidth) {
             midiInputs.add(std::move(midiInput));
         }
     }
-
-//    std::cout << "Available Devices : " << "\n";
-//    for (auto i : midiInputs) {
-//        std::cout << i->getName() << "\n";
-//    }
 
     breakProcessing.store(false);
 
@@ -134,7 +128,6 @@ void Instrument::listenFromAllMIDIInputs() {
     while (midiInputs.size() != 0) {
         midiInputs.remove(0);
     }
-
 
 
     // Setting up for the MIDI listening.
@@ -369,6 +362,7 @@ Instrument::GraphPage::GraphPage() {
 
     instrumentClassPointer = Instrument::getInstance();
 
+    instrumentClassPointer->nodeProcessingQueue.push(static_cast<GraphNode*>(instrumentClassPointer->InputNode));
     instrumentClassPointer->nodeProcessingQueue.push(static_cast<GraphNode*>(instrumentClassPointer->OutputNode));
 
 //    AllNodes.insert((GraphNode*)Instrument::instancePtr->InputNode);
@@ -410,8 +404,11 @@ void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *g
         temp = new Oscillator(pos_x, pos_y);
     } else if (result == 203) {
         temp = new Noise(pos_x, pos_y);
+    } else if (result == 505) {
+        temp = new Clamp(pos_x, pos_y);
     } else if (result == 0) {
         /* DO NOTHING */
+        return;
     } else {
         std::cout << "Returned option from Graph page menu is not handled in the AddNodeCallBack, Option : " << result
                   << "\n";
@@ -463,6 +460,7 @@ void Instrument::GraphPage::connectionRemoved(Connection *connectionPointer) {
 
     AllConnections.erase(connectionPointer);
     ConnectionToLineMap.erase(connectionPointer);
+
     updateRepaintArea();
     repaint();
 }
@@ -677,23 +675,18 @@ void Instrument::ConfigurationChanged() {
 
 bool Instrument::updateTreeParams() {
 
-    // everytime this function is called we delete the previous
-    // priority queue.
-    nodeProcessingQueue.flush();
-
     double bufferSize, bufferRate;
 
     if (deviceManager.get()) {
         bufferSize = deviceManager.get()->getAudioDeviceSetup().bufferSize;
         bufferRate = deviceManager.get()->getAudioDeviceSetup().sampleRate;
+
+        std::cout << bufferRate << " " << bufferSize << "\n";
+        nodeProcessingQueue.setBufferSizeAndRate(bufferRate, bufferSize);
     } else {
         std::cout << "No active audio device!" << std::endl;
         return false; // nothing to do.
     }
-
-    std::cout << bufferRate << " " << bufferSize << "\n";
-
-    nodeProcessingQueue.setBufferSizeAndRate(bufferRate, bufferSize);
 
     return true;
 }

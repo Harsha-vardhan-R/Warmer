@@ -82,7 +82,7 @@ public:
         }
 
         sliderFloat.reset(new juce::Slider());
-        sliderFloat.get()->setRange(from, to, 0.01);
+        sliderFloat.get()->setRange(from, to, 0.001);
         sliderFloat.get()->setValue(val);
 //        textEditor.setTextBoxStyle(juce::Slider::TextBoxLeft, false, 80, 20);
         sliderFloat.get()->setSliderStyle(juce::Slider::LinearBar);
@@ -104,7 +104,7 @@ public:
             menuList.get()->setBounds(getLocalBounds().reduced(4));
             addAndMakeVisible(menuList.get());
             // do not ask me if you did not even add one option, dude.
-            menuList.get()->setSelectedItemIndex(1, juce::sendNotificationSync);
+            menuList.get()->setSelectedId(1, juce::sendNotificationSync);
         } else if (sliderFloat.get()) {
             sliderFloat.get()->setBounds(getLocalBounds().reduced(4));
             addAndMakeVisible(sliderFloat.get());

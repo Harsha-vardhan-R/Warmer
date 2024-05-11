@@ -23,7 +23,6 @@ public:
         // Type of the basic wave shape.
         InputSockets.add(new Socket(juce::String("Wave Shape"), direction::IN, false));
         InputSockets[0]->addMenuParameterControl();
-        InputSockets[0]->addMenuItem("None");
         InputSockets[0]->addMenuItem("Sine");
         InputSockets[0]->addMenuItem("Square");
         InputSockets[0]->addMenuItem("Triangle");
@@ -38,7 +37,7 @@ public:
         InputSockets.add(new Socket(juce::String("Amplitude"), direction::IN, false));
         InputSockets[2]->acceptType(SocketDataType::Floating);
         InputSockets[2]->acceptType(SocketDataType::AudioBufferFloat);
-        InputSockets[2]->addSliderParameterControl(0.0, 1.2, 0.5);
+        InputSockets[2]->addSliderParameterControl(0.0, 1.0, 0.5);
 
         // Phase.
         InputSockets.add(new Socket(juce::String("Phase (deg)"), direction::IN, false));

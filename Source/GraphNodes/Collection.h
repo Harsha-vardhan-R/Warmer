@@ -22,5 +22,7 @@
 #include "Oscillators/Oscillator.h"
 #include "Oscillators/Noise.h"
 
+#include "Math/ClampSignal.h"
+
 // Demo for dev testing
 //#include "DemoNode.h"

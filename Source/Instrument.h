@@ -346,7 +346,9 @@ public:
         }
 
         void closeButtonPressed() override {
+            // try to listen from any new MIDI inputs that are selected.
             Instrument::getInstance()->refreshMIDIDevices();
+            Instrument:;getInstance()->updateTreeParams();
             setVisible(false); // Hide the window when close button is pressed
         }
 

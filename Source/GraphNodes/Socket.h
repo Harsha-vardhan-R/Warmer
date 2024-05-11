@@ -123,7 +123,7 @@ public:
 
     bool isThisConnected() { return isConnected; }
 
-    void resized() override {}
+    void resized() override;
 
     bool isMust;
 
@@ -138,6 +138,11 @@ public:
     ~Socket() override;
 
     std::set<Socket*> to;
+
+    bool hasParameterController() {
+        return (parameterController.getType() != -1);
+    }
+
 
 private:
 

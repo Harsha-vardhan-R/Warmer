@@ -9,6 +9,9 @@ MenuComponent::MenuComponent() {
     addAndMakeVisible(menuComponent.get());
     setLookAndFeel(this);
 
+    menuComponent.get()->setColour (juce::PopupMenu::backgroundColourId, juce::Colours::grey);
+
+
     resized(); // this is NEEDED for the first time rendering.
 }
 
@@ -30,27 +33,26 @@ juce::StringArray MenuComponent::getMenuBarNames() {
 }
 
 juce::PopupMenu MenuComponent::getMenuForIndex(int topLevelMenuIndex, const juce::String& menuName) {
-    juce::PopupMenu menu;
 
     if (menuName == "Instrument") {
         menu.addItem(1, "Initialize");
         menu.addItem(2, "Load");
         menu.addItem(3, "Save");
         menu.addItem(4, "Save as");
+        menu.addSeparator();
         menu.addItem(6, "Export blueprint");
         menu.addSeparator();
         menu.addItem(5, "Exit");
     } else if (menuName == "View") {
         menu.addItem(15, "Accent Colour");
-        menu.addItem(17, "Size+");
-        menu.addItem(18, "Size-");
     } else if (menuName == "Preferences") {
         menu.addItem(20, "Listen from all MIDI inputs");
         menu.addItem(19, "Audio/MIDI preferences");
         menu.addSeparator();
         menu.addItem(21, "About");
     } else if (menuName == "Edit") {
-        menu.addItem(22, "undo");
+        menu.addItem(22, "Instrument Background");
+        menu.addItem(23, "");
     }
 
     return menu;
@@ -73,6 +75,7 @@ void MenuComponent::menuItemSelected(int menuItemID, int topLevelMenuIndex) {
             instrument->listenFromAllMIDIInputs();
             break;
         default:
+            std::cout << "Menu case not handled, returning." << "\n";
             break;
     }
 }
@@ -188,7 +191,7 @@ void MenuComponent::drawTabButton(juce::TabBarButton& button,
                                                                       button.getLocalBounds().getCentreY());
     g.addTransform(transform);
     
-    if (button.isFrontTab()) { g.setColour(juce::Colours::orange); }
+    if (button.isFrontTab()) { g.setColour(juce::Colours::black); }
     g.drawText(button.getButtonText(), button.getLocalBounds().reduced(-15), juce::Justification::centred);
 
 }

@@ -16,7 +16,7 @@
 // cool aqua blue : 0xFF6DF1CC
 // cool peach : E3FFC3
 
-#define COLOUR 0xFFE3E1D9
+#define COLOUR 0xFFBED1CF
 
 static auto textColourID = juce::Colours::darkgrey;
 static auto textSelectedColourID = juce::Colours::black;

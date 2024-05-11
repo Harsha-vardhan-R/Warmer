@@ -173,7 +173,6 @@ void GraphNode::paint(juce::Graphics& g) {
 
 void GraphNode::resized() {
     UIWidth = 120;
-    UIHeight = 35+(InputSockets.size()*50 + OutputSockets.size()*25); // each socket is given 50px in height.
 
     int index = 0;
     int end = 30;
@@ -185,13 +184,21 @@ void GraphNode::resized() {
         index++;
     }
 
+    end += 5;
+
     index = 0;
     for (auto i : InputSockets) {
-        i->setBounds(0, (index*50)+end, UIWidth, 50);
+        bool connected = !(i->isThisConnected() || !i->hasParameterController());
+        int height = connected*(50) + (1-connected)*20;
+        i->setBounds(0, end, UIWidth, height);
+        end += height;
         index++;
     }
 
-    setSize(UIWidth, UIHeight);
+
+    UIHeight = end + 10;
+    setBounds(getX(), getY(), UIWidth, UIHeight);
+
 }
 
 GraphNode::~GraphNode() {

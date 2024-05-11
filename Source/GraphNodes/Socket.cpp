@@ -27,18 +27,16 @@ void Socket::paint(juce::Graphics &g)  {
     g.setColour(juce::Colours::darkgrey);
 
     // one for input socket and other for output socket check.
-    if (TypesAccepted.size() || type != SocketDataType::NULLType) {
-        if (dir == direction::IN) {
-            g.fillRect(0, 5, 5, 5);
-            juce::Rectangle<int> bound(10, 0, getWidth()-10, 15);
-            if (isMust) g.setColour(juce::Colours::orange);
-            g.drawText(name, bound, juce::Justification::centredLeft);
-        } else {
-            g.fillRect(getWidth()-5, 5, 5, 5);
-            juce::Rectangle<int> bound(0, 0, getWidth()-10, 15);
-            if (isMust) g.setColour(juce::Colours::orange);
-            g.drawText(name, bound, juce::Justification::centredRight);
-        }
+    if (dir == direction::IN) {
+        if (TypesAccepted.size()) g.fillRect(0, 5, 5, 5);
+        juce::Rectangle<int> bound(10, 0, getWidth()-10, 15);
+        if (isMust) g.setColour(juce::Colours::black);
+        g.drawText(name, bound, juce::Justification::centredLeft);
+    } else {
+        if (type != SocketDataType::NULLType) g.fillRect(getWidth()-5, 5, 5, 5);
+        juce::Rectangle<int> bound(0, 0, getWidth()-10, 15);
+        if (isMust) g.setColour(juce::Colours::black);
+        g.drawText(name, bound, juce::Justification::centredRight);
     }
 
 }
@@ -130,6 +128,7 @@ void Socket::repaintConnection() {
 void Socket::deleteConnections() {
     if (dir == direction::IN) {
         deleteSocketCallBack(1, this);
+        resized();
     } else {
 //        repaintConnection();
         // this is because we are interfering with this to from another socket,
@@ -226,6 +225,8 @@ void Socket::connected(Socket *otherPointer, Connection* connection) {
 
         // this is the last function call that happens after a connection is confirmed in this class.
         Instrument::getInstance()->connectionAdded(connection);
+
+        resized();
     } else {
         from = this;
         to.insert(otherPointer);
@@ -236,7 +237,9 @@ void Socket::connected(Socket *otherPointer, Connection* connection) {
     repaintConnection();
 }
 
-
+void Socket::resized() {
+    if (getParentComponent()) (getParentComponent()->resized());
+}
 
 //''''''''''''
 // API API API API API API API : PAIN-KILLERS
