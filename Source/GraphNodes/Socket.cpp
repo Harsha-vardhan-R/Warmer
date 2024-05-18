@@ -24,18 +24,20 @@ Socket::Socket(juce::String name, direction dir, bool isMust) {
 
 void Socket::paint(juce::Graphics &g)  {
     // Small square
-    g.setColour(juce::Colours::darkgrey);
+    g.setColour(GraphNodeConnectionBoxID);
 
     // one for input socket and other for output socket check.
     if (dir == direction::IN) {
         if (TypesAccepted.size()) g.fillRect(0, 5, 5, 5);
         juce::Rectangle<int> bound(10, 0, getWidth()-10, 15);
-        if (isMust) g.setColour(juce::Colours::black);
+        if (isMust) g.setColour(GraphNodeSocketTextMustID);
+        else g.setColour(GraphNodeSocketTextID);
         g.drawText(name, bound, juce::Justification::centredLeft);
     } else {
         if (type != SocketDataType::NULLType) g.fillRect(getWidth()-5, 5, 5, 5);
         juce::Rectangle<int> bound(0, 0, getWidth()-10, 15);
-        if (isMust) g.setColour(juce::Colours::black);
+        if (isMust) g.setColour(GraphNodeSocketTextMustID);
+        else g.setColour(GraphNodeSocketTextID);
         g.drawText(name, bound, juce::Justification::centredRight);
     }
 
@@ -99,6 +101,20 @@ void Socket::setOutputType(SocketDataType a) {
 
 SocketDataType Socket::getOutputType() {
     return type;
+}
+
+SocketDataType Socket::getConnectionType() {
+    if (dir == direction::OUT) {
+        std::cout << "The function getConnectionType is meant to be called on an input node to know the current type of connection" << "\n";
+        return SocketDataType::NULLType;
+
+    }
+
+    if (from) {
+        return from->getOutputType();
+    } else {
+        return SocketDataType::NULLType;
+    }
 }
 
 void Socket::repaintConnection() {

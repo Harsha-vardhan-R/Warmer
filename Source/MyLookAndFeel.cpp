@@ -20,7 +20,7 @@ void MyLookAndFeel::drawTextEditorOutline(juce::Graphics& g, int width, int heig
 void MyLookAndFeel::drawComboBox(juce::Graphics &g, int width, int height, bool isButtonDown, int buttonX, int buttonY,
                                  int buttonW, int buttonH, juce::ComboBox& box) {
     g.setColour(MenuMouseOverColourID);
-    g.fillRoundedRectangle(box.getLocalBounds().reduced(2).toFloat(), 3.0f);
+    //g.fillRoundedRectangle(box.getLocalBounds().reduced(2).toFloat(), 3.0f);
 
     juce::Path arrow;
     float arrowDimen = 5;

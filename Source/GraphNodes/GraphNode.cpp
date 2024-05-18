@@ -214,12 +214,6 @@ void GraphNode::setStateInformation(const void* data, int sizeInBytes) {
 
 }
 
-// lock and unlock while reading the values.
-void GraphNode::lock() { mutex.lock(); }
-
-void GraphNode::unlock() { mutex.unlock(); }
-
-
 ///|=========================================|
 const juce::String GraphNode::getName() const {
     return name; // Replace with your node name

@@ -22,8 +22,9 @@ WaveShapeDisp::WaveShapeDisp()
 WaveShapeDisp::~WaveShapeDisp() {}
 
 void WaveShapeDisp::paint (juce::Graphics& g) {
+    g.fillAll(juce::Colours::white);
     g.setColour(juce::Colours::grey);
-    g.drawRoundedRectangle(getLocalBounds().toFloat(), 5.0, 1);
+    g.drawRect(getLocalBounds().toFloat(), 1.0f);
 }
 
 void WaveShapeDisp::resized()

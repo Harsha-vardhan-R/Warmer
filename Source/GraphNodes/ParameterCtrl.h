@@ -11,20 +11,43 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "../ColourPalette.h"
 
 //==============================================================================
 /*
- * This is for the controlling of the parameter in a given node from the inside.
+ * Control the parameter in a node, can be used in two ways based on the use case.
+ *      1 -> Use `getValue()` that returns the current value stored in the valueAtomic.(thread safe)
  *
- * for example if you have a cutoff then you add a ParameterCtrl slider ype so the user can set it's value
- * and look at the currently set value.
+ *      2 -> this inherits from messageSender with the node set as the parent
+ *          , so we can send messages directly to the GraphNode (skipping a hierarchy level(Socket))
+ *          using the `sendMessage(juce::String, float, int)`,
+ *          but make sure that you override the method `messageWithContext(juce::String, float, int)`
+ *          in the node that you are trying to send a message to.
+ *          This is used to change callbacks(most probably) based on the selected option(thread safe).
  *
- * This will always have fixed length and height making it easy to abstract.
+ * Always have a fixed width and height making it easy to abstract.
  * the pointer to this will be stored by the respective socket,
- * but it will be the child directly to the GraphNode the socket is in,
- * it will not be visible when the socket is connected to some other node, because it(value from the other node) controls it.
+ * will be the child directly to the GraphNode the socket is in,
+ * will get collapsed when connected from another socket.
 */
 
+
+class parameterCtrlLookAndFeel : public juce::LookAndFeel_V3 {
+public:
+
+    parameterCtrlLookAndFeel() {
+        setColour(juce::Slider::ColourIds::textBoxTextColourId, GraphSliderTextID);
+        setColour(juce::Slider::ColourIds::trackColourId, juce::Colours::grey);
+        setColour(juce::Slider::ColourIds::backgroundColourId, juce::Colours::white);
+        setColour(juce::Slider::ColourIds::thumbColourId, GraphSliderThumbID);
+
+
+        setColour(juce::PopupMenu::ColourIds::backgroundColourId, juce::Colours::white);
+        setColour(juce::PopupMenu::ColourIds::textColourId, textColourID);
+        setColour(juce::PopupMenu::ColourIds::highlightedTextColourId, textSelectedColourID);
+    }
+
+};
 
 // invisible container that contains other controls.
 class ParameterCtrl : public juce::Component,
@@ -60,10 +83,15 @@ public:
 
         menuList.reset(new juce::ComboBox);
         menuList.get()->addListener(this);
+
+        menuList.get()->setLookAndFeel(&styles);
+
         valueAtomic.store(0.0);
         parameterType = 1;
     }
 
+    // stores the selected value in a thread safe variable,
+    // also sends a message to the GraphNode with the selected ID.
     void comboBoxChanged (juce::ComboBox* comboBoxThatHasChanged) override {
         valueAtomic.store(comboBoxThatHasChanged->getSelectedId());
     }
@@ -84,10 +112,11 @@ public:
         sliderFloat.reset(new juce::Slider());
         sliderFloat.get()->setRange(from, to, 0.001);
         sliderFloat.get()->setValue(val);
-//        textEditor.setTextBoxStyle(juce::Slider::TextBoxLeft, false, 80, 20);
         sliderFloat.get()->setSliderStyle(juce::Slider::LinearBar);
         sliderFloat.get()->addListener(this);
-        sliderFloat.get()->setNumDecimalPlacesToDisplay(2);
+        sliderFloat.get()->setNumDecimalPlacesToDisplay(3);
+
+        sliderFloat.get()->setLookAndFeel(&styles);
 
         this->from = from;
         this->to = to;
@@ -117,7 +146,7 @@ public:
         valueAtomic.store(value);
     }
 
-    // lock and unlock while reading the values.
+    // lock and unlock while reading the values(presently not used anywhere).
     void lock() { mutex.lock(); }
 
     void unlock() { mutex.unlock(); }
@@ -133,10 +162,14 @@ private:
 
     // set from the callbacks and read from get value.
     std::atomic<float> valueAtomic;
+
+    parameterCtrlLookAndFeel styles;
+
+
     // This is to lock this when others are reading or setting it.
+    // not used anywhere in the code base now
+    // because we process nodes one by one we do not set and get on the same socket at the same time.
     std::mutex mutex;
-
-
 
     // THE MENU
     // basically a list of values from which one can be selected.

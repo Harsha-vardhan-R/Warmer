@@ -335,11 +335,11 @@ Instrument::GraphPage::GraphPage() {
     subMenuArray[3]->addItem(403, "Digital");
 
     subMenuArray[4]->addItem(501, "Add & Mul");
-    subMenuArray[4]->addItem(502, "Subtract");
+    subMenuArray[4]->addItem(502, "Add Or Sub");
     subMenuArray[4]->addItem(503, "FM");
     subMenuArray[4]->addItem(504, "Mix");
     subMenuArray[4]->addItem(505, "Clamp");
-    subMenuArray[4]->addItem(506, "Invert");
+    subMenuArray[4]->addItem(506, "Re-Ramp");
 
     subMenuArray[5]->addItem(601, "MIDI");
     subMenuArray[5]->addItem(602, "Arpeggiator");
@@ -404,8 +404,16 @@ void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *g
         temp = new Oscillator(pos_x, pos_y);
     } else if (result == 203) {
         temp = new Noise(pos_x, pos_y);
+    } else if (result == 501) {
+        temp = new AddAndMul(pos_x, pos_y);
+    } else if (result == 502) {
+        temp = new AddOrSubtract(pos_x, pos_y);
+    } else if (result == 504) {
+        temp = new MixSignal(pos_x, pos_y);
     } else if (result == 505) {
         temp = new Clamp(pos_x, pos_y);
+    } else if (result == 506) {
+        temp = new ReRamp(pos_x, pos_y);
     } else if (result == 0) {
         /* DO NOTHING */
         return;
@@ -529,7 +537,7 @@ void Instrument::GraphPage::updateRepaintArea(juce::Line<int>& line) {
 //}
 
 void Instrument::GraphPage::drawConnections(juce::Graphics &g) {
-    g.setColour(juce::Colours::darkgrey);
+    g.setColour(GraphNodeConnectionColourID);
 
     if (temp) {
         g.drawLine(p.toFloat(), 1);
@@ -551,9 +559,6 @@ void Instrument::GraphPage::connectionAdded(Connection *newConnection) {
 
     GraphNode* f = static_cast<GraphNode*>(newConnection->fromNode);
     GraphNode* t = static_cast<GraphNode*>(newConnection->toNode);
-
-//    for (auto i : AllNodes) std::cout << "actual" << i << "\n";
-//    std::cout << f << " " << t << "\n";
 
 	instrumentClassPointer->nodeProcessingQueue.newConnection(f, t);
 
@@ -599,50 +604,6 @@ void Instrument::PlayPage::paint(juce::Graphics &g) {
     }
 }
 
-void Instrument::handleIncomingMidiMessage(juce::MidiInput* source, const juce::MidiMessage& message) {
-
-    // Lock the message because we are calling from a different thread(most probably).
-    juce::MessageManagerLock _messageManagerLock;
-
-    if (Instrument::VoidPointerToPianoComponent == nullptr) {
-        return;
-    }
-
-    auto PianoComponent = (Piano*)Instrument::VoidPointerToPianoComponent;
-    auto comp = (Wheels*)Instrument::VoidPointerToWheelComponent;
-    int change = 0;
-
-    if (message.isNoteOn()) {
-        int noteNumber = message.getNoteNumber();
-        int velocity = message.getVelocity(); // need to set.
-        int midi_ = MIDI_TO_MINE[noteNumber];
-
-        if (midi_ > 99) {
-            PianoComponent->overlayPainter.get()->BlackKeyDown(midi_-100);
-        } else if (midi_ > -1) {
-            PianoComponent->overlayPainter.get()->WhiteKeyDown(midi_);
-        }
-
-        change = 1;
-    } else if (message.isNoteOff()) {
-        int noteNumber = message.getNoteNumber();
-        int midi_ = MIDI_TO_MINE[noteNumber];
-
-        if (midi_ > 99) {
-            PianoComponent->overlayPainter.get()->BlackKeyUp(midi_-100);
-        } else if (midi_ > -1) {
-            PianoComponent->overlayPainter.get()->WhiteKeyUp(midi_);
-        }
-
-        change = 1;
-    } else if (message.isPitchWheel() && std::rand()%15 == 0) {
-        if (comp == nullptr) return;
-        comp->setPitchWheel((float)(message.getPitchWheelValue()/128));
-    }
-
-    if (change) PianoComponent->overlayPainter.get()->repaint();
-}
-
 
 Instrument::AudioMIDISettingClass::AudioMIDISettingClass(juce::AudioDeviceManager& deviceManager) : DocumentWindow("Audio/MIDI Settings",
                                                                             ButtonOutlineColourID,
@@ -675,14 +636,18 @@ void Instrument::ConfigurationChanged() {
 
 bool Instrument::updateTreeParams() {
 
-    double bufferSize, bufferRate;
-
     if (deviceManager.get()) {
-        bufferSize = deviceManager.get()->getAudioDeviceSetup().bufferSize;
-        bufferRate = deviceManager.get()->getAudioDeviceSetup().sampleRate;
+        double sampleSize;
+        double sampleRate;
 
-        std::cout << bufferRate << " " << bufferSize << "\n";
-        nodeProcessingQueue.setBufferSizeAndRate(bufferRate, bufferSize);
+        sampleSize = deviceManager.get()->getAudioDeviceSetup().bufferSize;
+        sampleRate = deviceManager.get()->getAudioDeviceSetup().sampleRate;
+
+
+        nodeProcessingQueue.setBufferSizeAndRate(sampleRate, sampleSize);
+
+        // reset the midi message collector.
+        reset(sampleRate);
     } else {
         std::cout << "No active audio device!" << std::endl;
         return false; // nothing to do.

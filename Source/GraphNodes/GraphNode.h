@@ -14,6 +14,9 @@
 #include "../ColourPalette.h"
 #include "Socket.h"
 
+#define PI 3.1415926
+#define PI_HALF 1.5707963
+#define TAU 6.2831853
 
 class EmptyLookAndFeel : public juce::LookAndFeel_V4 {
 public:
@@ -133,6 +136,8 @@ public :
 
     int zoomLevel;
     juce::OwnedArray<Socket> InputSockets;
+
+
     // YOU CAN HAVE AT-MOST ONE SOCKET OF THE TYPE SocketDataType::AudioBufferFloat
     juce::OwnedArray<Socket> OutputSockets;
 
@@ -174,10 +179,7 @@ public :
 
     void resized() override;
 
-
-
     ~GraphNode() override;
-
 
 //    Copy and Implement for your own node.
 //
@@ -185,8 +187,6 @@ public :
 //    void prepareToPlay(double sampleRate, int estimatedSamplesPerBlock) override {}
 //    void releaseResources() override {}
 //    void reset() override {}
-
-    // the function callback pointer that is
 
     double sampleRate;
     int estimatedSamplesPerBlock;
@@ -238,10 +238,6 @@ public :
 
     void setStateInformation(const void* data, int sizeInBytes) override;
 
-    // lock and unlock while reading the values.
-    void lock();
-
-    void unlock();
 
 
     ///|=========================================|
@@ -273,14 +269,18 @@ public :
     bool canBeDeleted;
 
 
+    // this not done by default because only a small
+    // percentage of nodes need to be locked.
+    // and mostly the use case is to change the callback pointer or something like that.
+    std::mutex mutex;
+
 private:
 
     EmptyLookAndFeel style;
 
     juce::Point<int> lastMouseDownPosition;
 
-    // locking from other Node's process.
-    std::mutex mutex;
+
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GraphNode)

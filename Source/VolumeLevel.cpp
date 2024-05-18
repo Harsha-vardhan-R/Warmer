@@ -21,11 +21,8 @@ VolumeLevel::VolumeLevel() {
     volumeSlider.setSliderStyle(juce::Slider::LinearBar);
     // Hide the text box
     volumeSlider.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 0, 0);
+    volumeSlider.setLookAndFeel(&style);
     addAndMakeVisible(&volumeSlider);
-
-    volumeSlider.setColour(juce::Slider::textBoxTextColourId, juce::Colours::darkgrey);
-    volumeSlider.setColour(juce::Slider::thumbColourId, juce::Colours::lightcoral);
-    volumeSlider.setColour(juce::Slider::trackColourId, juce::Colours::lightgrey);
 
     volumeSlider.textFromValueFunction = [](double value) {
         float dbValue = juce::Decibels::gainToDecibels(value) * 12.0f; // Adjust for decibel range
@@ -35,7 +32,6 @@ VolumeLevel::VolumeLevel() {
     // Add listener to handle value changes
     volumeSlider.addListener(this);
     volumeSlider.setValue(1.0);
-
 }
 
 void VolumeLevel::sliderValueChanged(juce::Slider *slider) {

@@ -14,7 +14,7 @@
 class Clamp : public GraphNode {
 public:
 
-    Clamp(int pos_x, int pos_y) : GraphNode(juce::String("Clamp Signal"), pos_x, pos_y) {
+    Clamp(int pos_x, int pos_y) : GraphNode(juce::String("Abs Clamp"), pos_x, pos_y) {
 
         // Output wave.
         OutputSockets.add(new Socket(juce::String("Signal OUT"), direction::OUT, true));
@@ -110,7 +110,6 @@ public:
     void processGraphNode() override {
         (this->*callbackFunction)();
     }
-
 
     void releaseResources() override {}
 

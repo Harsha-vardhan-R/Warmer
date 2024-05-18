@@ -98,6 +98,11 @@ public:
 
     SocketDataType getOutputType();
 
+    // like getOutputType but this returns the type of the connection presently,
+    // meant to be called on an IN, if the socket can accept multiple types
+    // you can use this to know what type of input is connected now,
+    // would not make any sense to call this on an output node.
+    SocketDataType getConnectionType();
 
     juce::PopupMenu menu;
 

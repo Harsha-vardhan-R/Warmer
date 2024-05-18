@@ -29,7 +29,7 @@
     Everything from loading an instrument, saving it, playing it and painting it on the component.
 */
 class Instrument : public juce::Component,
-                   public juce::MidiInputCallback {
+                   public juce::MidiMessageCollector {
 public:
 
     // Maintaining a global static variable for the instance pointer,
@@ -75,10 +75,6 @@ public:
     // Does not care about the devices presently listening to ,
     // Turns on all the devices which are registered as MIDI inputs
     void listenFromAllMIDIInputs();
-
-
-    // Handling the midi from selected midi devices.
-    void handleIncomingMidiMessage(juce::MidiInput* source, const juce::MidiMessage& message) override;
 
     /* Sets the mode */
     void setMode(Mode mode);

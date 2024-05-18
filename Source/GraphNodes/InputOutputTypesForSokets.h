@@ -18,14 +18,14 @@
 // AudioBufferFloat is juce::AudioBuffer<float> for continuous values,
 // Floating is a float point that is read once for processing each buffer.
 
-enum SocketDataType {
+enum class SocketDataType {
     MIDI,
     AudioBufferFloat,
     Floating,
     NULLType, // when you cannot modulate with any other output.
 };
 
-enum direction {
+enum class direction {
     IN,
     OUT
 };

@@ -78,6 +78,7 @@ public:
 
 
 private:
+
     juce::PopupMenu menu;
 
     std::unique_ptr<juce::MenuBarComponent> menuComponent;

@@ -23,6 +23,8 @@
 #include "Oscillators/Noise.h"
 
 #include "Math/ClampSignal.h"
+#include "Math/MixSignal.h"
+#include "Math/ReRamp.h"
+#include "Math/AddAndMul.h"
+#include "Math/AddOrSubtractSignal.h"
 
-// Demo for dev testing
-//#include "DemoNode.h"

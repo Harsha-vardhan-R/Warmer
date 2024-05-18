@@ -43,8 +43,6 @@
 
 */
 
-
-
 class PriorityQueue : public juce::AudioIODeviceCallback {
 public:
 
@@ -66,9 +64,6 @@ public:
     // this is to know we are not processing any nodes, because we edit their configurations from the GUI
     // thread.
     std::atomic<bool> insideCallback;
-
-
-
 
 
     void processingStart() {
@@ -182,6 +177,8 @@ public:
         totalNodesToProcess++;
         bunchOfNodes.insert(nodeGraph);
 
+        nodeGraph->prepareToPlay(sampleRate, sampleSize);
+
         if (checkAllGood()) processingStart();
 	}
 
@@ -189,6 +186,7 @@ public:
     // used to insert all the nodes before sorting them and making a linked-list of linkedNode's.
     void pushBlunt(GraphNode* nodeGraph) {
         totalNodesToProcess++;
+        nodeGraph->prepareToPlay(sampleRate, sampleSize);
         bunchOfNodes.insert(nodeGraph);
     }
 
@@ -296,11 +294,9 @@ public:
     bool newConnection(GraphNode *from, GraphNode *to) {
 
         if (!from || !to) {
-            std::cout << "Null pointers passed as arguments in PriorityQueue::newConnection" << "\n";
+            std::cout << "Null pointers passed as arguments in PriorityQueue::newConnection, ERROR" << "\n";
             return false;
         }
-
-        std::cout << "from : " << from << ", to : " << to << "\n";
 
         processingStop();
 
@@ -385,7 +381,7 @@ public:
         level.store(val);
     }
 
-    // Returns if the nodes are al good and can be processed,
+    // Returns if the nodes are all good and can be processed,
     // also stops the processing if that is not the case.
     bool connectionRemoved(GraphNode *from, GraphNode *to) {
 
@@ -605,8 +601,31 @@ public:
     // METHODS FOR AUDIO DEVICE IO CALLBACK.
     // ======================================
 
+    juce::MidiBuffer midiBuffer;
+    void setNextMidiBuffer(); // sets the next midi-buffer in midiBuffer.
 
+    void printMidiBuffer(const juce::MidiBuffer& midiBuffer) {
 
+        for (const auto metadata : midiBuffer) {
+            const auto& message = metadata.getMessage();
+            const int samplePosition = metadata.samplePosition;
+
+            if (message.isNoteOn())
+            {
+                int noteNumber = message.getNoteNumber();
+                int velocity = message.getVelocity();
+                std::cout << "Note On: Note=" << noteNumber
+                          << " Velocity=" << velocity
+                          << " Sample Position=" << samplePosition << std::endl;
+            }
+            else if (message.isNoteOff())
+            {
+                int noteNumber = message.getNoteNumber();
+                std::cout << "Note Off: Note=" << noteNumber
+                          << " Sample Position=" << samplePosition << std::endl;
+            }
+        }
+    }
 
     // +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
     // The main callback function that is called by the device manager in a very high priority thread,
@@ -620,6 +639,10 @@ public:
 
 //        auto start = std::chrono::high_resolution_clock::now();
 //        std::cout << "reached" << "\n";
+
+        setNextMidiBuffer();
+        printMidiBuffer(midiBuffer);
+        midiBuffer.clear();
 
         // if we are paused, fill it with 0's.
         // you can remove the callback, but this is very inexpensive so not a problem.

@@ -15,11 +15,7 @@
 class MyLookAndFeel : public juce::LookAndFeel_V4 {
 public:
 
-    MyLookAndFeel() {
-        setColour(juce::PopupMenu::ColourIds::backgroundColourId, MenuBackgroundID);
-        setColour(juce::PopupMenu::ColourIds::textColourId, textColourID);
-        setColour(juce::PopupMenu::ColourIds::highlightedTextColourId, textSelectedColourID);
-    }
+    MyLookAndFeel() {}
 
     ~MyLookAndFeel() override {}
 

@@ -12,6 +12,17 @@
 #pragma once
 #include <JuceHeader.h>
 
+class VolumeBarLookAndFeel : public juce::LookAndFeel_V3 {
+public:
+
+    VolumeBarLookAndFeel() {
+        setColour(juce::Slider::ColourIds::textBoxTextColourId, juce::Colour(0xFF2C3333));
+        setColour(juce::Slider::ColourIds::backgroundColourId, juce::Colours::white);
+        setColour(juce::Slider::ColourIds::thumbColourId, juce::Colour(0xFFB9F8D3));
+    }
+
+};
+
 class VolumeLevel : public juce::Component,
                     public juce::Slider::Listener {
 public :
@@ -38,7 +49,7 @@ public :
 private :
     float level; // set by the user defaults at 0.6. can be from 0.0 to 1.0.
 
-
+    VolumeBarLookAndFeel style;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VolumeLevel)
 };

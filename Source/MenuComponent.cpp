@@ -9,9 +9,6 @@ MenuComponent::MenuComponent() {
     addAndMakeVisible(menuComponent.get());
     setLookAndFeel(this);
 
-    menuComponent.get()->setColour (juce::PopupMenu::backgroundColourId, juce::Colours::grey);
-
-
     resized(); // this is NEEDED for the first time rendering.
 }
 
@@ -33,6 +30,8 @@ juce::StringArray MenuComponent::getMenuBarNames() {
 }
 
 juce::PopupMenu MenuComponent::getMenuForIndex(int topLevelMenuIndex, const juce::String& menuName) {
+
+    menu.clear();
 
     if (menuName == "Instrument") {
         menu.addItem(1, "Initialize");
@@ -162,7 +161,7 @@ void MenuComponent::drawTabButton(juce::TabBarButton& button,
                                   bool isMouseOver,
                                   bool isMouseDown) {
 
-    g.fillAll(MenuBackgroundID);
+    g.fillAll(TabBackgroundColourID);
 
     if (button.isFrontTab()) {
         g.setColour(SelectTabColourID);
