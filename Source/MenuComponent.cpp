@@ -85,6 +85,10 @@ void MenuComponent::menuItemSelected(int menuItemID, int topLevelMenuIndex) {
     }
 }
 
+void
+MenuComponent::drawMenuBarBackground(juce::Graphics &g, int width, int height, bool, juce::MenuBarComponent &menuBar) {
+    g.fillAll(juce::Colours::white);
+}
 
 void MenuComponent::drawMenuBarItem (juce::Graphics& g,
                       int width,
@@ -140,7 +144,7 @@ void MenuComponent::drawPopupMenuItem (juce::Graphics& g,
 
 void MenuComponent::drawComboBox(juce::Graphics &g, int width, int height, bool isButtonDown, int buttonX, int buttonY,
                                  int buttonW, int buttonH, juce::ComboBox& box) {
-    g.setColour(MenuMouseOverColourID);
+    g.setColour(juce::Colour(0xFFECEFF0));
     g.fillRect(box.getLocalBounds().reduced(1));
 
     juce::Path arrow;

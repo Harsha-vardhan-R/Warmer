@@ -24,9 +24,6 @@ public:
     juce::PopupMenu getMenuForIndex(int topLevelMenuIndex, const juce::String& menuName) override;
     void menuItemSelected(int menuItemID, int topLevelMenuIndex) override;
     //========================================
-    void drawMenuBarBackground (juce::Graphics& g, int width, int height, bool, juce::MenuBarComponent& menuBar) override {
-        g.fillAll (juce::Colour(0xffeee3e7));
-    }
     juce::Font getMenuBarFont (juce::MenuBarComponent& menuBar, int itemIndex, const juce::String& itemText) override {
         return juce::Font(12.0f);
     }
@@ -46,6 +43,7 @@ public:
                                            const juce::String& shortcutKeyText,
                                            const juce::Drawable* icon,
                                            const juce::Colour* textColourToUse) override;
+    void drawMenuBarBackground (juce::Graphics& g, int width, int height, bool, juce::MenuBarComponent& menuBar) override;
     void drawMenuBarItem (juce::Graphics& g,
                           int width,
                           int height,
