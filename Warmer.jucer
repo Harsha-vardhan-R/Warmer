@@ -7,6 +7,7 @@
   <MAINGROUP id="i1IZ57" name="Warmer">
     <GROUP id="{ABD2107A-91D9-3367-075C-DAB74831B466}" name="Assets"/>
     <GROUP id="{96AA9396-9DAD-7D0F-4F64-27DF1BACBC55}" name="Source">
+      <FILE id="ELNwgB" name="Profiler.h" compile="0" resource="0" file="Source/Profiler.h"/>
       <FILE id="istD9r" name="MyDataStructures.cpp" compile="1" resource="0"
             file="Source/MyDataStructures.cpp"/>
       <FILE id="Rzi8EP" name="MyDataStructures.h" compile="0" resource="0"
@@ -69,7 +70,6 @@
         <FILE id="XyGDjE" name="Connection.cpp" compile="1" resource="0" file="Source/GraphNodes/Connection.cpp"/>
         <FILE id="ZJzcx3" name="Connection.h" compile="0" resource="0" file="Source/GraphNodes/Connection.h"/>
         <FILE id="CRjcEt" name="Socket.cpp" compile="1" resource="0" file="Source/GraphNodes/Socket.cpp"/>
-        <FILE id="RrUtio" name="ParameterCtrl.h" compile="0" resource="0" file="Source/GraphNodes/ParameterCtrl.h"/>
         <GROUP id="{33CB675E-D569-27B8-6E4C-C01AF0AC6C12}" name="General">
           <FILE id="xPTLg4" name="AddLag.h" compile="0" resource="0" file="Source/GraphNodes/General/AddLag.h"/>
           <FILE id="szkenN" name="ADSR.h" compile="0" resource="0" file="Source/GraphNodes/General/ADSR.h"/>
@@ -92,6 +92,7 @@
           <FILE id="mrQhOQ" name="AddOrSubtractSignal.h" compile="0" resource="0"
                 file="Source/GraphNodes/Math/AddOrSubtractSignal.h"/>
           <FILE id="hVvSlm" name="ClampSignal.h" compile="0" resource="0" file="Source/GraphNodes/Math/ClampSignal.h"/>
+          <FILE id="PAJZTj" name="MathClamp.h" compile="0" resource="0" file="Source/GraphNodes/Math/MathClamp.h"/>
           <FILE id="UIeGkP" name="MixSignal.h" compile="0" resource="0" file="Source/GraphNodes/Math/MixSignal.h"/>
           <FILE id="m7TRG9" name="ReRamp.h" compile="0" resource="0" file="Source/GraphNodes/Math/ReRamp.h"/>
         </GROUP>
@@ -152,7 +153,8 @@
   <EXPORTFORMATS>
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="Warmer" extraLinkerFlags="-latomic"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="Warmer" extraLinkerFlags="-latomic"
+                       optimisation="5"/>
         <CONFIGURATION isDebug="0" name="Release" targetName="Warmer" linkTimeOptimisation="1"
                        recommendedWarnings="GCC" extraLinkerFlags="-latomic"/>
       </CONFIGURATIONS>

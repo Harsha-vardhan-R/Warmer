@@ -85,7 +85,6 @@ public:
         nodeProcessingQueue.setVolumeLevel(val);
     }
 
-
     /////##################################
     /// DATA STRUCTURES
     /////##################################
@@ -142,6 +141,11 @@ public:
                                    juce::Line<int> newLinePosition) {
         GraphPage* casted = (GraphPage*)(graphPage.get());
         casted->updateConnectionLine(connectionPointer, newLinePosition);
+    }
+
+    void triggerGraphPageRepaint() {
+        GraphPage* casted = (GraphPage*)(graphPage.get());
+        casted->triggerRepaint();
     }
 
     void connectionAdded(Connection* newConnection) {
@@ -234,6 +238,8 @@ public:
         void connectionInit(Connection* n, juce::Line<int> position);
 
         void connectionInitFail();
+
+        void triggerRepaint();
 
         // add new connection, object is created elsewhere,
         // we take ownership in abstraction.
@@ -358,17 +364,25 @@ public:
 
 
     // Because the pages to be displayed are private, get functions for the pages.
-    // Please do not use this before creating the pages, or else everything will crash
+    // do not use this before creating the pages.
     juce::Component* getEditPage() {
         return this->editPage.get();
     }
 
+    // returns the viewport component that graph page is in.
     juce::Component* getGraphPage() {
         return this->viewport.get();
     }
 
     juce::Component* getPlayPage() {
         return this->playPage.get();
+    }
+
+
+    // returns the part of graph page that is visible in the viewport.
+    juce::Rectangle<int> getPartToRepaintInViewPort() {
+        if (viewport.get()) return viewport.get()->getViewArea();
+        return juce::Rectangle(0, 0, 100, 100);
     }
 
 private:

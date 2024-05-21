@@ -17,6 +17,7 @@
 #include "Wheels.h"
 #include "ColourPalette.h"
 #include <JuceHeader.h>
+#include "Profiler.h"
 
 Instrument* Instrument::instancePtr = nullptr;
 
@@ -97,6 +98,7 @@ Instrument::Instrument(int tabWidth) {
     updateTreeParams();
 
     resized();
+    
 }
 
 void Instrument::refreshMIDIDevices() {
@@ -245,7 +247,7 @@ void Instrument::EditPage::resized() {
 }
 
 void Instrument::EditPage::paint(juce::Graphics &g) {
-    g.fillAll(juce::Colours::white);
+    g.fillAll(juce::Colour(0xAAEEF6FD));
 }
 
 void Instrument::EditPage::createCanvasButtonClicked() {
@@ -334,12 +336,13 @@ Instrument::GraphPage::GraphPage() {
     subMenuArray[3]->addItem(402, "Chebyshev");
     subMenuArray[3]->addItem(403, "Digital");
 
-    subMenuArray[4]->addItem(501, "Add & Mul");
-    subMenuArray[4]->addItem(502, "Add Or Sub");
+    subMenuArray[4]->addItem(501, "Mul & Add Transform");
+    subMenuArray[4]->addItem(502, "Add Or Sub Signals");
     subMenuArray[4]->addItem(503, "FM");
-    subMenuArray[4]->addItem(504, "Mix");
-    subMenuArray[4]->addItem(505, "Clamp");
+    subMenuArray[4]->addItem(504, "Mix Signals");
+    subMenuArray[4]->addItem(505, "Abs Clamp");
     subMenuArray[4]->addItem(506, "Re-Ramp");
+    subMenuArray[4]->addItem(507, "Math Clamp");
 
     subMenuArray[5]->addItem(601, "MIDI");
     subMenuArray[5]->addItem(602, "Arpeggiator");
@@ -400,7 +403,9 @@ void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *g
     int pos_x = graphPageComponent->lastMouseDownPosition.getX();
     int pos_y = graphPageComponent->lastMouseDownPosition.getY();
 
-    if (result == 201) {
+    if (result == 101) {
+        temp = new Utility(pos_x, pos_y);
+    } else if (result == 201) {
         temp = new Oscillator(pos_x, pos_y);
     } else if (result == 203) {
         temp = new Noise(pos_x, pos_y);
@@ -414,6 +419,8 @@ void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *g
         temp = new Clamp(pos_x, pos_y);
     } else if (result == 506) {
         temp = new ReRamp(pos_x, pos_y);
+    } else if (result == 507) {
+        temp = new MathClamp(pos_x, pos_y);
     } else if (result == 0) {
         /* DO NOTHING */
         return;
@@ -433,29 +440,23 @@ void Instrument::GraphPage::resized() {
 }
 
 void Instrument::GraphPage::paint(juce::Graphics &g) {
-//    drawConnections(g);
-    g.setColour(juce::Colours::darkgrey);
-
-    if (temp) {
-        g.drawLine(p.toFloat(), 1);
-    }
-
-    for (const auto& pair : ConnectionToLineMap) {
-        g.drawLine(pair.second.toFloat(), 1);
-    }
+    drawConnections(g);
 }
 
 void Instrument::GraphPage::connectionInit(Connection *n, juce::Line<int> p) {
+
+    //Profiler("connection init in graph page");
+
     temp = n;
     this->p = p;
-    updateRepaintArea(p);
-    repaint(repaintArea);
+    //updateRepaintArea(p);
+    repaint(instrumentClassPointer->getPartToRepaintInViewPort());
 }
 
 void Instrument::GraphPage::connectionInitFail() {
     temp = nullptr;
-    updateRepaintArea();
-    repaint();
+    //updateRepaintArea();
+    repaint(instrumentClassPointer->getPartToRepaintInViewPort());
 }
 
 void Instrument::GraphPage::connectionRemoved(Connection *connectionPointer) {
@@ -469,14 +470,21 @@ void Instrument::GraphPage::connectionRemoved(Connection *connectionPointer) {
     AllConnections.erase(connectionPointer);
     ConnectionToLineMap.erase(connectionPointer);
 
-    updateRepaintArea();
-    repaint();
+
+    repaint(instrumentClassPointer->getPartToRepaintInViewPort());
 }
 
 void Instrument::GraphPage::updateConnectionLine(Connection *connectionPointer, juce::Line<int> newLine) {
+    //Profiler("Update connection line");
+
     ConnectionToLineMap[connectionPointer] = newLine;
-    updateRepaintArea(newLine);
-    repaint(repaintArea);
+    //updateRepaintArea(newLine);
+    //repaint(instrumentClassPointer->getPartToRepaintInViewPort());
+}
+
+
+void Instrument::GraphPage::triggerRepaint() {
+    repaint(instrumentClassPointer->getPartToRepaintInViewPort());
 }
 
 void Instrument::GraphPage::updateRepaintArea() {
@@ -536,15 +544,34 @@ void Instrument::GraphPage::updateRepaintArea(juce::Line<int>& line) {
 //    }
 //}
 
+void drawBezierCurve(juce::Graphics& g, juce::Point<float> endPoint, juce::Point<float> startPoint)
+{
+    float controlPointDistance = std::abs(endPoint.x - startPoint.x) / 3.0f;
+
+    juce::Point<float> controlPoint1(startPoint.x + controlPointDistance, startPoint.y);
+    juce::Point<float> controlPoint2(endPoint.x - controlPointDistance, endPoint.y);
+
+    // Create the path
+    juce::Path path;
+    path.startNewSubPath(startPoint);
+    path.cubicTo(controlPoint1, controlPoint2, endPoint);
+
+
+    g.strokePath(path, juce::PathStrokeType(1.0f));
+}
+
 void Instrument::GraphPage::drawConnections(juce::Graphics &g) {
+
+    //Profiler("Draw connections in graphPage");
+
     g.setColour(GraphNodeConnectionColourID);
 
     if (temp) {
-        g.drawLine(p.toFloat(), 1);
+        drawBezierCurve(g, p.getEnd().toFloat(), p.getStart().toFloat());
     }
 
     for (const auto& pair : ConnectionToLineMap) {
-        g.drawLine(pair.second.toFloat(), 1);
+        drawBezierCurve(g, pair.second.getEnd().toFloat(), pair.second.getStart().toFloat());
     }
 }
 
@@ -555,14 +582,14 @@ void Instrument::GraphPage::connectionAdded(Connection *newConnection) {
     juce::Line<int> temp(0, 0, 0, 0);
 
     ConnectionToLineMap[newConnection] = temp;
-    updateRepaintArea();
+    //updateRepaintArea();
 
     GraphNode* f = static_cast<GraphNode*>(newConnection->fromNode);
     GraphNode* t = static_cast<GraphNode*>(newConnection->toNode);
 
 	instrumentClassPointer->nodeProcessingQueue.newConnection(f, t);
 
-    repaint();
+    repaint(instrumentClassPointer->getPartToRepaintInViewPort());
 }
 
 Instrument::GraphPage::BackGroundGraphPageCanvas::BackGroundGraphPageCanvas() {

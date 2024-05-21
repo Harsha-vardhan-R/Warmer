@@ -14,6 +14,13 @@
 #include "Modes.h"
 #include "MenuComponent.h"
 
+class look_and_feel_exp : public juce::LookAndFeel_V1 {
+public:
+    look_and_feel_exp() {
+        setColour(juce::TabbedComponent::backgroundColourId, juce::Colours::white);
+    }
+};
+
 
 /*
     Contains the code to manage the bar and component that is used to switch between modes, like `Play`, `Graph` and `Edit` mode.
@@ -21,6 +28,8 @@
 */
 class ModeSwitch final : public juce::TabbedComponent {
 public:
+
+    look_and_feel_exp s;
 
     ModeSwitch() : juce::TabbedComponent(juce::TabbedButtonBar::Orientation::TabsAtLeft) {
         //setSize(getParentWidth(), getParentHeight());
@@ -33,8 +42,10 @@ public:
         addTab("Graph", colour_here, this->instrument.get()->getGraphPage() , true);// viewport is set as the component.
         addTab("Edit", colour_here, this->instrument.get()->getEditPage() , true);
 
-        styles.reset(new MenuComponent());
-        setLookAndFeel(styles.get());
+//        styles.reset(new MenuComponent());
+//        setLookAndFeel(styles.get());
+
+        setLookAndFeel(&s);
 
         instrumentPresent = false;
 

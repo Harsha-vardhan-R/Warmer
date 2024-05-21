@@ -27,4 +27,7 @@
 #include "Math/ReRamp.h"
 #include "Math/AddAndMul.h"
 #include "Math/AddOrSubtractSignal.h"
+#include "Math/MathClamp.h"
+
+#include "General/Utility.h"
 

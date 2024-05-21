@@ -45,163 +45,174 @@ int BlackPianoKeyMap[12] = {15, 16, 17, 18, 19};
 
 
 
-Piano::Piano() {
-    overlayPainter.reset(new Piano::OverlayKeyPaint());
-    overlayPainter.get()->setWantsKeyboardFocus(true);
-    overlayPainter.get()->addKeyListener(overlayPainter.get());
-    addAndMakeVisible(overlayPainter.get());
+Piano::Piano(juce::MidiKeyboardState& state, juce::KeyboardComponentBase::Orientation orientation)  : juce::MidiKeyboardComponent(state, orientation) {
+//    overlayPainter.reset(new Piano::OverlayKeyPaint());
+//    overlayPainter.get()->setWantsKeyboardFocus(true);
+//    overlayPainter.get()->addKeyListener(overlayPainter.get());
+//    addAndMakeVisible(overlayPainter.get());
+//
+//    setBufferedToImage(true);
 
-    setBufferedToImage(true);
+    setVelocity(0.75, true);
+
+    grabKeyboardFocus();
+
+    setColour(juce::MidiKeyboardComponent::whiteNoteColourId, juce::Colours::white);
+    setColour(juce::MidiKeyboardComponent::blackNoteColourId, juce::Colour::fromRGB(100, 100, 100));
+    setColour(juce::MidiKeyboardComponent::keyDownOverlayColourId, juce::Colour(0x22000000));
+    setColour(juce::MidiKeyboardComponent::mouseOverKeyOverlayColourId, juce::Colours::transparentWhite);
+    setColour(juce::MidiKeyboardComponent::textLabelColourId, juce::Colours::grey);
+
 
     resized();
 }
 
-Piano::~Piano() {}
-
-void Piano::paint(juce::Graphics &g) {
-    g.drawImage(PianoImage, 0 , 0, 1192, getHeight(),
-                0, 0, 1192, 125, false);
-}
+Piano::~Piano(){}
+//
+//void Piano::paint(juce::Graphics &g) {
+//    g.drawImage(PianoImage, 0 , 0, 1192, getHeight(),
+//                0, 0, 1192, 125, false);
+//}
 
 void Piano::resized() {
     setBounds(200+offset, 0 ,1192, getParentHeight());
 
-    if (overlayPainter.get() != nullptr) {
-        overlayPainter.get()->resized();
-    }
+//    if (overlayPainter.get() != nullptr) {
+//        overlayPainter.get()->resized();
+//    }
 
 }
 
-// Overlay method implementations
-// Mostly used from the callbacks from the instrument.
-Piano::OverlayKeyPaint::OverlayKeyPaint() {
-    pressedWhiteKeys = {};
-    pressedBlackKeys = {};
-
-    for (int i = 0; i < 150; i++) {
-        KeysAndCorrespondingKeyCodes[i] = -1;
-    }
-    int i = 0;
-    for (auto j : KeyMap) {
-        KeysAndCorrespondingKeyCodes[j] = PianoKeyMap[i];
-        i++;
-    }
-    for (int i = 0; i < 150; i++) {
-        BlackKeysAndCorrespondingKeyCodes[i] = -1;
-    }
-    i = 0;
-    for (auto j : BlackKeyMap) {
-        BlackKeysAndCorrespondingKeyCodes[j] = BlackPianoKeyMap[i];
-        i++;
-    }
-
-    setWantsKeyboardFocus(true);
-
-    resized();
-
-}
-
-
-
-int presentKey;
-
-void Piano::OverlayKeyPaint::WhiteKeyDown(int keyIndex) {
-    presentKey = keyIndex+(Wheels::TRANSPOSE*7);
-    if (presentKey < 0 || presentKey > 52) return;
-    this->pressedWhiteKeys.insert(presentKey);
-}
-
-void Piano::OverlayKeyPaint::WhiteKeyUp(int keyIndex) {
-    // does not raise an exception if not found, so no need to handle any kind of exception.
-    this->pressedWhiteKeys.erase(keyIndex+(Wheels::TRANSPOSE*7));
-}
-
-void Piano::OverlayKeyPaint::BlackKeyDown(int keyIndex) {
-    presentKey = keyIndex+(Wheels::TRANSPOSE*5);
-    if (presentKey < 0 || presentKey > 36) return;
-    this->pressedBlackKeys.insert(presentKey);
-}
-
-void Piano::OverlayKeyPaint::BlackKeyUp(int keyIndex) {
-    this->pressedBlackKeys.erase(keyIndex+(Wheels::TRANSPOSE*5));
-}
-
-
-
-
-void Piano::OverlayKeyPaint::paint(juce::Graphics &g) {
-
-    // Draw the overlay for the pressed white keys.
-    for (auto i = pressedWhiteKeys.begin(); i != pressedWhiteKeys.end(); ++i) {
-        g.drawImage(WImage, WhiteKeyPositions[*i] - offset - 1, -3, 34, 130,
-                    WhiteKeyPositions[*i], 1, 34, 130, false);
-    }
-
-    for (auto i = pressedBlackKeys.begin(); i != pressedBlackKeys.end(); ++i) {
-        g.drawImage(Bimage, blackKeyPianoPosition[*i] - offset, 3, 20, 85,
-                    0, 6, 20, 85, false);
-    }
-
-}
-
-void Piano::OverlayKeyPaint::resized() {
-    if (this->getParentComponent() != nullptr) setBounds(this->getParentComponent()->getLocalBounds().reduced(1));
-    this->offset = 884-(getWidth()/2);
-}
-
-bool Piano::OverlayKeyPaint::keyPressed(const juce::KeyPress& k, juce::Component* c) {
-
-    int code = k.getKeyCode();
-    int keyCode = KeysAndCorrespondingKeyCodes[code];
-
-    if (keyCode != -1 && (this->pressedWhiteKeyCodes.find(code) == this->pressedWhiteKeyCodes.end())) {
-        this->pressedWhiteKeyCodes.insert(code);
-        WhiteKeyDown(keyCode);
-        repaint();
-        return true;
-    }
-
-    if (BlackKeysAndCorrespondingKeyCodes[code] != -1 && (this->pressedBlackKeyCodes.find(code) == this->pressedBlackKeyCodes.end())) {
-        this->pressedBlackKeyCodes.insert(code);
-        BlackKeyDown(BlackKeysAndCorrespondingKeyCodes[code]);
-        repaint();
-        return true;
-    }
-
-    return false;
-}
-
-
-
-
-std::queue<int> WhitePressedTemp;
-std::queue<int> BlackPressedTemp;
-
-bool Piano::OverlayKeyPaint::keyStateChanged(bool isKeyDown, juce::Component* c) {
-
-    bool stateChange = false;
-
-    for (auto i = pressedWhiteKeyCodes.begin(); i != pressedWhiteKeyCodes.end(); i++) {
-        if (!juce::KeyPress::isKeyCurrentlyDown(*i)) {
-            WhitePressedTemp.push(*i);
-            WhiteKeyUp(KeysAndCorrespondingKeyCodes[*i]);
-        }
-    }
-    while(!WhitePressedTemp.empty()) {
-        pressedWhiteKeyCodes.erase(WhitePressedTemp.front()); WhitePressedTemp.pop();stateChange = true;
-    }
-
-    for (auto i = pressedBlackKeyCodes.begin(); i != pressedBlackKeyCodes.end(); i++) {
-        if (!juce::KeyPress::isKeyCurrentlyDown(*i)) {
-            BlackPressedTemp.push(*i);
-            BlackKeyUp(BlackKeysAndCorrespondingKeyCodes[*i]);
-        }
-    }
-    while(!BlackPressedTemp.empty()) {
-        pressedBlackKeyCodes.erase(BlackPressedTemp.front()); BlackPressedTemp.pop();stateChange = true;
-    }
-
-    if (stateChange) repaint();
-
-    return false;
-};
+//// Overlay method implementations
+//// Mostly used from the callbacks from the instrument.
+//Piano::OverlayKeyPaint::OverlayKeyPaint() {
+//    pressedWhiteKeys = {};
+//    pressedBlackKeys = {};
+//
+//    for (int i = 0; i < 150; i++) {
+//        KeysAndCorrespondingKeyCodes[i] = -1;
+//    }
+//    int i = 0;
+//    for (auto j : KeyMap) {
+//        KeysAndCorrespondingKeyCodes[j] = PianoKeyMap[i];
+//        i++;
+//    }
+//    for (int i = 0; i < 150; i++) {
+//        BlackKeysAndCorrespondingKeyCodes[i] = -1;
+//    }
+//    i = 0;
+//    for (auto j : BlackKeyMap) {
+//        BlackKeysAndCorrespondingKeyCodes[j] = BlackPianoKeyMap[i];
+//        i++;
+//    }
+//
+//    setWantsKeyboardFocus(true);
+//
+//    resized();
+//
+//}
+//
+//
+//
+//int presentKey;
+//
+//void Piano::OverlayKeyPaint::WhiteKeyDown(int keyIndex) {
+//    presentKey = keyIndex+(Wheels::TRANSPOSE*7);
+//    if (presentKey < 0 || presentKey > 52) return;
+//    this->pressedWhiteKeys.insert(presentKey);
+//}
+//
+//void Piano::OverlayKeyPaint::WhiteKeyUp(int keyIndex) {
+//    // does not raise an exception if not found, so no need to handle any kind of exception.
+//    this->pressedWhiteKeys.erase(keyIndex+(Wheels::TRANSPOSE*7));
+//}
+//
+//void Piano::OverlayKeyPaint::BlackKeyDown(int keyIndex) {
+//    presentKey = keyIndex+(Wheels::TRANSPOSE*5);
+//    if (presentKey < 0 || presentKey > 36) return;
+//    this->pressedBlackKeys.insert(presentKey);
+//}
+//
+//void Piano::OverlayKeyPaint::BlackKeyUp(int keyIndex) {
+//    this->pressedBlackKeys.erase(keyIndex+(Wheels::TRANSPOSE*5));
+//}
+//
+//
+//
+//
+//void Piano::OverlayKeyPaint::paint(juce::Graphics &g) {
+//
+//    // Draw the overlay for the pressed white keys.
+//    for (auto i = pressedWhiteKeys.begin(); i != pressedWhiteKeys.end(); ++i) {
+//        g.drawImage(WImage, WhiteKeyPositions[*i] - offset - 1, -3, 34, 130,
+//                    WhiteKeyPositions[*i], 1, 34, 130, false);
+//    }
+//
+//    for (auto i = pressedBlackKeys.begin(); i != pressedBlackKeys.end(); ++i) {
+//        g.drawImage(Bimage, blackKeyPianoPosition[*i] - offset, 3, 20, 85,
+//                    0, 6, 20, 85, false);
+//    }
+//
+//}
+//
+//void Piano::OverlayKeyPaint::resized() {
+//    if (this->getParentComponent() != nullptr) setBounds(this->getParentComponent()->getLocalBounds().reduced(1));
+//    this->offset = 884-(getWidth()/2);
+//}
+//
+//bool Piano::OverlayKeyPaint::keyPressed(const juce::KeyPress& k, juce::Component* c) {
+//
+//    int code = k.getKeyCode();
+//    int keyCode = KeysAndCorrespondingKeyCodes[code];
+//
+//    if (keyCode != -1 && (this->pressedWhiteKeyCodes.find(code) == this->pressedWhiteKeyCodes.end())) {
+//        this->pressedWhiteKeyCodes.insert(code);
+//        WhiteKeyDown(keyCode);
+//        repaint();
+//        return true;
+//    }
+//
+//    if (BlackKeysAndCorrespondingKeyCodes[code] != -1 && (this->pressedBlackKeyCodes.find(code) == this->pressedBlackKeyCodes.end())) {
+//        this->pressedBlackKeyCodes.insert(code);
+//        BlackKeyDown(BlackKeysAndCorrespondingKeyCodes[code]);
+//        repaint();
+//        return true;
+//    }
+//
+//    return false;
+//}
+//
+//
+//
+//
+//std::queue<int> WhitePressedTemp;
+//std::queue<int> BlackPressedTemp;
+//
+//bool Piano::OverlayKeyPaint::keyStateChanged(bool isKeyDown, juce::Component* c) {
+//
+//    bool stateChange = false;
+//
+//    for (auto i = pressedWhiteKeyCodes.begin(); i != pressedWhiteKeyCodes.end(); i++) {
+//        if (!juce::KeyPress::isKeyCurrentlyDown(*i)) {
+//            WhitePressedTemp.push(*i);
+//            WhiteKeyUp(KeysAndCorrespondingKeyCodes[*i]);
+//        }
+//    }
+//    while(!WhitePressedTemp.empty()) {
+//        pressedWhiteKeyCodes.erase(WhitePressedTemp.front()); WhitePressedTemp.pop();stateChange = true;
+//    }
+//
+//    for (auto i = pressedBlackKeyCodes.begin(); i != pressedBlackKeyCodes.end(); i++) {
+//        if (!juce::KeyPress::isKeyCurrentlyDown(*i)) {
+//            BlackPressedTemp.push(*i);
+//            BlackKeyUp(BlackKeysAndCorrespondingKeyCodes[*i]);
+//        }
+//    }
+//    while(!BlackPressedTemp.empty()) {
+//        pressedBlackKeyCodes.erase(BlackPressedTemp.front()); BlackPressedTemp.pop();stateChange = true;
+//    }
+//
+//    if (stateChange) repaint();
+//
+//    return false;
+//};

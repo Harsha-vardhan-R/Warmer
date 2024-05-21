@@ -12,6 +12,7 @@
 #include "GraphNodes/Collection.h"
 #include <random>
 #include <chrono>
+#include "WaveShapeDisp.h"
 
 /*
 
@@ -355,7 +356,7 @@ public:
 
         resetAll();
 
-        debugDump();
+        //debugDump();
 
         if (checkAllGood()) processingStart();
 
@@ -373,12 +374,20 @@ public:
             current = current->nextNode;
         }
 
+        if (WaveShapeDisp::this_instance) WaveShapeDisp::this_instance->changeBufferSize(sampleSize);
+
     }
 
     std::atomic<float> level;
 
     void setVolumeLevel(float val) {
         level.store(val);
+    }
+
+    juce::AudioBuffer<float>* getOutputWave() {
+
+        if (AUDIO_OUT) return AUDIO_OUT->getToWriteAudioBuffer();
+        else return nullptr;
     }
 
     // Returns if the nodes are all good and can be processed,
@@ -430,6 +439,8 @@ public:
 
         if (!checkAllGood()) return;
 
+        int num_of_buffers_used = 0;
+
 
         while (current) {
             GraphNode* currentNode = current->nodePointer;
@@ -440,6 +451,7 @@ public:
                     juce::AudioBuffer<float>* t = new juce::AudioBuffer<float>(2, (int)std::ceil(sampleSize));
                     dependencieFreedBuffers.push(t);
                     bunchOfBuffers.insert(t);
+                    num_of_buffers_used++;
                 }
 
                 juce::AudioBuffer<float>* temp = dependencieFreedBuffers.front();
@@ -468,6 +480,7 @@ public:
                 // reference count reduced.
 
                 for (auto i : nodeToDependentBufferMap[currentNode]) {
+                    std::cout << "Node to dependent map" << "\n";
                     dependentCountMap[i]--;
 
                     // this node can be used, all it's dependencies are processed.
@@ -480,6 +493,9 @@ public:
 
             current = current->nextNode;
         }
+
+        debugDump();
+
     }
 
     // this is used while loading a configuration,
@@ -588,7 +604,7 @@ public:
 
     void recrPrint(linkedNode* node) {
         if (node) {
-            std::cout << node->nodePointer->name << ", Pointer value : " << node->nodePointer << "\n";
+            std::cout << node->nodePointer->name << ", Pointer value : " << node->nodePointer << ", Buffer used : " << node->nodePointer->getToWriteAudioBuffer() << "\n";
             recrPrint(node->nextNode);
         }
     }
@@ -625,6 +641,7 @@ public:
                           << " Sample Position=" << samplePosition << std::endl;
             }
         }
+
     }
 
     // +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
@@ -666,6 +683,7 @@ public:
         // this output node takes in output channel data and the loudness level.
         // it basically copies the buffer multiplied with the loudness level.
         ((OutputMasterGraphNode*)AUDIO_OUT)->processGraphNodeOutput(outputChannelData, level.load());
+        WaveShapeDisp::this_instance->pushFreshBuffer(((OutputMasterGraphNode*)AUDIO_OUT)->getBufferToDisplay());
 
 //        auto end = std::chrono::high_resolution_clock::now();
 //        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);

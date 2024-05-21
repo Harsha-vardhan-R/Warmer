@@ -119,15 +119,12 @@ public:
                             } else if (waveInputType == waveType::sawtooth) {
                                 channelData[i] = ((current_phase / PI) - 1) * amplitude;
                             } else if (waveInputType == waveType::triangle) {
-                                float reRampedPhase = current_phase / PI_HALF;
-                                float comp_one = reRampedPhase > 1.0;
-                                float temp_ = (comp_one) * (1 - reRampedPhase) + (1 - comp_one) * (reRampedPhase); // first fold.
-                                float comp_two = temp_ < -1;
-                                float temp_2_ = (1 - comp_two) * (temp_) + (comp_two) * (-1 - temp_); // second fold.
-                                channelData[i] = temp_2_ * amplitude;
+                                float normalizedPhase = current_phase / TAU; // Normalize phase to [0, 1]
+                                float triangle = 2.0f * std::abs(2.0f * (normalizedPhase - std::floor(normalizedPhase + 0.5f))) - 1.0f;
+                                channelData[i] = triangle * amplitude;
                             } else {
-                                int comp = current_phase < PI;
-                                channelData[i] = (comp * 1 + (1 - comp) * -1) * amplitude;
+                                float square = (current_phase < PI) ? 1.0f : -1.0f;
+                                channelData[i] = square * amplitude;
                             }
 
                         }
@@ -143,15 +140,12 @@ public:
                             } else if (waveInputType == waveType::sawtooth) {
                                 channelData[i] = ((current_phase / PI) - 1) * amplModPointer[i];
                             } else if (waveInputType == waveType::triangle) {
-                                float reRampedPhase = current_phase / PI_HALF;
-                                float comp_one = reRampedPhase > 1.0;
-                                float temp_ = (comp_one) * (1 - reRampedPhase) + (1 - comp_one) * (reRampedPhase); // first fold.
-                                float comp_two = temp_ < -1;
-                                float temp_2_ = (1 - comp_two) * (temp_) + (comp_two) * (-1 - temp_); // second fold.
-                                channelData[i] = temp_2_ * amplModPointer[i];
+                                float normalizedPhase = current_phase / TAU; // Normalize phase to [0, 1]
+                                float triangle = 2.0f * std::abs(2.0f * (normalizedPhase - std::floor(normalizedPhase + 0.5f))) - 1.0f;
+                                channelData[i] = triangle * amplModPointer[i];
                             } else {
-                                int comp = current_phase < PI;
-                                channelData[i] = (comp * 1 + (1 - comp) * -1) * amplModPointer[i];
+                                float square = (current_phase < PI) ? 1.0f : -1.0f;
+                                channelData[i] = square * amplModPointer[i];
                             }
 
                         }
@@ -172,15 +166,12 @@ public:
                             } else if (waveInputType == waveType::sawtooth) {
                                 channelData[i] = ((current_phase / PI) - 1) * amplitude;
                             } else if (waveInputType == waveType::triangle) {
-                                float reRampedPhase = current_phase / PI_HALF;
-                                float comp_one = reRampedPhase > 1.0;
-                                float temp_ = (comp_one) * (1 - reRampedPhase) + (1 - comp_one) * (reRampedPhase); // first fold.
-                                float comp_two = temp_ < -1;
-                                float temp_2_ = (1 - comp_two) * (temp_) + (comp_two) * (-1 - temp_); // second fold.
-                                channelData[i] = temp_2_ * amplitude;
+                                float normalizedPhase = current_phase / TAU; // Normalize phase to [0, 1]
+                                float triangle = 2.0f * std::abs(2.0f * (normalizedPhase - std::floor(normalizedPhase + 0.5f))) - 1.0f;
+                                channelData[i] = triangle * amplitude;
                             } else {
-                                int comp = current_phase < PI;
-                                channelData[i] = (comp * 1 + (1 - comp) * -1) * amplitude;
+                                float square = (current_phase < PI) ? 1.0f : -1.0f;
+                                channelData[i] = square * amplitude;
                             }
 
                         }
@@ -196,15 +187,12 @@ public:
                             } else if (waveInputType == waveType::sawtooth) {
                                 channelData[i] = ((current_phase / PI) - 1) * amplModPointer[i];
                             } else if (waveInputType == waveType::triangle) {
-                                float reRampedPhase = current_phase / PI_HALF;
-                                float comp_one = reRampedPhase > 1.0;
-                                float temp_ = (comp_one) * (1 - reRampedPhase) + (1 - comp_one) * (reRampedPhase); // first fold.
-                                float comp_two = temp_ < -1;
-                                float temp_2_ = (1 - comp_two) * (temp_) + (comp_two) * (-1 - temp_); // second fold.
-                                channelData[i] = temp_2_ * amplModPointer[i];
+                                float normalizedPhase = current_phase / TAU; // Normalize phase to [0, 1]
+                                float triangle = 2.0f * std::abs(2.0f * (normalizedPhase - std::floor(normalizedPhase + 0.5f))) - 1.0f;
+                                channelData[i] = triangle * amplModPointer[i];
                             } else {
-                                int comp = current_phase < PI;
-                                channelData[i] = (comp * 1 + (1 - comp) * -1) * amplModPointer[i];
+                                float square = (current_phase < PI) ? 1.0f : -1.0f;
+                                channelData[i] = square * amplModPointer[i];
                             }
 
                         }
@@ -272,15 +260,12 @@ public:
                             } else if (waveInputType == waveType::sawtooth) {
                                 channelData[i] = ((current_phase / PI) - 1) * amplitude;
                             } else if (waveInputType == waveType::triangle) {
-                                float reRampedPhase = current_phase / PI_HALF;
-                                float comp_one = reRampedPhase > 1.0;
-                                float temp_ = (comp_one) * (1 - reRampedPhase) + (1 - comp_one) * (reRampedPhase); // first fold.
-                                float comp_two = temp_ < -1;
-                                float temp_2_ = (1 - comp_two) * (temp_) + (comp_two) * (-1 - temp_); // second fold.
-                                channelData[i] = temp_2_ * amplitude;
+                                float normalizedPhase = current_phase / TAU; // Normalize phase to [0, 1]
+                                float triangle = 2.0f * std::abs(2.0f * (normalizedPhase - std::floor(normalizedPhase + 0.5f))) - 1.0f;
+                                channelData[i] = triangle * amplitude;
                             } else {
-                                int comp = current_phase < PI;
-                                channelData[i] = (comp * 1 + (1 - comp) * -1) * amplitude;
+                                float square = (current_phase < PI) ? 1.0f : -1.0f;
+                                channelData[i] = square * amplitude;
                             }
 
                         }
@@ -297,15 +282,12 @@ public:
                             } else if (waveInputType == waveType::sawtooth) {
                                 channelData[i] = ((current_phase / PI) - 1) * amplModPointer[i];
                             } else if (waveInputType == waveType::triangle) {
-                                float reRampedPhase = current_phase / PI_HALF;
-                                float comp_one = reRampedPhase > 1.0;
-                                float temp_ = (comp_one) * (1 - reRampedPhase) + (1 - comp_one) * (reRampedPhase); // first fold.
-                                float comp_two = temp_ < -1;
-                                float temp_2_ = (1 - comp_two) * (temp_) + (comp_two) * (-1 - temp_); // second fold.
-                                channelData[i] = temp_2_ * amplModPointer[i];
+                                float normalizedPhase = current_phase / TAU; // Normalize phase to [0, 1]
+                                float triangle = 2.0f * std::abs(2.0f * (normalizedPhase - std::floor(normalizedPhase + 0.5f))) - 1.0f;
+                                channelData[i] = triangle * amplModPointer[i];
                             } else {
-                                int comp = current_phase < PI;
-                                channelData[i] = (comp * 1 + (1 - comp) * -1) * amplModPointer[i];
+                                float square = (current_phase < PI) ? 1.0f : -1.0f;
+                                channelData[i] = square * amplModPointer[i];
                             }
 
                         }
@@ -325,15 +307,12 @@ public:
                             } else if (waveInputType == waveType::sawtooth) {
                                 channelData[i] = ((current_phase / PI) - 1) * amplitude;
                             } else if (waveInputType == waveType::triangle) {
-                                float reRampedPhase = current_phase / PI_HALF;
-                                float comp_one = reRampedPhase > 1.0;
-                                float temp_ = (comp_one) * (1 - reRampedPhase) + (1 - comp_one) * (reRampedPhase); // first fold.
-                                float comp_two = temp_ < -1;
-                                float temp_2_ = (1 - comp_two) * (temp_) + (comp_two) * (-1 - temp_); // second fold.
-                                channelData[i] = temp_2_ * amplitude;
+                                float normalizedPhase = current_phase / TAU; // Normalize phase to [0, 1]
+                                float triangle = 2.0f * std::abs(2.0f * (normalizedPhase - std::floor(normalizedPhase + 0.5f))) - 1.0f;
+                                channelData[i] = triangle * amplitude;
                             } else {
-                                int comp = current_phase < PI;
-                                channelData[i] = (comp * 1 + (1 - comp) * -1) * amplitude;
+                                float square = (current_phase < PI) ? 1.0f : -1.0f;
+                                channelData[i] = square * amplitude;
                             }
 
                         }
@@ -350,15 +329,12 @@ public:
                             } else if (waveInputType == waveType::sawtooth) {
                                 channelData[i] = ((current_phase / PI) - 1) * amplModPointer[i];
                             } else if (waveInputType == waveType::triangle) {
-                                float reRampedPhase = current_phase / PI_HALF;
-                                float comp_one = reRampedPhase > 1.0;
-                                float temp_ = (comp_one) * (1 - reRampedPhase) + (1 - comp_one) * (reRampedPhase); // first fold.
-                                float comp_two = temp_ < -1;
-                                float temp_2_ = (1 - comp_two) * (temp_) + (comp_two) * (-1 - temp_); // second fold.
-                                channelData[i] = temp_2_ * amplModPointer[i];
+                                float normalizedPhase = current_phase / TAU; // Normalize phase to [0, 1]
+                                float triangle = 2.0f * std::abs(2.0f * (normalizedPhase - std::floor(normalizedPhase + 0.5f))) - 1.0f;
+                                channelData[i] = triangle * amplModPointer[i];
                             } else {
-                                int comp = current_phase < PI;
-                                channelData[i] = (comp * 1 + (1 - comp) * -1) * amplModPointer[i];
+                                float square = (current_phase < PI) ? 1.0f : -1.0f;
+                                channelData[i] = square * amplModPointer[i];
                             }
 
                         }
@@ -385,17 +361,12 @@ public:
                             } else if (waveInputType == waveType::sawtooth) {
                                 channelData[i] = ((current_phase / PI) - 1) * amplitude;
                             } else if (waveInputType == waveType::triangle) {
-                                float reRampedPhase = current_phase / PI_HALF;
-                                float comp_one = reRampedPhase > 1.0;
-                                float temp_ = (comp_one) * (1 - reRampedPhase) +
-                                              (1 - comp_one) * (reRampedPhase); // first fold.
-                                float comp_two = temp_ < -1;
-                                float temp_2_ =
-                                        (1 - comp_two) * (temp_) + (comp_two) * (-1 - temp_); // second fold.
-                                channelData[i] = temp_2_ * amplitude;
+                                float normalizedPhase = current_phase / TAU; // Normalize phase to [0, 1]
+                                float triangle = 2.0f * std::abs(2.0f * (normalizedPhase - std::floor(normalizedPhase + 0.5f))) - 1.0f;
+                                channelData[i] = triangle * amplitude;
                             } else {
-                                int comp = current_phase < PI;
-                                channelData[i] = (comp * 1 + (1 - comp) * -1) * amplitude;
+                                float square = (current_phase < PI) ? 1.0f : -1.0f;
+                                channelData[i] = square * amplitude;
                             }
 
                         }
@@ -414,17 +385,12 @@ public:
                             } else if (waveInputType == waveType::sawtooth) {
                                 channelData[i] = ((current_phase / PI) - 1) * amplModPointer[i];
                             } else if (waveInputType == waveType::triangle) {
-                                float reRampedPhase = current_phase / PI_HALF;
-                                float comp_one = reRampedPhase > 1.0;
-                                float temp_ = (comp_one) * (1 - reRampedPhase) +
-                                              (1 - comp_one) * (reRampedPhase); // first fold.
-                                float comp_two = temp_ < -1;
-                                float temp_2_ =
-                                        (1 - comp_two) * (temp_) + (comp_two) * (-1 - temp_); // second fold.
-                                channelData[i] = temp_2_ * amplModPointer[i];
+                                float normalizedPhase = current_phase / TAU; // Normalize phase to [0, 1]
+                                float triangle = 2.0f * std::abs(2.0f * (normalizedPhase - std::floor(normalizedPhase + 0.5f))) - 1.0f;
+                                channelData[i] = triangle * amplModPointer[i];
                             } else {
-                                int comp = current_phase < PI;
-                                channelData[i] = (comp * 1 + (1 - comp) * -1) * amplModPointer[i];
+                                float square = (current_phase < PI) ? 1.0f : -1.0f;
+                                channelData[i] = square * amplModPointer[i];
                             }
 
                         }
@@ -450,17 +416,12 @@ public:
                             } else if (waveInputType == waveType::sawtooth) {
                                 channelData[i] = ((current_phase / PI) - 1) * amplitude;
                             } else if (waveInputType == waveType::triangle) {
-                                float reRampedPhase = current_phase / PI_HALF;
-                                float comp_one = reRampedPhase > 1.0;
-                                float temp_ = (comp_one) * (1 - reRampedPhase) +
-                                              (1 - comp_one) * (reRampedPhase); // first fold.
-                                float comp_two = temp_ < -1;
-                                float temp_2_ =
-                                        (1 - comp_two) * (temp_) + (comp_two) * (-1 - temp_); // second fold.
-                                channelData[i] = temp_2_ * amplitude;
+                                float normalizedPhase = current_phase / TAU; // Normalize phase to [0, 1]
+                                float triangle = 2.0f * std::abs(2.0f * (normalizedPhase - std::floor(normalizedPhase + 0.5f))) - 1.0f;
+                                channelData[i] = triangle * amplitude;
                             } else {
-                                int comp = current_phase < PI;
-                                channelData[i] = (comp * 1 + (1 - comp) * -1) * amplitude;
+                                float square = (current_phase < PI) ? 1.0f : -1.0f;
+                                channelData[i] = square * amplitude;
                             }
 
                         }
@@ -479,17 +440,12 @@ public:
                             } else if (waveInputType == waveType::sawtooth) {
                                 channelData[i] = ((current_phase / PI) - 1) * amplModPointer[i];
                             } else if (waveInputType == waveType::triangle) {
-                                float reRampedPhase = current_phase / PI_HALF;
-                                float comp_one = reRampedPhase > 1.0;
-                                float temp_ = (comp_one) * (1 - reRampedPhase) +
-                                              (1 - comp_one) * (reRampedPhase); // first fold.
-                                float comp_two = temp_ < -1;
-                                float temp_2_ =
-                                        (1 - comp_two) * (temp_) + (comp_two) * (-1 - temp_); // second fold.
-                                channelData[i] = temp_2_ * amplModPointer[i];
+                                float normalizedPhase = current_phase / TAU; // Normalize phase to [0, 1]
+                                float triangle = 2.0f * std::abs(2.0f * (normalizedPhase - std::floor(normalizedPhase + 0.5f))) - 1.0f;
+                                channelData[i] = triangle * amplModPointer[i];
                             } else {
-                                int comp = current_phase < PI;
-                                channelData[i] = (comp * 1 + (1 - comp) * -1) * amplModPointer[i];
+                                float square = (current_phase < PI) ? 1.0f : -1.0f;
+                                channelData[i] = square * amplModPointer[i];
                             }
 
                         }
@@ -538,6 +494,15 @@ public:
         presMIDI_Note = 0;
         MIDI_order.clear();
 
+        setCallBackHell();
+
+    }
+
+    void mini_reset() override {
+        setCallBackHell();
+    }
+
+    void setCallBackHell() {
         // I had the dumbest idea to make freqInputType even after having SocketDataType,
         // now here is my punishment.
         if (InputSockets[1]->getConnectionType() == SocketDataType::MIDI) {
@@ -635,7 +600,6 @@ public:
                 }
             }
         }
-
     }
 
     ~Oscillator() {};

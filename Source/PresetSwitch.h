@@ -42,7 +42,7 @@ public:
         addAndMakeVisible(volumeBars.get());
         VolumeLevel::instance = volumeBars.get();
 
-        waveShape.reset(new WaveShapeDisp());
+        waveShape.reset(new WaveShapeDisp(2));
         addAndMakeVisible(waveShape.get());
 
         juce::Image myImage = juce::ImageFileFormat::loadFrom(juce::File("./Assets/Icons/icon.png"));
@@ -76,8 +76,8 @@ public:
         if (instrumentSelect.get() != nullptr) instrumentSelect.get()->setBounds(130, 1, (getParentWidth()-130)*0.4f, 33);
         if (logo.get() != nullptr) logo.get()->setBounds(10, 2, 115, 31);
         if (presetSelect.get() != nullptr) presetSelect.get()->setBounds(130+instrumentSelect.get()->getWidth(), 1, (getParentWidth()-130)*0.25f, 33);
-        if (volumeBars.get() != nullptr) volumeBars.get()->setBounds(presetSelect.get()->getX()+presetSelect.get()->getWidth()+5, 2, getWidth()-(370+instrumentSelect.get()->getWidth()+presetSelect.get()->getWidth()), 31);
-        if (waveShape.get() != nullptr) waveShape.get()->setBounds(getWidth()-230, 2, 225, 31);
+        if (volumeBars.get() != nullptr) volumeBars.get()->setBounds(presetSelect.get()->getX()+presetSelect.get()->getWidth()+1, 2, getWidth()-(367+instrumentSelect.get()->getWidth()+presetSelect.get()->getWidth()), 31);
+        if (waveShape.get() != nullptr) waveShape.get()->setBounds(getWidth()-234, 2, 232, 31);
 
     };
 

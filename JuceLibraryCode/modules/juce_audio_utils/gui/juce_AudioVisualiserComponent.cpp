@@ -178,32 +178,62 @@ void AudioVisualiserComponent::paint (Graphics& g)
     g.fillAll (backgroundColour);
 
     auto r = getLocalBounds().toFloat();
-    auto channelHeight = r.getHeight() / (float) channels.size();
+    juce::Rectangle<float> newBounds(0, 3, r.getWidth(), r.getHeight() - 6);
 
-    g.setColour (waveformColour);
+    g.setColour(juce::Colours::grey);
+    g.drawRect(r, 1.0f);
 
-    for (auto* c : channels)
-        paintChannel (g, r.removeFromTop (channelHeight),
-                      c->levels.begin(), c->levels.size(), c->nextSample);
+    int index = 0;
+    for (auto* c : channels) {
+        if (index == 0) {
+            g.setColour(juce::Colours::red);
+            index++;
+        } else {
+            g.setColour(juce::Colours::blue);
+        }
+        paintChannel(g, newBounds,
+                     c->levels.begin(), c->levels.size(), c->nextSample);
+    }
 }
 
 void AudioVisualiserComponent::getChannelAsPath (Path& path, const Range<float>* levels,
                                                  int numLevels, int nextSample)
 {
-    path.preallocateSpace (4 * numLevels + 8);
+    path.preallocateSpace(2 * numLevels); // Adjusted space preallocation
 
-    for (int i = 0; i < numLevels; ++i)
+    bool startNewPath = true;
+
+    for (int i = 0; i < numLevels; i += 2) // Skip every other point
     {
         auto level = -(levels[(nextSample + i) % numLevels].getEnd());
 
-        if (i == 0)
-            path.startNewSubPath (0.0f, level);
+        if (startNewPath)
+        {
+            path.startNewSubPath((float)i, level);
+            startNewPath = false;
+        }
         else
-            path.lineTo ((float) i, level);
+        {
+            path.lineTo((float)i, level);
+        }
     }
 
-    for (int i = numLevels; --i >= 0;)
-        path.lineTo ((float) i, -(levels[(nextSample + i) % numLevels].getStart()));
+    startNewPath = true;
+
+    for (int i = numLevels - 2; i >= 0; i -= 2) // Skip every other point
+    {
+        auto level = -(levels[(nextSample + i) % numLevels].getStart());
+
+        if (startNewPath)
+        {
+            path.lineTo((float)i, level);
+            startNewPath = false;
+        }
+        else
+        {
+            path.lineTo((float)i, level);
+        }
+    }
 
     path.closeSubPath();
 }
@@ -212,11 +242,16 @@ void AudioVisualiserComponent::paintChannel (Graphics& g, Rectangle<float> area,
                                              const Range<float>* levels, int numLevels, int nextSample)
 {
     Path p;
-    getChannelAsPath (p, levels, numLevels, nextSample);
 
-    g.fillPath (p, AffineTransform::fromTargetPoints (0.0f, -1.0f,               area.getX(), area.getY(),
-                                                      0.0f, 1.0f,                area.getX(), area.getBottom(),
-                                                      (float) numLevels, -1.0f,  area.getRight(), area.getY()));
+    getChannelAsPath(p, levels, numLevels, nextSample);
+
+    // Create a PathStrokeType with a thickness of 2.0f
+    PathStrokeType strokeType(0.8f);
+
+    // Draw the stroked path with the specified thickness
+    g.strokePath(p, strokeType, AffineTransform::fromTargetPoints(0.0f, -1.0f,               area.getX(), area.getY(),
+                                                                  0.0f, 1.0f,                area.getX(), area.getBottom(),
+                                                                  (float)numLevels, -1.0f,  area.getRight(), area.getY()));
 }
 
 } // namespace juce

@@ -11,6 +11,8 @@
 #include "GraphNode.h"
 #include "../Instrument.h"
 
+Instrument* instrument_ptr = nullptr;
+
 
 std::vector<GraphNode*> GraphNode::getDependencies() {
     std::vector<GraphNode*> output;
@@ -50,6 +52,8 @@ std::set<GraphNode*> GraphNode::getAudioBufferDependencies() {
 
 
 GraphNode::GraphNode(juce::String name, int pos_x, int pos_y) {
+    instrument_ptr = Instrument::getInstance();
+
     setLookAndFeel(&style);
 
     this->name = name;
@@ -90,7 +94,7 @@ bool GraphNode::allGood() {
 void GraphNode::deleteNodeCallback(int result, GraphNode* graphNodeInstance) {
     if (result == 1) {
         graphNodeInstance->deleteAllConnectionsToAndFromNode();
-        Instrument::getInstance()->nodeDeleted(graphNodeInstance);
+        instrument_ptr->nodeDeleted(graphNodeInstance);
     }
 }
 
@@ -103,7 +107,7 @@ void GraphNode::mouseDown(const juce::MouseEvent& event) {
                            juce::ModalCallbackFunction::forComponent(deleteNodeCallback, this));
     } else {
         lastMouseDownPosition = event.getPosition();
-        resized();
+//        resized();
     }
 }
 
@@ -121,7 +125,12 @@ void GraphNode::mouseDrag(const juce::MouseEvent& event) {
         i->repaintConnection();
     }
 
+    instrument_ptr->triggerGraphPageRepaint();
 
+}
+
+void GraphNode::mouseUp(const juce::MouseEvent &event) {
+    instrument_ptr->triggerGraphPageRepaint();
 }
 
 void GraphNode::deleteAllConnectionsToAndFromNode() {
@@ -134,12 +143,13 @@ void GraphNode::deleteAllConnectionsToAndFromNode() {
     for (Socket* i : OutputSockets) {
         i->deleteConnections();
     }
+
 }
 
 // Draws the common parts for all the nodes,
 // called before drawing the respective node related content.
 void GraphNode::paintBasic(juce::Graphics& g) {
-    auto bounds = g.getClipBounds();
+    auto bounds = getLocalBounds();
     g.setColour(GraphNodeBackgroundColourID);
     g.fillRect(bounds);
 
@@ -188,8 +198,7 @@ void GraphNode::resized() {
 
     index = 0;
     for (auto i : InputSockets) {
-        bool connected = !(i->isThisConnected() || !i->hasParameterController());
-        int height = connected*(50) + (1-connected)*20;
+        int height = i->getTotHeight();
         i->setBounds(0, end, UIWidth, height);
         end += height;
         index++;

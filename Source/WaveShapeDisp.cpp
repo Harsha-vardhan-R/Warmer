@@ -1,33 +1,41 @@
-/*
-  ==============================================================================
-
-    WaveShapeDisp.cpp
-    Created: 5 Mar 2024 11:11:36am
-    Author:  harshavardhan
-
-  ==============================================================================
-*/
-
 #include <JuceHeader.h>
 #include "WaveShapeDisp.h"
 
-//==============================================================================
-WaveShapeDisp::WaveShapeDisp()
-{
-    // In your constructor, you should add any child components, and
-    // initialise any special settings that your component needs.
+WaveShapeDisp* WaveShapeDisp::this_instance = nullptr;
 
+//==============================================================================
+WaveShapeDisp::WaveShapeDisp(int channel) : juce::AudioVisualiserComponent(channel) {
+    WaveShapeDisp::this_instance = this;
+
+    setColours(juce::Colours::white, juce::Colours::grey);
+    setRepaintRate(40);
+    setSamplesPerBlock(1);
+    //addAndMakeVisible(&audioVisualiser);
+    setBufferSize(512);
+}
+
+void WaveShapeDisp::changeBufferSize(int bufferSize) {
+    //setBufferSize(bufferSize);
 }
 
 WaveShapeDisp::~WaveShapeDisp() {}
 
-void WaveShapeDisp::paint (juce::Graphics& g) {
-    g.fillAll(juce::Colours::white);
-    g.setColour(juce::Colours::grey);
-    g.drawRect(getLocalBounds().toFloat(), 1.0f);
+void WaveShapeDisp::resized() {
+    setBounds(0 , 0 , getWidth() , getHeight());
 }
 
-void WaveShapeDisp::resized()
-{
+void WaveShapeDisp::start() {
+    borderColour = juce::Colours::green;
+}
 
+void WaveShapeDisp::stop() {
+    borderColour = juce::Colours::grey;
+}
+
+void WaveShapeDisp::trigger() {}
+
+void WaveShapeDisp::pushFreshBuffer(const juce::AudioBuffer<float>& buffer) {
+    const juce::ScopedLock sl(lock);
+    pushBuffer(buffer);
+    //repaint();
 }

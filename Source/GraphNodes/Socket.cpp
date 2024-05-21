@@ -12,6 +12,8 @@
 
 //class Instrument;
 #include "../Instrument.h"
+#include "GraphNode.h"
+#include "../Profiler.h"
 
 Socket::Socket(juce::String name, direction dir, bool isMust) {
     this->name = name;
@@ -48,11 +50,8 @@ juce::Point<int> Socket::getPivotPos() {
     juce::Point<int> TopLeft = getParentComponent()->getPosition();
     TopLeft += getPosition();
 
-    if (dir == direction::IN) {
-        TopLeft += juce::Point(0, 8);
-    } else {
-        TopLeft += juce::Point(getWidth(), 8);
-    }
+    int comp = (dir == direction::IN);
+    TopLeft += comp * juce::Point(0, 8) + (1-comp) * juce::Point(getWidth(), 8);
 
     return TopLeft;
 }
@@ -99,6 +98,7 @@ void Socket::setOutputType(SocketDataType a) {
     type = a;
 }
 
+
 SocketDataType Socket::getOutputType() {
     return type;
 }
@@ -117,7 +117,9 @@ SocketDataType Socket::getConnectionType() {
     }
 }
 
-void Socket::repaintConnection() {
+int Socket::repaintConnection() {
+
+    //Profiler("Socket Position update");
 
     if (isConnected) {
         // if the connectionPointer is not NULL,
@@ -125,7 +127,7 @@ void Socket::repaintConnection() {
         if (dir == direction::IN) {
             // here from would be prev socket and to would be this
             juce::Line<int> temp(from->getPivotPos(), (*(to.begin()))->getPivotPos());
-            Instrument::getInstance()->connectionPositionUpdated(connectionPointer,
+            Instrument::instancePtr->connectionPositionUpdated(connectionPointer,
                                                                  temp);
         } else {
             // for output socket we redraw every connection, that is connected to.
@@ -137,14 +139,14 @@ void Socket::repaintConnection() {
                 (*i)->repaintConnection();
             }
         }
+        return 1;
     }
-
+    return 0;
 }
 
 void Socket::deleteConnections() {
     if (dir == direction::IN) {
         deleteSocketCallBack(1, this);
-        resized();
     } else {
 //        repaintConnection();
         // this is because we are interfering with this to from another socket,
@@ -177,6 +179,7 @@ void Socket::deleteSocketCallBack(int result, Socket* thisInstance) {
         thisInstance->connectionPointer = nullptr;
         thisInstance->addAndMakeVisible(thisInstance->parameterController);
         thisInstance->to.clear();
+        thisInstance->resized();
     }
 
 }
@@ -213,6 +216,8 @@ void print_Line(juce::Line<int>& l) {
 void Socket::mouseDrag(const juce::MouseEvent &event) {
     if (dir == direction::IN) return;
 
+    //Profiler("Socket mouse drag");
+
     // anything except the AudioBuffer output can be connected to multiple input sockets.
     // if (type == SocketDataType::AudioBufferFloat && isConnected) return;
 
@@ -239,10 +244,10 @@ void Socket::connected(Socket *otherPointer, Connection* connection) {
         to.insert(this);
         removeChildComponent(&parameterController);
 
+        resized();
+
         // this is the last function call that happens after a connection is confirmed in this class.
         Instrument::getInstance()->connectionAdded(connection);
-
-        resized();
     } else {
         from = this;
         to.insert(otherPointer);

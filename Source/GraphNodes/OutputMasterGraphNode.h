@@ -33,30 +33,34 @@ public:
 
     void processGraphNodeOutput(float* const* outputChannelData, float volumeLevel) {
 
-        // just copy the data with the given volume level.
-        const float* channelOneData = readBuff->getReadPointer(0);
-        const float* channelTwoData = readBuff->getReadPointer(1);
+        for (int channel = 0; channel < 2; channel++) {
+            const float* finalProcessedSignal = readBuff->getReadPointer(channel);
+            float* outputToHearChannelData = outputChannelData[channel];
+            float* outputToDisplayChannelData = displayBuff->getWritePointer(channel);
 
-        float* outputChannelOneData = outputChannelData[0];
-        float* outputChannelTwoData = outputChannelData[1];
+            const juce::ScopedLock sl(lock);
 
-        for (int i = 0; i < readBuff->getNumSamples();  i += 2) {
-            outputChannelOneData[i] = channelOneData[i]*volumeLevel;
-            outputChannelOneData[i+1] = channelOneData[i+1]*volumeLevel;
+            for (int i = 0; i < readBuff->getNumSamples();  i += 2) {
+                outputToDisplayChannelData[i] = finalProcessedSignal[i];
+                outputToDisplayChannelData[i+1] = finalProcessedSignal[i+1];
 
-            outputChannelTwoData[i] = channelTwoData[i]*volumeLevel;
-            outputChannelTwoData[i+1] = channelTwoData[i+1]*volumeLevel;
+                outputToHearChannelData[i] = finalProcessedSignal[i]*volumeLevel;
+                outputToHearChannelData[i+1] = finalProcessedSignal[i+1]*volumeLevel;
+            }
         }
-
-//        std::cout << readBuff->getRMSLevel(0, 0, readBuff->getNumSamples()) << " " << readBuff->getRMSLevel(1, 0, readBuff->getNumSamples()) << "\n";
 
 
     }
 
-    ~OutputMasterGraphNode() {};
+    ~OutputMasterGraphNode() {
+        if (displayBuff) delete displayBuff;
+    };
 
     bool allGood() { return (InputSockets[0]->isThisConnected()); }
 
+    const juce::AudioBuffer<float>& getBufferToDisplay() {
+        return *displayBuff;
+    }
 
     void processGraphNode() override {}
 
@@ -64,9 +68,18 @@ public:
 
     void reset() override {
         readBuff = InputSockets[0]->getBufferPointer();
+
+        if (displayBuff && displayBuff->getNumSamples() == estimatedSamplesPerBlock) return;
+
+        if (displayBuff) delete displayBuff;
+        displayBuff = new juce::AudioBuffer<float>(2, estimatedSamplesPerBlock);
     }
 
 private:
+    juce::CriticalSection lock;
+
     juce::AudioBuffer<float>* readBuff;
+
+    juce::AudioBuffer<float>* displayBuff;
 
 };

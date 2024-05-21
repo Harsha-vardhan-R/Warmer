@@ -1,6 +1,9 @@
 #include "MenuComponent.h"
 #include "Instrument.h"
 
+
+// Please do not disturb any of this,
+// I've found making a MenuComponent pretty time
 MenuComponent::MenuComponent() {
     // `this` already implements the `MenuBarModel` so this is going to return a
     // `MenuBarComponent` with the Model already setup.
@@ -8,6 +11,9 @@ MenuComponent::MenuComponent() {
     // getting the new component to show up.
     addAndMakeVisible(menuComponent.get());
     setLookAndFeel(this);
+
+    juce::LookAndFeel::setColour(juce::TextButton::buttonColourId, juce::Colours::black);
+    menuComponent.get()->setColour(juce::TextButton::buttonColourId, juce::Colours::black);
 
     resized(); // this is NEEDED for the first time rendering.
 }
@@ -89,6 +95,7 @@ void MenuComponent::drawMenuBarItem (juce::Graphics& g,
                       bool isMenuOpen,
                       bool isMouseOverBar,
                       juce::MenuBarComponent& menuBar) {
+
     juce::Rectangle<int> highLight(1, 1, width-2, height-2);
     if (isMouseOverItem) {
         g.setColour(MenuMouseOverColourID);
@@ -134,7 +141,7 @@ void MenuComponent::drawPopupMenuItem (juce::Graphics& g,
 void MenuComponent::drawComboBox(juce::Graphics &g, int width, int height, bool isButtonDown, int buttonX, int buttonY,
                                  int buttonW, int buttonH, juce::ComboBox& box) {
     g.setColour(MenuMouseOverColourID);
-    g.fillRoundedRectangle(box.getLocalBounds().reduced(2).toFloat(), 3.0f);
+    g.fillRect(box.getLocalBounds().reduced(1));
 
     juce::Path arrow;
     float arrowDimen = 10;
@@ -151,7 +158,12 @@ void MenuComponent::drawComboBox(juce::Graphics &g, int width, int height, bool 
                           arrowX + (arrowDimen * 0.5f) + 1, arrowY + arrowDimen);
     }
 
+    g.setColour(juce::Colours::grey);
+
+    g.drawRect(box.getLocalBounds().reduced(1), 1.0f);
+
     g.setColour(ComboBoxArrowColourID);
+
     g.fillPath(arrow);
 }
 

@@ -161,6 +161,8 @@ public :
 
     void mouseDrag(const juce::MouseEvent& event) override;
 
+    void mouseUp(const juce::MouseEvent& event) override;
+
     // deletes all the connections that come to this node,
     // and are from this node
     void deleteAllConnectionsToAndFromNode();
@@ -218,13 +220,23 @@ public :
     // the audio buffer that needs to get written will get the
     virtual void reset() = 0;
 
+    // mini reset is called when a parameter is changed,
+    // the parameterCtrl(if mentioned in the callback), will tell the
+    // node processor to stop and call this function here.
+    // no mutex locks or processing stops, do only atomic or non processGraphNode related stuff.
+    virtual void mini_reset() {}
+
 
     juce::AudioBuffer<float>* bufferToWritePointer;
     // set false if this node does not send out an audio buffer as an output.
     bool needAudioBuffer = true;
 
-
+    // sets the buffer to write, done from the processing queue.
     void setToWriteAudioBuffer(juce::AudioBuffer<float>* b) { bufferToWritePointer = b; }
+
+    // get the set bufferToWritePointer, if not set, returns nullptr
+    juce::AudioBuffer<float>* getToWriteAudioBuffer() { return bufferToWritePointer; }
+
 
     // the master function that is called from the AudioThread fo each audio buffer,
     // Make sure anything you access from this function is either thread synchronised,

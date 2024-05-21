@@ -31,7 +31,7 @@ VolumeLevel::VolumeLevel() {
 
     // Add listener to handle value changes
     volumeSlider.addListener(this);
-    volumeSlider.setValue(1.0);
+    volumeSlider.setValue(0.5f);
 }
 
 void VolumeLevel::sliderValueChanged(juce::Slider *slider) {
