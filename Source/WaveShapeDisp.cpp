@@ -12,6 +12,8 @@ WaveShapeDisp::WaveShapeDisp(int channel) : juce::AudioVisualiserComponent(chann
     setSamplesPerBlock(1);
     //addAndMakeVisible(&audioVisualiser);
     setBufferSize(512);
+
+    setOpaque(true);
 }
 
 void WaveShapeDisp::changeBufferSize(int bufferSize) {
@@ -37,5 +39,4 @@ void WaveShapeDisp::trigger() {}
 void WaveShapeDisp::pushFreshBuffer(const juce::AudioBuffer<float>& buffer) {
     const juce::ScopedLock sl(lock);
     pushBuffer(buffer);
-    //repaint();
 }

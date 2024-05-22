@@ -11,7 +11,6 @@
 #pragma once
 #include "../GraphNode.h"
 
-
 // Applies a linear re-mapping of a signal from 0..1 to low.high,
 // if the low is greater than high the signal gets inverted but may not lie in the same
 // range.
@@ -21,17 +20,17 @@ public:
     ReRamp(int pos_x, int pos_y) : GraphNode(juce::String("Re-map"), pos_x, pos_y) {
 
         // Output wave.
-        OutputSockets.add(new Socket(juce::String("Signal OUT"), direction::OUT, true));
+        OutputSockets.add(new GraphNode::Socket(juce::String("Signal OUT"), direction::OUT, true));
         OutputSockets[0]->setOutputType(SocketDataType::AudioBufferFloat);
 
-        InputSockets.add(new Socket(juce::String("Signal IN"), direction::IN, true));
+        InputSockets.add(new GraphNode::Socket(juce::String("Signal IN"), direction::IN, true));
         InputSockets[0]->acceptType(SocketDataType::AudioBufferFloat);
 
-        InputSockets.add(new Socket(juce::String("Low"), direction::IN, false));
+        InputSockets.add(new GraphNode::Socket(juce::String("Low"), direction::IN, false));
         InputSockets[1]->acceptType(SocketDataType::AudioBufferFloat);
         InputSockets[1]->addSliderParameterControl(0.0, 100.0, 1.0);
 
-        InputSockets.add(new Socket(juce::String("High"), direction::IN, false));
+        InputSockets.add(new GraphNode::Socket(juce::String("High"), direction::IN, false));
         InputSockets[2]->acceptType(SocketDataType::AudioBufferFloat);
         InputSockets[2]->addSliderParameterControl(0.0, 100.0, 0.0);
 

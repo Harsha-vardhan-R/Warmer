@@ -17,18 +17,18 @@ public:
     Clamp(int pos_x, int pos_y) : GraphNode(juce::String("Abs Clamp"), pos_x, pos_y) {
 
         // Output wave.
-        OutputSockets.add(new Socket(juce::String("Signal OUT"), direction::OUT, true));
+        OutputSockets.add(new GraphNode::Socket(juce::String("Signal OUT"), direction::OUT, true));
         OutputSockets[0]->setOutputType(SocketDataType::AudioBufferFloat);
 
-        InputSockets.add(new Socket(juce::String("Signal IN"), direction::IN, true));
+        InputSockets.add(new GraphNode::Socket(juce::String("Signal IN"), direction::IN, true));
         InputSockets[0]->acceptType(SocketDataType::AudioBufferFloat);
 
 
-        InputSockets.add(new Socket(juce::String("Upper Bound"), direction::IN, false));
+        InputSockets.add(new GraphNode::Socket(juce::String("Upper Bound"), direction::IN, false));
         InputSockets[1]->acceptType(SocketDataType::AudioBufferFloat);
         InputSockets[1]->addSliderParameterControl(0.0, 1.0, 1.0);
 
-        InputSockets.add(new Socket(juce::String("Lower Bound"), direction::IN, false));
+        InputSockets.add(new GraphNode::Socket(juce::String("Lower Bound"), direction::IN, false));
         InputSockets[2]->acceptType(SocketDataType::AudioBufferFloat);
         InputSockets[2]->addSliderParameterControl(0.0, 1.0, 0.0);
 
@@ -47,8 +47,8 @@ public:
             for (int i = 0; i < readBuff->getNumSamples(); ++i) {
                 float data = channelData[i];
                 float absolute = std::abs(data);
-                float sign = data / absolute;
-                writeChannel[i] = std::clamp(absolute, lowerBound, upperBound) * sign;
+                float clamped = std::clamp(absolute, lowerBound, upperBound);
+                writeChannel[i] = std::copysign(clamped, data);
             }
         }
     }
@@ -65,8 +65,8 @@ public:
             for (int i = 0 ; i < readBuff->getNumSamples(); ++i) {
                 float data = channelData[i];
                 float absolute = std::abs(data);
-                float sign = data/absolute;
-                writeChannel[i] = std::clamp(absolute, lowerBoundModulating[i], upperBound) * sign;
+                float clamped = std::clamp(absolute, lowerBoundModulating[i], upperBound);
+                writeChannel[i] = std::copysign(clamped, data);
             }
         }
 
@@ -84,8 +84,8 @@ public:
             for (int i = 0 ; i < readBuff->getNumSamples(); ++i) {
                 float data = channelData[i];
                 float absolute = std::abs(data);
-                float sign = data/absolute;
-                writeChannel[i] = std::clamp(absolute, lowerBound, upperBoundModulating[i]) * sign;
+                float clamped = std::clamp(absolute, lowerBound, upperBoundModulating[i]);
+                writeChannel[i] = std::copysign(clamped, data);
             }
         }
     }
@@ -101,8 +101,8 @@ public:
             for (int i = 0 ; i < readBuff->getNumSamples(); ++i) {
                 float data = channelData[i];
                 float absolute = std::abs(data);
-                float sign = data/absolute;
-                writeChannel[i] = std::clamp(absolute, lowerBoundModulating[i], upperBoundModulating[i]) * sign;
+                float clamped = std::clamp(absolute, lowerBoundModulating[i], upperBoundModulating[i]);
+                writeChannel[i] = std::copysign(clamped, data);
             }
         }
     }

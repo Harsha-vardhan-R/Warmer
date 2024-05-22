@@ -11,7 +11,6 @@
 #pragma once
 #include "../GraphNode.h"
 
-
 class Oscillator : public GraphNode {
 public:
 
@@ -33,11 +32,11 @@ public:
     Oscillator(int pos_x, int pos_y) : GraphNode(juce::String("Oscillator"), pos_x, pos_y) {
 
         // Output wave.
-        OutputSockets.add(new Socket(juce::String("Signal"), direction::OUT, true));
+        OutputSockets.add(new GraphNode::Socket(juce::String("Signal"), direction::OUT, true));
         OutputSockets[0]->setOutputType(SocketDataType::AudioBufferFloat);
 
         // Type of the basic wave shape.
-        InputSockets.add(new Socket(juce::String("Wave Shape"), direction::IN, false));
+        InputSockets.add(new GraphNode::Socket(juce::String("Wave Shape"), direction::IN, false));
         InputSockets[0]->addMenuParameterControl();
         InputSockets[0]->addMenuItem("Sine");
         InputSockets[0]->addMenuItem("Square");
@@ -45,19 +44,19 @@ public:
         InputSockets[0]->addMenuItem("Saw-tooth");
 
         // frequency.
-        InputSockets.add(new Socket(juce::String("Frequency (Hz)"), direction::IN, false));
+        InputSockets.add(new GraphNode::Socket(juce::String("Frequency (Hz)"), direction::IN, false));
         InputSockets[1]->acceptType(SocketDataType::MIDI);
         InputSockets[1]->acceptType(SocketDataType::AudioBufferFloat);
         InputSockets[1]->addSliderParameterControl(0.0, 20000.0, 150.0); // frequency range.
 
         // Amplitude.
-        InputSockets.add(new Socket(juce::String("Amplitude"), direction::IN, false));
+        InputSockets.add(new GraphNode::Socket(juce::String("Amplitude"), direction::IN, false));
         InputSockets[2]->acceptType(SocketDataType::Floating);
         InputSockets[2]->acceptType(SocketDataType::AudioBufferFloat);
         InputSockets[2]->addSliderParameterControl(0.0, 1.0, 0.5);
 
         // Phase.
-        InputSockets.add(new Socket(juce::String("Phase (deg)"), direction::IN, false));
+        InputSockets.add(new GraphNode::Socket(juce::String("Phase (deg)"), direction::IN, false));
         InputSockets[3]->acceptType(SocketDataType::Floating);
         InputSockets[3]->acceptType(SocketDataType::AudioBufferFloat);
         InputSockets[3]->addSliderParameterControl(0.0, 2*PI, 0.0);

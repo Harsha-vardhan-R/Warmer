@@ -82,7 +82,6 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/MIDIPianoComponent_40e12e1e.o \
   $(JUCE_OBJDIR)/GraphNode_6181e5cd.o \
   $(JUCE_OBJDIR)/Connection_271a78eb.o \
-  $(JUCE_OBJDIR)/Socket_bf86b300.o \
   $(JUCE_OBJDIR)/MasterComponent_9f7faf9c.o \
   $(JUCE_OBJDIR)/Main_90ebc5c2.o \
   $(JUCE_OBJDIR)/MenuComponent_1ba0c2bf.o \
@@ -166,11 +165,6 @@ $(JUCE_OBJDIR)/GraphNode_6181e5cd.o: ../../Source/GraphNodes/GraphNode.cpp
 $(JUCE_OBJDIR)/Connection_271a78eb.o: ../../Source/GraphNodes/Connection.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling Connection.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/Socket_bf86b300.o: ../../Source/GraphNodes/Socket.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling Socket.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/MasterComponent_9f7faf9c.o: ../../Source/MasterComponent.cpp

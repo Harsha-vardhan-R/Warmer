@@ -28,18 +28,18 @@ public:
     MathClamp(int pos_x, int pos_y) : GraphNode(juce::String("MathClamp"), pos_x, pos_y) {
 
         // Output wave.
-        OutputSockets.add(new Socket(juce::String("Signal OUT"), direction::OUT, true));
+        OutputSockets.add(new GraphNode::Socket(juce::String("Signal OUT"), direction::OUT, true));
         OutputSockets[0]->setOutputType(SocketDataType::AudioBufferFloat);
 
-        InputSockets.add(new Socket(juce::String("Signal IN"), direction::IN, true));
+        InputSockets.add(new GraphNode::Socket(juce::String("Signal IN"), direction::IN, true));
         InputSockets[0]->acceptType(SocketDataType::AudioBufferFloat);
 
 
-        InputSockets.add(new Socket(juce::String("Upper Bound"), direction::IN, false));
+        InputSockets.add(new GraphNode::Socket(juce::String("Upper Bound"), direction::IN, false));
         InputSockets[1]->acceptType(SocketDataType::AudioBufferFloat);
         InputSockets[1]->addSliderParameterControl(-5.0, 5.0, 1.0);
 
-        InputSockets.add(new Socket(juce::String("Lower Bound"), direction::IN, false));
+        InputSockets.add(new GraphNode::Socket(juce::String("Lower Bound"), direction::IN, false));
         InputSockets[2]->acceptType(SocketDataType::AudioBufferFloat);
         InputSockets[2]->addSliderParameterControl(-5.0, 5.0, -1.0);
 

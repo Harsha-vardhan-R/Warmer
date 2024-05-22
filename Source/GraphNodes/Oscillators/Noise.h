@@ -12,7 +12,6 @@
 #include "../GraphNode.h"
 #include <random>
 
-
 class Noise : public GraphNode {
 public:
 
@@ -23,11 +22,11 @@ public:
                                     dis(-1.0f, 1.0f) {
 
         // Output wave.
-        OutputSockets.add(new Socket(juce::String("Signal"), direction::OUT, true));
+        OutputSockets.add(new GraphNode::Socket(juce::String("Signal"), direction::OUT, true));
         OutputSockets[0]->setOutputType(SocketDataType::AudioBufferFloat);
 
         // Type of the basic wave shape.
-        InputSockets.add(new Socket(juce::String("Noise Type"), direction::IN, false));
+        InputSockets.add(new GraphNode::Socket(juce::String("Noise Type"), direction::IN, false));
         InputSockets[0]->addMenuParameterControl();
         InputSockets[0]->addMenuItem("White");
         InputSockets[0]->addMenuItem("Pink");
@@ -35,7 +34,7 @@ public:
         InputSockets[0]->addMenuItem("Blue");
 
         // Amplitude.
-        InputSockets.add(new Socket(juce::String("Amplitude"), direction::IN, false));
+        InputSockets.add(new GraphNode::Socket(juce::String("Amplitude"), direction::IN, false));
         InputSockets[1]->acceptType(SocketDataType::Floating);
         InputSockets[1]->acceptType(SocketDataType::AudioBufferFloat);
         InputSockets[1]->addSliderParameterControl(0.0, 1.0, 0.1);

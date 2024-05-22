@@ -17,18 +17,18 @@ public:
     Utility(int pos_x, int pos_y) : GraphNode(juce::String("Utility"), pos_x, pos_y) {
 
         // Output wave.
-        OutputSockets.add(new Socket(juce::String("Signal OUT"), direction::OUT, true));
+        OutputSockets.add(new GraphNode::Socket(juce::String("Signal OUT"), direction::OUT, true));
         OutputSockets[0]->setOutputType(SocketDataType::AudioBufferFloat);
 
-        InputSockets.add(new Socket(juce::String("Signal IN"), direction::IN, true));
+        InputSockets.add(new GraphNode::Socket(juce::String("Signal IN"), direction::IN, true));
         InputSockets[0]->acceptType(SocketDataType::AudioBufferFloat);
 
-        InputSockets.add(new Socket(juce::String("Linear Gain"), direction::IN, false));
+        InputSockets.add(new GraphNode::Socket(juce::String("Linear Gain"), direction::IN, false));
         InputSockets[1]->acceptType(SocketDataType::AudioBufferFloat);
         InputSockets[1]->acceptType(SocketDataType::Floating);
         InputSockets[1]->addSliderParameterControl(-1.0, 5.0, 1.0);
 
-        InputSockets.add(new Socket(juce::String("Pan Amount"), direction::IN, false));
+        InputSockets.add(new GraphNode::Socket(juce::String("Pan Amount"), direction::IN, false));
         InputSockets[2]->acceptType(SocketDataType::AudioBufferFloat);
         InputSockets[2]->acceptType(SocketDataType::Floating);
         InputSockets[2]->addSliderParameterControl(-1.0, 1.0, 0.0);

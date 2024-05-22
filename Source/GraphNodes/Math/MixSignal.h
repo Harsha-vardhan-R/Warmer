@@ -17,16 +17,16 @@ public:
     MixSignal(int pos_x, int pos_y) : GraphNode(juce::String("Mix"), pos_x, pos_y) {
 
         // Output wave.
-        OutputSockets.add(new Socket(juce::String("Signal OUT"), direction::OUT, true));
+        OutputSockets.add(new GraphNode::Socket(juce::String("Signal OUT"), direction::OUT, true));
         OutputSockets[0]->setOutputType(SocketDataType::AudioBufferFloat);
 
-        InputSockets.add(new Socket(juce::String("Signal 1"), direction::IN, true));
+        InputSockets.add(new GraphNode::Socket(juce::String("Signal 1"), direction::IN, true));
         InputSockets[0]->acceptType(SocketDataType::AudioBufferFloat);
 
-        InputSockets.add(new Socket(juce::String("Signal 2"), direction::IN, true));
+        InputSockets.add(new GraphNode::Socket(juce::String("Signal 2"), direction::IN, true));
         InputSockets[1]->acceptType(SocketDataType::AudioBufferFloat);
 
-        InputSockets.add(new Socket(juce::String("Amount 1<-1|2->2"), direction::IN, false));
+        InputSockets.add(new GraphNode::Socket(juce::String("Amount 1<-1|2->2"), direction::IN, false));
         InputSockets[2]->acceptType(SocketDataType::AudioBufferFloat);
         InputSockets[2]->acceptType(SocketDataType::Floating);
         InputSockets[2]->addSliderParameterControl(-1.0, 1.0, 0.0);

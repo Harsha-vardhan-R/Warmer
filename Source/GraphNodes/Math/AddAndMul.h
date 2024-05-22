@@ -11,7 +11,6 @@
 #pragma once
 #include "../GraphNode.h"
 
-
 // This actually does multiplication then add unlike what the name says.
 class AddAndMul : public GraphNode {
 public:
@@ -19,17 +18,17 @@ public:
     AddAndMul(int pos_x, int pos_y) : GraphNode(juce::String("Multiply & Add"), pos_x, pos_y) {
 
         // Output wave.
-        OutputSockets.add(new Socket(juce::String("Signal OUT"), direction::OUT, true));
+        OutputSockets.add(new GraphNode::Socket(juce::String("Signal OUT"), direction::OUT, true));
         OutputSockets[0]->setOutputType(SocketDataType::AudioBufferFloat);
 
-        InputSockets.add(new Socket(juce::String("Signal IN"), direction::IN, true));
+        InputSockets.add(new GraphNode::Socket(juce::String("Signal IN"), direction::IN, true));
         InputSockets[0]->acceptType(SocketDataType::AudioBufferFloat);
 
-        InputSockets.add(new Socket(juce::String("Mul"), direction::IN, false));
+        InputSockets.add(new GraphNode::Socket(juce::String("Mul"), direction::IN, false));
         InputSockets[1]->acceptType(SocketDataType::AudioBufferFloat);
         InputSockets[1]->addSliderParameterControl(-10000.0, 10000.0, 1.0);
 
-        InputSockets.add(new Socket(juce::String("Add"), direction::IN, false));
+        InputSockets.add(new GraphNode::Socket(juce::String("Add"), direction::IN, false));
         InputSockets[2]->acceptType(SocketDataType::AudioBufferFloat);
         InputSockets[2]->addSliderParameterControl(-10000.0, 10000.0, 0.0);
 

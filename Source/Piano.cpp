@@ -62,7 +62,7 @@ Piano::Piano(juce::MidiKeyboardState& state, juce::KeyboardComponentBase::Orient
     setColour(juce::MidiKeyboardComponent::keyDownOverlayColourId, juce::Colour(0x22000000));
     setColour(juce::MidiKeyboardComponent::mouseOverKeyOverlayColourId, juce::Colours::transparentWhite);
     setColour(juce::MidiKeyboardComponent::textLabelColourId, juce::Colours::grey);
-
+    setColour(juce::MidiKeyboardComponent::keySeparatorLineColourId, juce::Colours::darkgrey);
 
     resized();
 }

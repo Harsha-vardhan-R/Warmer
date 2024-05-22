@@ -101,8 +101,8 @@ public:
     OutputMasterGraphNode* OutputNode;
 
     // returns component at the position in the Graph Page
-    Socket* getComponentInGraphPage(juce::Point<float> p) {
-        return dynamic_cast<Socket*>(graphPage.get()->getComponentAt(p));
+    GraphNode::Socket* getComponentInGraphPage(juce::Point<float> p) {
+        return dynamic_cast<GraphNode::Socket*>(graphPage.get()->getComponentAt(p));
     }
 
     // Called from GraphPage when a new node is added.

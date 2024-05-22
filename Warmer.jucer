@@ -69,7 +69,6 @@
         <FILE id="Hhmm3G" name="GraphNode.cpp" compile="1" resource="0" file="Source/GraphNodes/GraphNode.cpp"/>
         <FILE id="XyGDjE" name="Connection.cpp" compile="1" resource="0" file="Source/GraphNodes/Connection.cpp"/>
         <FILE id="ZJzcx3" name="Connection.h" compile="0" resource="0" file="Source/GraphNodes/Connection.h"/>
-        <FILE id="CRjcEt" name="Socket.cpp" compile="1" resource="0" file="Source/GraphNodes/Socket.cpp"/>
         <GROUP id="{33CB675E-D569-27B8-6E4C-C01AF0AC6C12}" name="General">
           <FILE id="xPTLg4" name="AddLag.h" compile="0" resource="0" file="Source/GraphNodes/General/AddLag.h"/>
           <FILE id="szkenN" name="ADSR.h" compile="0" resource="0" file="Source/GraphNodes/General/ADSR.h"/>
@@ -115,7 +114,6 @@
               file="Source/GraphNodes/InputOutputTypesForSokets.h"/>
         <FILE id="gFY7sI" name="OutputMasterGraphNode.h" compile="0" resource="0"
               file="Source/GraphNodes/OutputMasterGraphNode.h"/>
-        <FILE id="MwimFx" name="Socket.h" compile="0" resource="0" file="Source/GraphNodes/Socket.h"/>
       </GROUP>
       <FILE id="nePoUx" name="PresetSwitch.h" compile="0" resource="0" file="Source/PresetSwitch.h"/>
       <FILE id="Peufm3" name="MasterComponent.cpp" compile="1" resource="0"

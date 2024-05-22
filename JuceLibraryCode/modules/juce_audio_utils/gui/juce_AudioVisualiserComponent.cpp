@@ -26,132 +26,132 @@
 namespace juce
 {
 
-struct AudioVisualiserComponent::ChannelInfo
-{
-    ChannelInfo (AudioVisualiserComponent& o, int bufferSize) : owner (o)
+    struct AudioVisualiserComponent::ChannelInfo
     {
-        setBufferSize (bufferSize);
-        clear();
-    }
-
-    void clear() noexcept
-    {
-        levels.fill ({});
-        value = {};
-        subSample = 0;
-    }
-
-    void pushSamples (const float* inputSamples, int num) noexcept
-    {
-        for (int i = 0; i < num; ++i)
-            pushSample (inputSamples[i]);
-    }
-
-    void pushSample (float newSample) noexcept
-    {
-        if (--subSample <= 0)
+        ChannelInfo (AudioVisualiserComponent& o, int bufferSize) : owner (o)
         {
-            if (++nextSample == levels.size())
+            setBufferSize (bufferSize);
+            clear();
+        }
+
+        void clear() noexcept
+        {
+            levels.fill ({});
+            value = {};
+            subSample = 0;
+        }
+
+        void pushSamples (const float* inputSamples, int num) noexcept
+        {
+            for (int i = 0; i < num; ++i)
+                pushSample (inputSamples[i]);
+        }
+
+        void pushSample (float newSample) noexcept
+        {
+            if (--subSample <= 0)
+            {
+                if (++nextSample == levels.size())
+                    nextSample = 0;
+
+                levels.getReference (nextSample) = value;
+                subSample = owner.getSamplesPerBlock();
+                value = Range<float> (newSample, newSample);
+            }
+            else
+            {
+                value = value.getUnionWith (newSample);
+            }
+        }
+
+        void setBufferSize (int newSize)
+        {
+            levels.removeRange (newSize, levels.size());
+            levels.insertMultiple (-1, {}, newSize - levels.size());
+
+            if (nextSample >= newSize)
                 nextSample = 0;
-
-            levels.getReference (nextSample) = value;
-            subSample = owner.getSamplesPerBlock();
-            value = Range<float> (newSample, newSample);
         }
-        else
-        {
-            value = value.getUnionWith (newSample);
-        }
-    }
 
-    void setBufferSize (int newSize)
-    {
-        levels.removeRange (newSize, levels.size());
-        levels.insertMultiple (-1, {}, newSize - levels.size());
+        AudioVisualiserComponent& owner;
+        Array<Range<float>> levels;
+        Range<float> value;
+        std::atomic<int> nextSample { 0 }, subSample { 0 };
 
-        if (nextSample >= newSize)
-            nextSample = 0;
-    }
-
-    AudioVisualiserComponent& owner;
-    Array<Range<float>> levels;
-    Range<float> value;
-    std::atomic<int> nextSample { 0 }, subSample { 0 };
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChannelInfo)
-};
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChannelInfo)
+    };
 
 //==============================================================================
-AudioVisualiserComponent::AudioVisualiserComponent (int initialNumChannels)
-  : numSamples (1024),
-    inputSamplesPerBlock (256),
-    backgroundColour (Colours::black),
-    waveformColour (Colours::white)
-{
-    setOpaque (true);
-    setNumChannels (initialNumChannels);
-    setRepaintRate (60);
-}
+    AudioVisualiserComponent::AudioVisualiserComponent (int initialNumChannels)
+            : numSamples (1024),
+              inputSamplesPerBlock (256),
+              backgroundColour (Colours::black),
+              waveformColour (Colours::white)
+    {
+        setOpaque (true);
+        setNumChannels (initialNumChannels);
+        setRepaintRate (60);
+    }
 
-AudioVisualiserComponent::~AudioVisualiserComponent()
-{
-}
+    AudioVisualiserComponent::~AudioVisualiserComponent()
+    {
+    }
 
-void AudioVisualiserComponent::setNumChannels (int numChannels)
-{
-    channels.clear();
+    void AudioVisualiserComponent::setNumChannels (int numChannels)
+    {
+        channels.clear();
 
-    for (int i = 0; i < numChannels; ++i)
-        channels.add (new ChannelInfo (*this, numSamples));
-}
+        for (int i = 0; i < numChannels; ++i)
+            channels.add (new ChannelInfo (*this, numSamples));
+    }
 
-void AudioVisualiserComponent::setBufferSize (int newNumSamples)
-{
-    numSamples = newNumSamples;
+    void AudioVisualiserComponent::setBufferSize (int newNumSamples)
+    {
+        numSamples = newNumSamples;
 
-    for (auto* c : channels)
-        c->setBufferSize (newNumSamples);
-}
+        for (auto* c : channels)
+            c->setBufferSize (newNumSamples);
+    }
 
-void AudioVisualiserComponent::clear()
-{
-    for (auto* c : channels)
-        c->clear();
-}
+    void AudioVisualiserComponent::clear()
+    {
+        for (auto* c : channels)
+            c->clear();
+    }
 
-void AudioVisualiserComponent::pushBuffer (const float* const* d, int numChannels, int num)
-{
-    numChannels = jmin (numChannels, channels.size());
+    void AudioVisualiserComponent::pushBuffer (const float* const* d, int numChannels, int num)
+    {
+        numChannels = jmin (numChannels, channels.size());
 
-    for (int i = 0; i < numChannels; ++i)
-        channels.getUnchecked (i)->pushSamples (d[i], num);
-}
+        for (int i = 0; i < numChannels; ++i)
+            channels.getUnchecked (i)->pushSamples (d[i], num);
+    }
 
-void AudioVisualiserComponent::pushBuffer (const AudioBuffer<float>& buffer)
-{
-    pushBuffer (buffer.getArrayOfReadPointers(),
-                buffer.getNumChannels(),
-                buffer.getNumSamples());
-}
+    void AudioVisualiserComponent::pushBuffer (const AudioBuffer<float>& buffer)
+    {
+        pushBuffer (buffer.getArrayOfReadPointers(),
+                    buffer.getNumChannels(),
+                    buffer.getNumSamples());
+    }
 
-void AudioVisualiserComponent::pushBuffer (const AudioSourceChannelInfo& buffer)
-{
-    auto numChannels = jmin (buffer.buffer->getNumChannels(), channels.size());
+    void AudioVisualiserComponent::pushBuffer (const AudioSourceChannelInfo& buffer)
+    {
+        auto numChannels = jmin (buffer.buffer->getNumChannels(), channels.size());
 
-    for (int i = 0; i < numChannels; ++i)
-        channels.getUnchecked (i)->pushSamples (buffer.buffer->getReadPointer (i, buffer.startSample),
-                                               buffer.numSamples);
-}
+        for (int i = 0; i < numChannels; ++i)
+            channels.getUnchecked (i)->pushSamples (buffer.buffer->getReadPointer (i, buffer.startSample),
+                                                    buffer.numSamples);
+    }
 
-void AudioVisualiserComponent::pushSample (const float* d, int numChannels)
-{
-    numChannels = jmin (numChannels, channels.size());
+    void AudioVisualiserComponent::pushSample (const float* d, int numChannels)
+    {
+        numChannels = jmin (numChannels, channels.size());
 
-    for (int i = 0; i < numChannels; ++i)
-        channels.getUnchecked (i)->pushSample (d[i]);
-}
+        for (int i = 0; i < numChannels; ++i)
+            channels.getUnchecked (i)->pushSample (d[i]);
+    }
 
-void AudioVisualiserComponent::setSamplesPerBlock (int newSamplesPerPixel) noexcept
+    void AudioVisualiserComponent::setSamplesPerBlock (int newSamplesPerPixel) noexcept
 {
     inputSamplesPerBlock = newSamplesPerPixel;
 }
@@ -168,9 +168,9 @@ void AudioVisualiserComponent::timerCallback()
 
 void AudioVisualiserComponent::setColours (Colour bk, Colour fg) noexcept
 {
-    backgroundColour = bk;
-    waveformColour = fg;
-    repaint();
+backgroundColour = bk;
+waveformColour = fg;
+repaint();
 }
 
 void AudioVisualiserComponent::paint (Graphics& g)
