@@ -78,14 +78,15 @@ Instrument::Instrument(int tabWidth) {
 
     // nodeProcessingQueue.setInputNode(InputNode);
 
+    int temp = 0;
     // Create and add MidiInput objects to the owned array
     for (const auto& device : midiDevicesHere) {
         auto midiInput = juce::MidiInput::openDevice(device.identifier, this);
-        if (midiInput != nullptr) {
-            // Initially listening from all the MIDI inputs.
+        if (midiInput) {
             deviceManager.get()->setMidiInputDeviceEnabled(device.identifier, true);
-            midiInput->start();
             midiInputs.add(std::move(midiInput));
+            // find the first enabled device.
+            if (temp) midiInput->start();
         }
     }
 
@@ -247,7 +248,7 @@ void Instrument::EditPage::resized() {
 }
 
 void Instrument::EditPage::paint(juce::Graphics &g) {
-    g.fillAll(juce::Colour(0xAAEEF6FD));
+    g.fillAll(juce::Colours::lightskyblue);
 }
 
 void Instrument::EditPage::createCanvasButtonClicked() {
@@ -322,7 +323,8 @@ Instrument::GraphPage::GraphPage() {
     subMenuArray[1]->addItem(201, "Oscillator");
     subMenuArray[1]->addItem(202, "Custom Oscillator");
     subMenuArray[1]->addItem(203, "Wave-table Oscillator");
-    subMenuArray[1]->addItem(203, "Noise");
+    subMenuArray[1]->addItem(204, "Noise");
+    subMenuArray[1]->addItem(205, "Random Oscillator");
 
     subMenuArray[2]->addItem(301, "Reverb");
     subMenuArray[2]->addItem(302, "Delay");
@@ -343,6 +345,7 @@ Instrument::GraphPage::GraphPage() {
     subMenuArray[4]->addItem(505, "Abs Clamp");
     subMenuArray[4]->addItem(506, "Re-Ramp");
     subMenuArray[4]->addItem(507, "Math Clamp");
+    subMenuArray[4]->addItem(508, "Abs");
 
     subMenuArray[5]->addItem(601, "MIDI");
     subMenuArray[5]->addItem(602, "Arpeggiator");
@@ -405,10 +408,14 @@ void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *g
 
     if (result == 101) {
         temp = new Utility(pos_x, pos_y);
+    } else if (result == 103) {
+        temp = new Latency(pos_x, pos_y);
     } else if (result == 201) {
         temp = new Oscillator(pos_x, pos_y);
-    } else if (result == 203) {
+    } else if (result == 204) {
         temp = new Noise(pos_x, pos_y);
+    } else if (result == 205) {
+        temp = new RandomOscillator(pos_x, pos_y);
     } else if (result == 501) {
         temp = new AddAndMul(pos_x, pos_y);
     } else if (result == 502) {
@@ -421,6 +428,8 @@ void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *g
         temp = new ReRamp(pos_x, pos_y);
     } else if (result == 507) {
         temp = new MathClamp(pos_x, pos_y);
+    } else if (result == 508) {
+        temp = new Absolute(pos_x, pos_y);
     } else if (result == 0) {
         /* DO NOTHING */
         return;

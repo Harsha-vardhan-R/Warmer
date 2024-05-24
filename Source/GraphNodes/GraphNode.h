@@ -31,6 +31,9 @@ public:
         setColour(juce::ComboBox::ColourIds::backgroundColourId, MenuBackgroundID);
         setColour(juce::ComboBox::ColourIds::textColourId, textColourID);
         setColour(juce::ComboBox::ColourIds::arrowColourId, ComboBoxArrowColourID);
+
+        setColour(juce::PopupMenu::highlightedBackgroundColourId, juce::Colours::lightgrey);
+
     }
 
     void drawComboBox(juce::Graphics &g, int width, int height, bool isButtonDown, int buttonX, int buttonY,
@@ -115,7 +118,9 @@ private:
 
 class menuStyleJuceNode : public juce::LookAndFeel_V3 {
 public:
-    menuStyleJuceNode() {}
+    menuStyleJuceNode() {
+        setColour(juce::PopupMenu::highlightedBackgroundColourId, juce::Colours::lightgrey);
+    }
 };
 
 // Class that all the nodes inherit.
@@ -126,7 +131,9 @@ public :
 
     class menuStyleJuce : public juce::LookAndFeel_V3 {
     public:
-        menuStyleJuce() {}
+        menuStyleJuce() {
+            setColour(juce::PopupMenu::highlightedBackgroundColourId, juce::Colours::lightgrey);
+        }
     };
 
     // Socket is a block inside the GraphNode.
@@ -154,12 +161,12 @@ public :
         // not to be called on output sockets.
         float getValue();
         juce::AudioBuffer<float>* getBufferPointer();
-        juce::MidiBuffer* getMidiMessage();
+        juce::MidiBuffer* getMidiBuffer();
 
         // set value to all the connections this socket is connected to.
         void setFloatValue(float f);
         void setBufferPointer(juce::AudioBuffer<float>* bufferPointer);
-        void setMidiMessagePointer(juce::MidiBuffer* midiMessagePointer);
+        void setMidiBufferPointer(juce::MidiBuffer* midiMessagePointer);
 
 
         // isMust must be connected or else the queue will not be built.
@@ -267,12 +274,21 @@ public :
         }
 
 
+        GraphNode* parentNodePointer = nullptr;
+
+        // set by the parent while calling the update sockets method
+        // so that we have a parent to call to when we have to trigger the parents mini-reset.
+        void setParent(GraphNode* nodeParent) {
+            parentNodePointer = nodeParent;
+        }
+
+
         // This is the function that is going to get called from the,
-        // Parameter Ctrl if if the method `triggerSocketsTrigger` is called on it.
+        // Parameter Ctrl if if the method `triggerSocketsTrigger` is called in the listener method.
         // this call then sends the signal to the parent Graph node,
         // where we change callback or something similar based on the changed state.
         static void triggerGraphNodeMiniReset(Socket* thisInstance) {
-            std::cout << "Reset triggered from Parameter Ctrl" << "\n";
+            if (thisInstance->parentNodePointer) thisInstance->parentNodePointer->mini_reset();
         }
 
 
@@ -295,10 +311,40 @@ public :
                 setColour(juce::Slider::ColourIds::backgroundColourId, juce::Colours::white);
                 setColour(juce::Slider::ColourIds::thumbColourId, GraphSliderThumbID);
 
+                setColour(juce::PopupMenu::highlightedBackgroundColourId, juce::Colours::lightgrey);
 
                 setColour(juce::PopupMenu::ColourIds::backgroundColourId, juce::Colours::white);
                 setColour(juce::PopupMenu::ColourIds::textColourId, textColourID);
                 setColour(juce::PopupMenu::ColourIds::highlightedTextColourId, textSelectedColourID);
+            }
+
+            void drawPopupMenuItem (juce::Graphics& g,
+                                    const juce::Rectangle<int>& area,
+                                    bool isSeparator,
+                                    bool isActive,
+                                    bool isHighlighted,
+                                    bool isTicked,
+                                    bool hasSubMenu,
+                                    const juce::String& text,
+                                    const juce::String& shortcutKeyText,
+                                    const juce::Drawable* icon,
+                                    const juce::Colour* textColourToUse) override {
+
+                juce::Rectangle<int> highLight(area.getX() + 3, area.getY(), area.getWidth() - 6 , area.getHeight());
+                juce::Rectangle<int> aligner(area.getX(), area.getY(), area.getWidth() , area.getHeight());
+
+                auto width = area.getWidth();
+
+                if (isHighlighted) {
+                    g.setColour(MenuMouseOverColourID);
+                    g.fillRoundedRectangle(highLight.toFloat(), 3.0f);
+                    g.setColour(SelectedTabTextColourID);
+                } else {
+                    g.setColour(IdleTabTextColourID);
+                }
+
+                g.drawText(text, aligner, juce::Justification::centred);
+
             }
 
         };
@@ -588,7 +634,9 @@ public :
     virtual void mini_reset() {}
 
 
-    // called from the Socket to inform that parameterCtrl has
+    // called from socket after deletion or creation of a new socket to the
+    // input nodes.
+    void repaintAllInputConnectionsToNode();
 
 
     juce::AudioBuffer<float>* bufferToWritePointer;
@@ -649,10 +697,6 @@ public :
     // percentage of nodes need to be locked.
     // and mostly the use case is to change the callback pointer or something like that.
     std::mutex mutex;
-
-
-
-
 
 
 

@@ -479,7 +479,7 @@ public:
         freqAtSamplePoint_from_MIDI.resize(estimatedSamplesPerBlock);
 
         frequencyModBuffer = InputSockets[1]->getBufferPointer();
-        midiBuffer = InputSockets[1]->getMidiMessage();
+        midiBuffer = InputSockets[1]->getMidiBuffer();
 
         amplitudeModBuffer = InputSockets[2]->getBufferPointer();
         phaseModBuffer = InputSockets[3]->getBufferPointer();

@@ -112,6 +112,14 @@ void GraphNode::mouseDown(const juce::MouseEvent& event) {
     }
 }
 
+void GraphNode::repaintAllInputConnectionsToNode() {
+    for (Socket* i : InputSockets) {
+        i->repaintConnection();
+    }
+
+    instrument_ptr->triggerGraphPageRepaint();
+}
+
 void GraphNode::mouseDrag(const juce::MouseEvent& event) {
     juce::Point<int> delta = event.getPosition() - lastMouseDownPosition;
     auto newBounds = getBounds().translated(delta.getX(), delta.getY());
@@ -151,6 +159,7 @@ void GraphNode::deleteAllConnectionsToAndFromNode() {
 // called before drawing the respective node related content.
 void GraphNode::paintBasic(juce::Graphics& g) {
     auto bounds = getLocalBounds();
+
     g.setColour(GraphNodeBackgroundColourID);
     g.fillRect(bounds);
 
@@ -158,8 +167,12 @@ void GraphNode::paintBasic(juce::Graphics& g) {
     juce::Rectangle<int> topTextArea(0, 0, getWidth(), 20);
     g.fillRect(topTextArea);
 
+    g.setColour(juce::Colours::lightgrey);
+    g.drawRect(bounds);
+
     g.setColour(GraphNodeHeadingTextID);
     g.drawText(name, topTextArea.toFloat(), juce::Justification::centred);
+
 }
 
 // sets all the sockets in both input and output socket arrays to
@@ -171,6 +184,7 @@ void GraphNode::makeAllSocketsVisible() {
     for (Socket* i : InputSockets) {
         addAndMakeVisible(i);
         i->update();
+        i->setParent(this);
     }
     for (Socket* i : OutputSockets) {
         addAndMakeVisible(i);
@@ -447,6 +461,10 @@ void GraphNode::Socket::deleteSocketCallBack(int result, Socket* thisInstance) {
         thisInstance->resized();
     }
 
+    // here we trigger this function because deleting a node should repaint all the connections,
+    // the height at which they are may change.
+    if (thisInstance->parentNodePointer) thisInstance->parentNodePointer->repaintAllInputConnectionsToNode();
+
 }
 
 void GraphNode::Socket::deletedThisConnectionFrom(Socket *thatSocket) {
@@ -513,6 +531,9 @@ void GraphNode::Socket::connected(Socket *otherPointer, Connection* connection) 
 
         // this is the last function call that happens after a connection is confirmed in this class.
         Instrument::getInstance()->connectionAdded(connection);
+
+        if (parentNodePointer) parentNodePointer->repaintAllInputConnectionsToNode();
+
     } else {
         from = this;
         to.insert(otherPointer);
@@ -543,7 +564,7 @@ juce::AudioBuffer<float> *GraphNode::Socket::getBufferPointer() {
     // for the particular case called in the `processGraphNode`.
 }
 
-juce::MidiBuffer *GraphNode::Socket::getMidiMessage() {
+juce::MidiBuffer *GraphNode::Socket::getMidiBuffer() {
     if (connectionPointer) return connectionPointer->midiMessagePointer;
     return nullptr;
 }
@@ -557,7 +578,7 @@ void GraphNode::Socket::setBufferPointer(juce::AudioBuffer<float> *bufferPointer
     for (Socket* i : to) i->connectionPointer->setBufferPointer(bufferPointer);
 }
 
-void GraphNode::Socket::setMidiMessagePointer(juce::MidiBuffer *midiMessagePointer) {
+void GraphNode::Socket::setMidiBufferPointer(juce::MidiBuffer *midiMessagePointer) {
     for (Socket* i : to) i->connectionPointer->setMidiMessagePointer(midiMessagePointer);
 }
 

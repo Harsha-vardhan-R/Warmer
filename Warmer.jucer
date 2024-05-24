@@ -87,10 +87,12 @@
           <FILE id="kBz5GT" name="Digital.h" compile="0" resource="0" file="Source/GraphNodes/Filters/Digital.h"/>
         </GROUP>
         <GROUP id="{0CB8FAA1-8283-E03A-7C60-B3FB4E618C01}" name="Math">
+          <FILE id="pwGDXZ" name="Absolute.h" compile="0" resource="0" file="Source/GraphNodes/Math/Absolute.h"/>
           <FILE id="Xh3Nds" name="AddAndMul.h" compile="0" resource="0" file="Source/GraphNodes/Math/AddAndMul.h"/>
           <FILE id="mrQhOQ" name="AddOrSubtractSignal.h" compile="0" resource="0"
                 file="Source/GraphNodes/Math/AddOrSubtractSignal.h"/>
           <FILE id="hVvSlm" name="ClampSignal.h" compile="0" resource="0" file="Source/GraphNodes/Math/ClampSignal.h"/>
+          <FILE id="dMjjDL" name="FM.h" compile="0" resource="0" file="Source/GraphNodes/Math/FM.h"/>
           <FILE id="PAJZTj" name="MathClamp.h" compile="0" resource="0" file="Source/GraphNodes/Math/MathClamp.h"/>
           <FILE id="UIeGkP" name="MixSignal.h" compile="0" resource="0" file="Source/GraphNodes/Math/MixSignal.h"/>
           <FILE id="m7TRG9" name="ReRamp.h" compile="0" resource="0" file="Source/GraphNodes/Math/ReRamp.h"/>

@@ -207,29 +207,27 @@ public:
         }
     }
 
-//    void messageWithContext(juce::String message, float value, int valueInt) override {
-//        // this message is going to change the callback function here.
-//
-//        int ID = (int)std::round(value);
-//        bool is_modulated = InputSockets[1]->isThisConnected();
-//
-//        callbackFunction_type callBackTempPointer;
-//
-//        if (!is_modulated) {
-//            if (ID == 1) callBackTempPointer = &Noise::generateWhiteNoise;
-//            else if (ID == 2) callBackTempPointer = &Noise::generatePinkNoise;
-//            else if (ID == 3) callBackTempPointer = &Noise::generateBrownNoise;
-//            else callBackTempPointer = &Noise::generateBlueNoise;
-//        } else {
-//            if (ID == 1) callBackTempPointer = &Noise::generateWhiteNoise_mod;
-//            else if (ID == 2) callBackTempPointer = &Noise::generatePinkNoise_mod;
-//            else if (ID == 3) callBackTempPointer = &Noise::generateBrownNoise_mod;
-//            else callBackTempPointer = &Noise::generateBlueNoise_mod;
-//        }
-//
-//        callBackFunctionNoise.store(callBackTempPointer);
-//
-//    }
+
+    void mini_reset() override {
+        int ID = (int)std::round(InputSockets[0]->getValue());
+        bool is_modulated = InputSockets[1]->isThisConnected();
+
+        callbackFunction_type callBackTempPointer;
+
+        if (!is_modulated) {
+            if (ID == 1) callBackTempPointer = &Noise::generateWhiteNoise;
+            else if (ID == 2) callBackTempPointer = &Noise::generatePinkNoise;
+            else if (ID == 3) callBackTempPointer = &Noise::generateBrownNoise;
+            else callBackTempPointer = &Noise::generateBlueNoise;
+        } else {
+            if (ID == 1) callBackTempPointer = &Noise::generateWhiteNoise_mod;
+            else if (ID == 2) callBackTempPointer = &Noise::generatePinkNoise_mod;
+            else if (ID == 3) callBackTempPointer = &Noise::generateBrownNoise_mod;
+            else callBackTempPointer = &Noise::generateBlueNoise_mod;
+        }
+
+        callBackFunctionNoise.store(callBackTempPointer);
+    }
 
     void processGraphNode() override {
         float gain = InputSockets[1]->getValue();

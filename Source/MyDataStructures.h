@@ -69,7 +69,6 @@ public:
 
     void processingStart() {
         play.store(1);
-        std::cout << "Playing" << "\n";
     }
 
     // This function sets the ply atomic variable to false,
@@ -80,9 +79,10 @@ public:
     // nodes for the callback but this call back may still be processing nodes so we wait till this completes).
     void processingStop() {
         play.store(0);
-        std::cout << "Pausing, and waiting..." << "\n";
         while (insideCallback.load()); // infinite loop until we are not inside the callback,
-        // processing nodes, now it is safe to delete nodes and such.
+        // processing nodes, now it is safe to delete nodes and such,
+        // note that if there was an infinite loop in a node while processing and this is called,
+        // it may cause a program freeze.
     }
 
     linkedNode* headLinkedNode = nullptr;
@@ -480,7 +480,6 @@ public:
                 // reference count reduced.
 
                 for (auto i : nodeToDependentBufferMap[currentNode]) {
-                    std::cout << "Node to dependent map" << "\n";
                     dependentCountMap[i]--;
 
                     // this node can be used, all it's dependencies are processed.
@@ -494,7 +493,7 @@ public:
             current = current->nextNode;
         }
 
-        debugDump();
+        //debugDump();
 
     }
 

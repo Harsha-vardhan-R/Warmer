@@ -21,6 +21,7 @@
 
 #include "Oscillators/Oscillator.h"
 #include "Oscillators/Noise.h"
+#include "Oscillators/RandomOscillator.h"
 
 #include "Math/ClampSignal.h"
 #include "Math/MixSignal.h"
@@ -28,6 +29,8 @@
 #include "Math/AddAndMul.h"
 #include "Math/AddOrSubtractSignal.h"
 #include "Math/MathClamp.h"
+#include "Math/Absolute.h"
 
 #include "General/Utility.h"
+#include "General/AddLag.h"
 

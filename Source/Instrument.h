@@ -352,6 +352,8 @@ public:
             Instrument::getInstance()->refreshMIDIDevices();
             Instrument:;getInstance()->updateTreeParams();
             setVisible(false); // Hide the window when close button is pressed
+
+
         }
 
     private:

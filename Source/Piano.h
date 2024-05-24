@@ -16,6 +16,8 @@
 class Piano : public juce::MidiKeyboardComponent {
 public:
 
+    static Piano* Instance_Pointer;
+
     Piano(juce::MidiKeyboardState& state, juce::KeyboardComponentBase::Orientation orientation);
     ~Piano() override;
 
@@ -43,76 +45,13 @@ public:
         g.drawRoundedRectangle(area, 1.0f, 1.0f);
     }
 
-//    void focusLost(juce::FocusChangeType cause) override {
+//    void focusLost(juce::Component::FocusChangeType a) {
 //        grabKeyboardFocus();
 //    }
 
-
-    /*
-        This is an overlay which exactly lies over the piano component,
-        because we need not draw every key every time a key is pressed or released ,
-        this just paints over the top of the keys leaving the remaining unchanged.
-    */
-//    class OverlayKeyPaint : public juce::Component,
-//                            public juce::KeyListener {
-//    public :
-//
-//        OverlayKeyPaint();
-//        ~OverlayKeyPaint() override {};
-//
-//        void paint(juce::Graphics& g) override;
-//        void resized() override;
-//
-//        void WhiteKeyDown(int keyIndex);
-//        void WhiteKeyUp(int keyIndex);
-//
-//        void BlackKeyDown(int keyIndex);
-//        void BlackKeyUp(int keyIndex);
-//
-//        bool keyPressed(const juce::KeyPress&, juce::Component*) override;
-//        bool keyStateChanged(bool isKeyDown, juce::Component*) override;
-//
-//        void setOffset(int n) {
-//            offset = n;
-//        }
-//
-//
-//
-//        // for callbacks from other classes like from MIDI and keyboard.
-////        std::function<void(int)> WhiteKeyDownCallback;
-////        std::function<void(int)> WhiteKeyUpCallback;
-////        std::function<void(int)> BlackKeyDownCallback;
-////        std::function<void(int)> BlackKeyUpCallback;
-//
-//        void setTransposeLevel(int level) {
-//            transposeLevel = level;
-//        }
-//
-//    private:
-//        int offset;
-//
-//        int transposeLevel;
-//
-//        // The white keys that are presently pressed.
-//        std::set<int> pressedWhiteKeys;
-//        std::set<int> pressedBlackKeys;
-//
-//        std::set<int> pressedWhiteKeyCodes;
-//        std::set<int> pressedBlackKeyCodes;
-//
-////        int pos_to_type[7] = {1, 2, 3, 1, 2, 2, 3};
-//
-//
-//        // images to overlay.
-//        juce::Image WImage = juce::ImageFileFormat::loadFrom(juce::File("./Assets/KeyPressedImages/PianoFullImageWhitePressed_.png"));
-//        juce::Image Bimage = juce::ImageFileFormat::loadFrom(juce::File("./Assets/KeyPressedImages/B2.png"));
-//
-//        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OverlayKeyPaint)
-//    };
-
-    // Should be visible.
-
-//    std::unique_ptr<Piano::OverlayKeyPaint> overlayPainter;
+    static void setMidiNumToListenTo(int channelNumber) {
+        Piano::Instance_Pointer->setMidiChannel(channelNumber);
+    }
 
 
 private:

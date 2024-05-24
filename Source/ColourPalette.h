@@ -63,9 +63,9 @@ static auto GraphNodeHeadingColourID = juce::Colour(0xffcacaca);
 
 static auto GraphNodeConnectionColourID = juce::Colours::grey;
 static auto GraphSliderBackgroundID = juce::Colours::black;
-static auto GraphSliderThumbID = juce::Colour(0xFFDCF2F1);
+static auto GraphSliderThumbID = juce::Colour(0x44000000);
 static auto GraphSliderOutlineID = juce::Colours::darkgrey;
-static auto GraphSliderTextID = juce::Colour(0xFF6962AD);
+static auto GraphSliderTextID = juce::Colours::darkgrey;
 
 static auto GraphNodeConnectionBoxID = juce::Colour(0xFF643843);
 static auto GraphNodeSocketTextID = juce::Colour(0xFF8C6A5D);
