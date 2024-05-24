@@ -369,6 +369,8 @@ public:
     void resetAll() {
         linkedNode* current = head;
 
+        (static_cast<InputMasterGraphNode*>(MIDI_IN))->setInputMIDI(&midiBuffer);
+
         while (current) {
             current->nodePointer->reset();
             current = current->nextNode;
@@ -657,14 +659,15 @@ public:
 //        std::cout << "reached" << "\n";
 
         setNextMidiBuffer();
-        printMidiBuffer(midiBuffer);
-        midiBuffer.clear();
+
 
         // if we are paused, fill it with 0's.
         // you can remove the callback, but this is very inexpensive so not a problem.
         if (!play.load()) {
             juce::AudioBuffer<float> buffer (outputChannelData, numOutputChannels, numSamples);
             buffer.clear();
+//            printMidiBuffer(midiBuffer);
+            midiBuffer.clear();
             return;
         }
 
@@ -689,6 +692,9 @@ public:
 //        std::cout << "Execution time: " << duration.count() << " microseconds" << numSamples << std::endl;
 
         insideCallback.store(false);
+
+//        printMidiBuffer(midiBuffer);
+        midiBuffer.clear();
 
     }
 

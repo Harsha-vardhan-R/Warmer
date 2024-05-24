@@ -83,6 +83,10 @@ public:
 
     }
 
+    void setInputMIDI(juce::MidiBuffer* buffer) {
+        readBuff = buffer;
+    }
+
     void releaseResources() override {}
     void reset() override {
         OutputSockets[0]->setMidiBufferPointer(readBuff);
