@@ -20,7 +20,7 @@ Piano::Piano(juce::MidiKeyboardState& state, juce::KeyboardComponentBase::Orient
 
     setVelocity(0.75, true);
 
-    grabKeyboardFocus();
+    //grabKeyboardFocus();
 
     setColour(juce::MidiKeyboardComponent::whiteNoteColourId, juce::Colours::white);
     setColour(juce::MidiKeyboardComponent::blackNoteColourId, juce::Colour::fromRGB(100, 100, 100));

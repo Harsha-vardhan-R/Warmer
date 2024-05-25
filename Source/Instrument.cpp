@@ -78,15 +78,14 @@ Instrument::Instrument(int tabWidth) {
 
     // nodeProcessingQueue.setInputNode(InputNode);
 
-    int temp = 0;
+
     // Create and add MidiInput objects to the owned array
     for (const auto& device : midiDevicesHere) {
         auto midiInput = juce::MidiInput::openDevice(device.identifier, this);
         if (midiInput) {
+            midiInput->start(); // start listening to all possible midi in's.
             deviceManager.get()->setMidiInputDeviceEnabled(device.identifier, true);
             midiInputs.add(std::move(midiInput));
-            // find the first enabled device.
-            if (temp) midiInput->start();
         }
     }
 
@@ -120,10 +119,10 @@ void Instrument::refreshMIDIDevices() {
         }
     }
 	
-    std::cout << "Listening From : " << "\n";
-    for (auto i : midiInputs) {
-        std::cout << i->getName() << "\n";
-    }
+//    std::cout << "Listening From : " << "\n";
+//    for (auto i : midiInputs) {
+//        std::cout << i->getName() << "\n";
+//    }
 }
 
 void Instrument::listenFromAllMIDIInputs() {
@@ -145,10 +144,10 @@ void Instrument::listenFromAllMIDIInputs() {
         }
     }
 
-    std::cout << "Listening From : " << "\n";
-    for (auto i : midiInputs) {
-        std::cout << i->getName() << "\n";
-    }
+//    std::cout << "Listening From : " << "\n";
+//    for (auto i : midiInputs) {
+//        std::cout << i->getName() << "\n";
+//    }
 
     
 }
@@ -360,6 +359,7 @@ Instrument::GraphPage::GraphPage() {
     AddNodesPopupMenu.get()->addSubMenu("Math", *subMenuArray[4]);
     AddNodesPopupMenu.get()->addSubMenu("MIDI", *subMenuArray[5]);
     AddNodesPopupMenu.get()->addSubMenu("Etc", *subMenuArray[6]);
+
 
     styles.reset(new MyLookAndFeel());
     AddNodesPopupMenu.get()->setLookAndFeel(styles.get());
@@ -642,8 +642,8 @@ void Instrument::PlayPage::paint(juce::Graphics &g) {
 
 
 Instrument::AudioMIDISettingClass::AudioMIDISettingClass(juce::AudioDeviceManager& deviceManager) : DocumentWindow("Audio/MIDI Settings",
-                                                                            ButtonOutlineColourID,
-                                                                            DocumentWindow::closeButton) {
+                                                                            juce::Colours::white,
+                                                                            DocumentWindow::allButtons) {
     // This is to make sure the input audio is set to none.
     juce::AudioDeviceManager::AudioDeviceSetup setup;
     deviceManager.getAudioDeviceSetup(setup);
@@ -654,15 +654,15 @@ Instrument::AudioMIDISettingClass::AudioMIDISettingClass(juce::AudioDeviceManage
 
 
     settingPage.reset(new juce::AudioDeviceSelectorComponent(deviceManager,0, 0, 0,256, true, false, true, false));
-    settingPage.get()->setSize(1200, 800);
-    setDraggable(false);
+    settingPage.get()->setBounds(0, 0, getWidth(), getHeight());
 
-    styles.reset(new MyLookAndFeel());
-    settingPage.get()->setLookAndFeel(styles.get());
+    styles.setColour(juce::PopupMenu::highlightedBackgroundColourId, juce::Colours::lightgrey);
+    styles.setColour(juce::PopupMenu::highlightedTextColourId, juce::Colours::darkgrey);
+    styles.setColour(juce::PopupMenu::textColourId, juce::Colours::grey);
+    settingPage.get()->setLookAndFeel(&styles);
 
     setContentOwned(settingPage.get(), true);
 }
-
 
 
 void Instrument::ConfigurationChanged() {

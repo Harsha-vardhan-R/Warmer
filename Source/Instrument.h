@@ -353,13 +353,12 @@ public:
             Instrument:;getInstance()->updateTreeParams();
             setVisible(false); // Hide the window when close button is pressed
 
-
         }
 
     private:
         std::unique_ptr<juce::Component> settingPage;
 
-        std::unique_ptr<juce::LookAndFeel_V4> styles;
+        juce::LookAndFeel_V3 styles;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioMIDISettingClass)
     };
