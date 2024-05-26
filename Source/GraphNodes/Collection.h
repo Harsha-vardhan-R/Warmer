@@ -33,4 +33,7 @@
 
 #include "General/Utility.h"
 #include "General/AddLag.h"
+#include "General/Convolution.h"
+#include "General/ADSR.h"
 
+#include "Effects/Delay.h"

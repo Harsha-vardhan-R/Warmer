@@ -12,8 +12,6 @@ MenuComponent::MenuComponent() {
     addAndMakeVisible(menuComponent.get());
     setLookAndFeel(this);
 
-    juce::LookAndFeel::setColour(juce::TextButton::buttonColourId, juce::Colours::black);
-    menuComponent.get()->setColour(juce::TextButton::buttonColourId, juce::Colours::black);
 
     resized(); // this is NEEDED for the first time rendering.
 }
@@ -57,7 +55,6 @@ juce::PopupMenu MenuComponent::getMenuForIndex(int topLevelMenuIndex, const juce
         menu.addItem(21, "About");
     } else if (menuName == "Edit") {
         menu.addItem(22, "Instrument Background");
-        menu.addItem(23, "");
     }
 
     return menu;
@@ -124,6 +121,7 @@ void MenuComponent::drawPopupMenuItem (juce::Graphics& g,
                                        const juce::Colour* textColourToUse) {
     juce::Rectangle<int> highLight(area.getX() + 3, area.getY(), area.getWidth() - 6 , area.getHeight());
     juce::Rectangle<int> aligner(area.getX() + 15, area.getY(), area.getWidth() , area.getHeight());
+
     if (isSeparator) {
         g.setColour(SeparatorColourID);
         juce::Rectangle<int> sepLine(area.getX()+3, area.getCentreY(), area.getWidth()-6, 1);
@@ -144,7 +142,9 @@ void MenuComponent::drawPopupMenuItem (juce::Graphics& g,
 
 void MenuComponent::drawComboBox(juce::Graphics &g, int width, int height, bool isButtonDown, int buttonX, int buttonY,
                                  int buttonW, int buttonH, juce::ComboBox& box) {
-    g.setColour(juce::Colour(0xFFECEFF0));
+
+    g.setColour(ComboBoxBackgroundColourID);
+
     g.fillRect(box.getLocalBounds().reduced(1));
 
     juce::Path arrow;
@@ -162,7 +162,7 @@ void MenuComponent::drawComboBox(juce::Graphics &g, int width, int height, bool 
                           arrowX + (arrowDimen * 0.5f) + 1, arrowY + arrowDimen);
     }
 
-    g.setColour(juce::Colours::grey);
+    g.setColour(ComboBoxOutlineColourID);
 
     g.drawRect(box.getLocalBounds().reduced(1), 1.0f);
 

@@ -598,7 +598,7 @@ void GraphNode::Socket::mouseUp(const juce::MouseEvent &event) {
     // now we need to check if it accepts the type given out by the
     // socket that is being connected to.
 
-    // TODO : Check for loops, please.
+
     if (ComponentUnderMouse && // 2nd check will not be done if this was false, so no nullptr errors.
         ComponentUnderMouse->dir == direction::IN &&
         ComponentUnderMouse->accepts(type) &&

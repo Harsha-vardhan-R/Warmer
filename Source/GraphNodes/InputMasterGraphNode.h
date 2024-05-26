@@ -45,9 +45,6 @@ public:
             for (const auto metadata : *readBuff) {
                 const auto& message = metadata.getMessage();
 
-//                int noteNumber = message.getNoteNumber();
-//                std::cout << "Note = " << noteNumber << "\n";
-
                 if (message.isPitchWheel()) {
                     pitchValue = ((float)(message.getPitchWheelValue() - 8192)) / 8192.0f;
                 } else if (message.isController() && message.getControllerNumber() == 1) {

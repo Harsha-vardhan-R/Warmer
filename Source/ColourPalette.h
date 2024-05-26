@@ -36,8 +36,13 @@ static auto SelectedTabTextColourID = juce::Colours::darkgrey;
 static auto SelectedTabButtonBorderColourID = juce::Colours::grey;  // F2910A
 
 static auto ComboBoxArrowColourID = juce::Colours::darkgrey;
+static auto ComboBoxOutlineColourID = juce::Colours::grey;
 static auto SeparatorColourID = juce::Colours::lightgrey;
 static auto ComboBoxTextSelectedColourID = juce::Colours::darkgrey;
+static auto ComboBoxBackgroundColourID = juce::Colour(0xFFECEFF0);
+
+static auto jucePopupOutlineColourID = juce::Colours::white;
+
 
 static auto WheelComponentBackgroundID = juce::Colours::white;  // F2910A
 static auto WheelArrowColourID = juce::Colours::grey;
@@ -46,18 +51,20 @@ static auto WheelSliderBackgroundID = juce::Colours::grey;
 static auto WheelSliderLineBackgroundID = juce::Colours::lightgrey;
 
 
-static auto EditPageBackColourOneID = juce::Colours::white;  // F2910A
-static auto EditPageBackColourTwoID = juce::Colours::white;  // F2910A
+static auto EditPageBackColourOneID = juce::Colours::aqua;  // F2910A
+static auto EditPageBackColourTwoID = juce::Colours::coral;  // F2910A
 
-static auto InstrumentDefaultBackColourID = juce::Colours::white;  // F2910A
+static auto PlayBackgroundColourID = juce::Colours::white;  // F2910A
 
 static auto VolumeLevelBackgroundID = juce::Colours::grey;
 static auto VolumeSliderID = juce::Colours::darkgrey;
 static auto VolumeLevelID = juce::Colours::white;
 static auto VolumeSliderSlitID = juce::Colours::white;
 
+static auto GraphPageBackgroundColourID = juce::Colours::white;
+
 // node colours.
-static auto GraphNodeBackgroundColourID = juce::Colour(0xDDEBEBEB);
+static auto GraphNodeBackgroundColourID = juce::Colour(0xDDFEFEFE);
 static auto GraphNodeHeadingTextID = juce::Colours::darkgrey;
 static auto GraphNodeHeadingColourID = juce::Colour(0xffcacaca);
 
@@ -70,116 +77,67 @@ static auto GraphSliderTextID = juce::Colours::darkgrey;
 static auto GraphNodeConnectionBoxID = juce::Colour(0xFF643843);
 static auto GraphNodeSocketTextID = juce::Colour(0xFF8C6A5D);
 static auto GraphNodeSocketTextMustID = juce::Colour(0xFF5F374B);
-//static auto textColourID = juce::Colours::lightgrey;
-//static auto textSelectedColourID = juce::Colours::white;
+
+
+
+
+
+//static auto textColourID = juce::Colours::lightgrey; // Inverse of darkgrey for dark theme
+//static auto textSelectedColourID = juce::Colours::white; // Inverse of black for dark theme
 //
-//static auto ButtonBackColourID = juce::Colour(0xff333333); // Dark grey
-//static auto ButtonBackSelectedColourID = juce::Colour(0xff444444); // Slightly lighter dark grey
-//static auto ButtonOutlineColourID = juce::Colour(0xff555555); // Even lighter dark grey
+//static auto ButtonBackColourID = juce::Colour(0xFF333333); // Darker shade
+//static auto ButtonBackSelectedColourID = juce::Colour(0xFF444444); // Darker shade
+//static auto ButtonOutlineColourID = juce::Colour(0xFF555555); // Darker shade
 //
-//static auto MenuBackgroundID = juce::Colour(0xff222222); // Very dark grey
-//static auto MenuMouseOverColourID = juce::Colour(0x447B8788); // Maintain transparency
+//static auto MenuBackgroundID = juce::Colour(0xFF222222); // Darker background
+//static auto MenuMouseOverColourID = juce::Colour(0x44888888); // Adjusted transparency
 //
-//static auto MouseOverTabColourID = juce::Colour(0xff2b2b2b); // Dark grey similar to mouse over tab
-//static auto TabBackgroundColourID = juce::Colour(0xff2a2a2a); // Slightly different dark grey
-//static auto SelectTabColourID = juce::Colour(0xff252525); // Darker grey for selected tab
-//static auto IdleTabColourID = juce::Colour(0xff2a2a2a); // Same as TabBackgroundColourID
-//static auto IdleTabTextColourID = juce::Colours::lightgrey;
-//static auto SelectedTabTextColourID = juce::Colours::white;
-//static auto SelectedTabButtonBorderColourID = juce::Colour(0xff555555); // Dark grey for border
+//static auto MouseOverTabColourID = juce::Colour(0xff3b3b3b); // Darker shade
+//static auto TabBackgroundColourID = juce::Colour(0xff2b2b2b); // Darker shade
+//static auto SelectTabColourID = juce::Colour(0xff1e1e1e); // Darker shade
+//static auto IdleTabColourID = juce::Colour(0xff2b2b2b); // Darker shade
+//static auto IdleTabTextColourID = juce::Colours::lightgrey; // Inverse of darkgrey
+//static auto SelectedTabTextColourID = juce::Colours::lightgrey; // Inverse of darkgrey
+//static auto SelectedTabButtonBorderColourID = juce::Colours::silver; // Inverse of grey
 //
-//static auto ComboBoxArrowColourID = juce::Colours::lightgrey;
-//static auto SeparatorColourID = juce::Colours::darkgrey;
-//static auto ComboBoxTextSelectedColourID = juce::Colours::lightgrey;
+//static auto ComboBoxArrowColourID = juce::Colours::lightgrey; // Inverse of darkgrey
+//static auto ComboBoxOutlineColourID = juce::Colours::silver; // Inverse of grey
+//static auto SeparatorColourID = juce::Colours::darkgrey; // Darker shade
+//static auto ComboBoxTextSelectedColourID = juce::Colours::lightgrey; // Inverse of darkgrey
+//static auto ComboBoxBackgroundColourID = juce::Colour(0xFF2B2E30); // Darker shade
 //
-//static auto WheelComponentBackgroundID = juce::Colour(0xff333333); // Dark grey
-//static auto WheelArrowColourID = juce::Colours::lightgrey;
-//static auto WheelBackgroundID = juce::Colour(0xff333333); // Same as WheelComponentBackgroundID
-//static auto WheelSliderBackgroundID = juce::Colours::darkgrey;
-//static auto WheelSliderLineBackgroundID = juce::Colours::grey;
+//static auto jucePopupOutlineColourID = juce::Colour(0xFF333333); // Darker shade
 //
-//static auto EditPageBackColourOneID = juce::Colour(0xff333333); // Dark grey
-//static auto EditPageBackColourTwoID = juce::Colour(0xff333333); // Same as EditPageBackColourOneID
+//static auto WheelComponentBackgroundID = juce::Colour(0xFF333333); // Darker shade
+//static auto WheelArrowColourID = juce::Colours::silver; // Inverse of grey
+//static auto WheelBackgroundID = juce::Colour(0xFF333333); // Darker shade
+//static auto WheelSliderBackgroundID = juce::Colours::silver; // Inverse of grey
+//static auto WheelSliderLineBackgroundID = juce::Colours::darkgrey; // Darker shade
 //
-//static auto InstrumentDefaultBackColourID = juce::Colour(0xff333333); // Same dark grey
+//static auto EditPageBackColourOneID = juce::Colour(0xFF005f5f); // Darker shade of aqua
+//static auto EditPageBackColourTwoID = juce::Colour(0xFF5f1f1f); // Darker shade of coral
 //
-//static auto VolumeLevelBackgroundID = juce::Colours::darkgrey;
-//static auto VolumeSliderID = juce::Colours::grey;
-//static auto VolumeLevelID = juce::Colour(0xff555555); // Slightly lighter grey
-//static auto VolumeSliderSlitID = juce::Colour(0xff555555); // Same as VolumeLevelID
+//static auto PlayBackgroundColourID = juce::Colour(0xFF333333); // Darker shade
 //
-//// Node colours.
-//static auto GraphNodeBackgroundColourID = juce::Colour(0xff3a3a3a); // Darker grey for nodes
-//static auto GraphNodeHeadingTextID = juce::Colours::lightgrey;
-//static auto GraphNodeHeadingColourID = juce::Colour(0xff444444); // Dark grey
+//static auto VolumeLevelBackgroundID = juce::Colours::silver; // Inverse of grey
+//static auto VolumeSliderID = juce::Colours::lightgrey; // Inverse of darkgrey
+//static auto VolumeLevelID = juce::Colour(0xFF333333); // Darker shade
+//static auto VolumeSliderSlitID = juce::Colour(0xFF333333); // Darker shade
 //
-//static auto GraphNodeConnectionColourID = juce::Colours::darkgrey;
-//static auto GraphSliderBackgroundID = juce::Colours::lightgrey;
-//static auto GraphSliderThumbID = juce::Colour(0x44ffffff); // Light thumb with transparency
-//static auto GraphSliderOutlineID = juce::Colours::grey;
-//static auto GraphSliderTextID = juce::Colours::lightgrey;
+//static auto GraphPageBackgroundColourID = juce::Colour(0xFF222222); // Darker background
 //
-//static auto GraphNodeConnectionBoxID = juce::Colour(0xffb35a60); // Darker red tone
-//static auto GraphNodeSocketTextID = juce::Colour(0xffc38a7e); // Muted pink tone
-//static auto GraphNodeSocketTextMustID = juce::Colour(0xffa04e5e); // Darker muted pink
+//// node colours
+//static auto GraphNodeBackgroundColourID = juce::Colour(0xDD2B2B2B); // Darker shade with transparency
+//static auto GraphNodeHeadingTextID = juce::Colours::lightgrey; // Inverse of darkgrey
+//static auto GraphNodeHeadingColourID = juce::Colour(0xff3b3b3b); // Darker shade
+//
+//static auto GraphNodeConnectionColourID = juce::Colours::silver; // Inverse of grey
+//static auto GraphSliderBackgroundID = juce::Colours::white; // Keeping white for contrast
+//static auto GraphSliderThumbID = juce::Colour(0x44FFFFFF); // Adjusted to fit dark theme with transparency
+//static auto GraphSliderOutlineID = juce::Colours::lightgrey; // Inverse of darkgrey
+//static auto GraphSliderTextID = juce::Colours::lightgrey; // Inverse of darkgrey
+//
+//static auto GraphNodeConnectionBoxID = juce::Colour(0xFF964349); // Darker and complimentary
+//static auto GraphNodeSocketTextID = juce::Colour(0xFFAB8977); // Darker and complimentary
+//static auto GraphNodeSocketTextMustID = juce::Colour(0xFF9A4B61); // Darker and complimentary
 
-
-
-/*
-// E1F0DA e1f0da
-
-// Stores the colours for the present theme.
-static auto textColourID = juce::Colours::darkgrey;
-static auto textSelectedColourID = juce::Colours::white;
-
-static auto ButtonBackColourID = juce::Colours::white;
-static auto ButtonBackSelectedColourID = juce::Colours::black;
-static auto ButtonOutlineColourID = juce::Colours::darkgrey;
-
-static auto MenuBackgroundID = juce::Colour(0xffe1f0da);
-static auto MenuMouseOverColourID = juce::Colour(0xffa9dfbf);
-
-
-static auto MouseOverTabColourID = juce::Colour(0xcca9dfbf);
-static auto SelectTabColourID = juce::Colour(0xffa9dfbf);
-static auto IdleTabColourID = juce::Colour(0x88a9dfbf);
-static auto IdleTabTextColourID = juce::Colours::grey;
-static auto SelectedTabTextColourID = juce::Colours::darkgrey;
-static auto SelectedTabButtonBorderColourID = juce::Colours::grey;
-
-
-static auto ComboBoxArrowColourID = juce::Colours::darkgrey;
-static auto SeparatorColourID = juce::Colours::grey;
-static auto ComboBoxTextSelectedColourID = juce::Colours::grey;
-
-static auto WheelComponentBackgroundID = juce::Colour(0xffe1f0da);
-static auto WheelArrowColourID = juce::Colours::darkgrey;
-static auto WheelBackgroundID = juce::Colour(0xffa9dfbf);
-static auto WheelSliderBackgroundID = juce::Colours::darkgrey;
-static auto WheelSliderLineBackgroundID = juce::Colours::white;
-
-
-//static auto MIDISettingsBackgroundID = juce::Colour(0xffffffff);
-//static auto MIDISettingsTextID = juce::Colours::white;
-//static auto MIDISettingsTextSelectID = juce::Colours::darkgrey;
-//static auto MIDISettingsButtonColourID = juce::Colours::grey;
-//static auto MIDISettingsButtonColourSelectID = juce::Colour(0xffa9dfbf);
-
-
-static auto GraphNodeBackgroundColourID = juce::Colours::black;
-static auto GraphNodeHeadingTextID = juce::Colours::white;
-static auto GraphNodeHeadingColourID = juce::Colours::darkgrey;
-
-static auto GraphNodeMIDIColourID = juce::Colour(0xfff9a760);
-static auto GraphNodeAudioBufferIntColourID = juce::Colour(0xffffeadb);
-static auto GraphNodeAudioBufferFloatColourID = juce::Colour(0xff679b9b);
-static auto GraphNodeIntegerColourID = juce::Colour(0xff637373);
-static auto GraphNodeFloatingColourID = juce::Colour(0xfff1c2b);
-static auto GraphNodeImpColourID = juce::Colours::white;
-
-
-static auto EditPageBackColourOneID = juce::Colours::grey;
-static auto EditPageBackColourTwoID = juce::Colour(0xffe1f0da);
-
-static auto InstrumentDefaultBackColourID = juce::Colour(0xffe1f0da);
-*/

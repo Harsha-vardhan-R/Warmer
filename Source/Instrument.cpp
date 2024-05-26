@@ -247,7 +247,7 @@ void Instrument::EditPage::resized() {
 }
 
 void Instrument::EditPage::paint(juce::Graphics &g) {
-    g.fillAll(juce::Colours::lightskyblue);
+    g.fillAll(EditPageBackColourOneID);
 }
 
 void Instrument::EditPage::createCanvasButtonClicked() {
@@ -292,7 +292,7 @@ void Instrument::EditPage::createCanvasButtonClicked() {
 
 // +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
 void Instrument::InstrumentCanvas::paint(juce::Graphics &g) {
-    g.fillAll(juce::Colours::aquamarine);
+    g.fillAll(EditPageBackColourTwoID);
 }
 
 //////////////////////////////
@@ -408,14 +408,20 @@ void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *g
 
     if (result == 101) {
         temp = new Utility(pos_x, pos_y);
+    } else if (result == 102) {
+        temp = new Convolution(pos_x, pos_y);
     } else if (result == 103) {
         temp = new Latency(pos_x, pos_y);
+    } else if (result == 104) {
+        temp = new ADSR(pos_x, pos_y);
     } else if (result == 201) {
         temp = new Oscillator(pos_x, pos_y);
     } else if (result == 204) {
         temp = new Noise(pos_x, pos_y);
     } else if (result == 205) {
         temp = new RandomOscillator(pos_x, pos_y);
+    } else if (result == 302) {
+        temp = new Delay(pos_x, pos_y);
     } else if (result == 501) {
         temp = new AddAndMul(pos_x, pos_y);
     } else if (result == 502) {
@@ -629,8 +635,13 @@ void Instrument::PlayPage::resized() {
 }
 
 void Instrument::PlayPage::paint(juce::Graphics &g) {
+
+    g.fillAll(PlayBackgroundColourID);
+
     auto InstrumentInstance = Instrument::getInstance();
-    g.setColour(juce::Colours::grey);
+
+    g.setColour(textColourID);
+
     if (InstrumentInstance->Canvas.get() == nullptr) {
         g.drawText("Please Create an Instrument Canvas for this Instrument in the Edit Page",
                    getLocalBounds(),

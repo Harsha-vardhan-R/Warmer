@@ -74,8 +74,8 @@ public:
             float* channelData = bufferToWritePointer->getWritePointer(channel);
 
             for (int i = 0; i < bufferToWritePointer->getNumSamples(); i += 2) {
-                float white1 = random.nextFloat();
-                float white2 = random.nextFloat();
+                float white1 = random.nextFloat() * 2.0f - 1.0f;
+                float white2 = random.nextFloat() * 2.0f - 1.0f;
 
                 // Generate two samples at a time
                 channelData[i] = ( white1 * pinkParamTwo) + (prevSample1 * pinkParamOne);

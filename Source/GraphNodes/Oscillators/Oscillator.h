@@ -222,22 +222,11 @@ public:
 
                     // Check if the message is a Note On or Note Off message
                     if (message.isNoteOn()) {
-                        MIDI_order.insert(note);
                         presMIDI_Note = note;
                         presMIDI_freq = midiFrequencies[note];
-                    } else if (message.isNoteOff()) {
-                        MIDI_order.erase(note);
-                        int note_now = getLastElement(MIDI_order);
-                        // we reset if there is new note is different.
-                        if (note_now != presMIDI_Note) resetPhaseAt.insert(samplePosition);
-                        if (note_now == -1) {
-                            presMIDI_Note = -1;
-                            presMIDI_freq = 0;
-                        } else {
-                            presMIDI_Note = note_now; // Fixing this to use note_now instead of note
-                            presMIDI_freq = midiFrequencies[note_now];
-                        }
+                        resetPhaseAt.insert(samplePosition);
                     }
+
                 }
 
                 // Fill remaining samples in `freqAtSamplePoint_from_MIDI`
@@ -252,7 +241,6 @@ public:
                         for (int i = 0; i < bufferToWritePointer->getNumSamples(); ++i) {
                             current_phase += freqAtSamplePoint_from_MIDI[i] * phaseIncrementRatio;
                             current_phase = std::fmod(current_phase, TAU);
-                            if (resetPhaseAt.count(i)) current_phase = 0;
 
                             if constexpr(waveInputType == waveType::sine) {
                                 channelData[i] = std::sin(current_phase) * amplitude;
@@ -267,6 +255,8 @@ public:
                                 channelData[i] = square * amplitude;
                             }
 
+                            if (resetPhaseAt.count(i)) current_phase = phase;
+
                         }
                     } else {
                         const float *amplModPointer = amplitudeModBuffer->getReadPointer(channel);
@@ -274,7 +264,6 @@ public:
                         for (int i = 0; i < bufferToWritePointer->getNumSamples(); ++i) {
                             current_phase += freqAtSamplePoint_from_MIDI[i] * phaseIncrementRatio;
                             current_phase = std::fmod(current_phase, TAU);
-                            if (resetPhaseAt.count(i)) current_phase = 0;
 
                             if constexpr(waveInputType == waveType::sine) {
                                 channelData[i] = std::sin(current_phase) * amplModPointer[i];
@@ -288,6 +277,8 @@ public:
                                 float square = (current_phase < PI) ? 1.0f : -1.0f;
                                 channelData[i] = square * amplModPointer[i];
                             }
+
+                            if (resetPhaseAt.count(i)) current_phase = phase;
 
                         }
                     }

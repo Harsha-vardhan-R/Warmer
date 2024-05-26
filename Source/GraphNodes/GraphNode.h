@@ -312,7 +312,6 @@ public :
                 setColour(juce::Slider::ColourIds::thumbColourId, GraphSliderThumbID);
 
                 setColour(juce::PopupMenu::highlightedBackgroundColourId, juce::Colours::lightgrey);
-
                 setColour(juce::PopupMenu::ColourIds::backgroundColourId, juce::Colours::white);
                 setColour(juce::PopupMenu::ColourIds::textColourId, textColourID);
                 setColour(juce::PopupMenu::ColourIds::highlightedTextColourId, textSelectedColourID);
