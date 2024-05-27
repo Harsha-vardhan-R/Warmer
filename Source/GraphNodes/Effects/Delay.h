@@ -32,6 +32,10 @@ public:
         InputSockets[2]->acceptType(SocketDataType::Floating);
         InputSockets[2]->addSliderParameterControl(0.0f, 1.0f, 0.2f);
 
+        InputSockets.add(new GraphNode::Socket(juce::String("Mix(Dry<->Wet)"), direction::IN, false));
+        InputSockets[3]->acceptType(SocketDataType::Floating);
+        InputSockets[3]->addSliderParameterControl(0.0f, 1.0f, 0.3f);
+
         makeAllSocketsVisible();
 
         resized();
@@ -41,6 +45,8 @@ public:
     void processGraphNode() override {
         float delayTime = std::clamp(InputSockets[1]->getValue(), 0.0f, 4000.0f);
         float feedback = InputSockets[2]->getValue();
+        float mix = InputSockets[3]->getValue();
+        float mix_inv = 1.0-mix;
         int delaySamples = std::clamp(static_cast<int>((delayTime / 1000.0f) * sampleRate), 0, max_index);
         int write_index = (read_index + delaySamples) % size_Channel;
 
@@ -54,7 +60,7 @@ public:
 
             for (int i = 0; i < bufferToWritePointer->getNumSamples(); ++i) {
                 delayChannelData[write_index_local] = inputSignal[i] + delayChannelData[read_index_local]*feedback;
-                channelData[i] = delayChannelData[read_index_local];
+                channelData[i] = delayChannelData[read_index_local] * mix + inputSignal[i] * mix_inv;
                 read_index_local = (read_index_local + 1) % size_Channel;
                 write_index_local = (write_index_local + 1) % size_Channel;
             }

@@ -269,7 +269,7 @@ public :
         }
 
         int getTotHeight() {
-            if (isConnected) return 20;
+            if (isConnected && collapseOnConnection) return 20;
             else return 20 + parameterController.getHeight();
         }
 
@@ -291,6 +291,12 @@ public :
             if (thisInstance->parentNodePointer) thisInstance->parentNodePointer->mini_reset();
         }
 
+
+        // if this is called on a socket,
+        // even if it is connected the parameter ctrl will not get collapsed.
+        void setParameterCtrlNoCollapseOnConnection();
+
+        bool collapseOnConnection = true;
 
     private:
 

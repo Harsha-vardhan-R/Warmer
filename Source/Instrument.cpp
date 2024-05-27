@@ -345,6 +345,7 @@ Instrument::GraphPage::GraphPage() {
     subMenuArray[4]->addItem(506, "Re-Ramp");
     subMenuArray[4]->addItem(507, "Math Clamp");
     subMenuArray[4]->addItem(508, "Abs");
+    subMenuArray[4]->addItem(509, "Mixer");
 
     subMenuArray[5]->addItem(601, "MIDI");
     subMenuArray[5]->addItem(602, "Arpeggiator");
@@ -436,6 +437,10 @@ void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *g
         temp = new MathClamp(pos_x, pos_y);
     } else if (result == 508) {
         temp = new Absolute(pos_x, pos_y);
+    } else if (result == 509) {
+        temp = new Mixer(pos_x, pos_y);
+    } else if (result == 603) {
+        temp = new Polyphony(pos_x, pos_y);
     } else if (result == 0) {
         /* DO NOTHING */
         return;

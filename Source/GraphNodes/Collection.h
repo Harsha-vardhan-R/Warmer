@@ -30,6 +30,7 @@
 #include "Math/AddOrSubtractSignal.h"
 #include "Math/MathClamp.h"
 #include "Math/Absolute.h"
+#include "Math/Mixer.h"
 
 #include "General/Utility.h"
 #include "General/AddLag.h"
@@ -37,3 +38,5 @@
 #include "General/ADSR.h"
 
 #include "Effects/Delay.h"
+
+#include "MIDI/MIDI_Polyphony.h"

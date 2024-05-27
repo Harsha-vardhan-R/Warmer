@@ -525,7 +525,8 @@ void GraphNode::Socket::connected(Socket *otherPointer, Connection* connection) 
         from = otherPointer;
         to.clear();
         to.insert(this);
-        removeChildComponent(&parameterController);
+
+        if (collapseOnConnection) removeChildComponent(&parameterController);
 
         resized();
 
@@ -553,7 +554,7 @@ void GraphNode::Socket::resized() {
 float GraphNode::Socket::getValue() {
     // if it is connected we get the value from the previous node,
     // else we just return what the value in parameter control is.
-    if (connectionPointer) return connectionPointer->getFloatValue();
+    if (connectionPointer && collapseOnConnection) return connectionPointer->getFloatValue();
     else return parameterController.getValue();
 }
 
@@ -621,4 +622,8 @@ void GraphNode::Socket::mouseUp(const juce::MouseEvent &event) {
     }
 
 
+}
+
+void GraphNode::Socket::setParameterCtrlNoCollapseOnConnection() {
+    collapseOnConnection = false;
 }

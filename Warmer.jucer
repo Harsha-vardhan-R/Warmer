@@ -78,6 +78,8 @@
           <FILE id="TxUJU1" name="Utility.h" compile="0" resource="0" file="Source/GraphNodes/General/Utility.h"/>
         </GROUP>
         <GROUP id="{3BF01387-906D-E405-94C0-D9574A80B114}" name="Etc">
+          <FILE id="C9Tjtw" name="BPM-Tempo.h" compile="0" resource="0" file="Source/GraphNodes/Etc/BPM-Tempo.h"/>
+          <FILE id="PYNlsN" name="Constant.h" compile="0" resource="0" file="Source/GraphNodes/Etc/Constant.h"/>
           <FILE id="qVyYRC" name="Glide.h" compile="0" resource="0" file="Source/GraphNodes/Etc/Glide.h"/>
           <FILE id="Kl7ZiH" name="PitchShift.h" compile="0" resource="0" file="Source/GraphNodes/Etc/PitchShift.h"/>
         </GROUP>
@@ -94,6 +96,7 @@
           <FILE id="hVvSlm" name="ClampSignal.h" compile="0" resource="0" file="Source/GraphNodes/Math/ClampSignal.h"/>
           <FILE id="dMjjDL" name="FM.h" compile="0" resource="0" file="Source/GraphNodes/Math/FM.h"/>
           <FILE id="PAJZTj" name="MathClamp.h" compile="0" resource="0" file="Source/GraphNodes/Math/MathClamp.h"/>
+          <FILE id="o4yLWO" name="Mixer.h" compile="0" resource="0" file="Source/GraphNodes/Math/Mixer.h"/>
           <FILE id="UIeGkP" name="MixSignal.h" compile="0" resource="0" file="Source/GraphNodes/Math/MixSignal.h"/>
           <FILE id="m7TRG9" name="ReRamp.h" compile="0" resource="0" file="Source/GraphNodes/Math/ReRamp.h"/>
         </GROUP>
