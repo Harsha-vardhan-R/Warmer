@@ -339,7 +339,7 @@ Instrument::GraphPage::GraphPage() {
 
     subMenuArray[4]->addItem(501, "Mul & Add Transform");
     subMenuArray[4]->addItem(502, "Add Or Sub Signals");
-    subMenuArray[4]->addItem(503, "FM");
+    subMenuArray[4]->addItem(503, "FM Operator");
     subMenuArray[4]->addItem(504, "Mix Signals");
     subMenuArray[4]->addItem(505, "Abs Clamp");
     subMenuArray[4]->addItem(506, "Re-Ramp");
@@ -369,8 +369,8 @@ Instrument::GraphPage::GraphPage() {
 
     instrumentClassPointer = Instrument::getInstance();
 
-    instrumentClassPointer->nodeProcessingQueue.push(static_cast<GraphNode*>(instrumentClassPointer->InputNode));
-    instrumentClassPointer->nodeProcessingQueue.push(static_cast<GraphNode*>(instrumentClassPointer->OutputNode));
+    instrumentClassPointer->nodeProcessingQueue.push(static_cast<GraphNode*>(Instrument::getInstance()->InputNode));
+    instrumentClassPointer->nodeProcessingQueue.push(static_cast<GraphNode*>(Instrument::getInstance()->OutputNode));
 
 //    AllNodes.insert((GraphNode*)Instrument::instancePtr->InputNode);
     AllNodes.insert(static_cast<GraphNode*>(instrumentClassPointer->OutputNode));
@@ -384,6 +384,7 @@ Instrument::GraphPage::GraphPage() {
 
     resized();
 }
+
 
 Instrument::GraphPage::~GraphPage() {
     for (GraphNode* i : AllNodes) delete i;
@@ -427,6 +428,8 @@ void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *g
         temp = new AddAndMul(pos_x, pos_y);
     } else if (result == 502) {
         temp = new AddOrSubtract(pos_x, pos_y);
+    } else if (result == 503) {
+        temp = new FM(pos_x, pos_y);
     } else if (result == 504) {
         temp = new MixSignal(pos_x, pos_y);
     } else if (result == 505) {
@@ -564,8 +567,7 @@ void Instrument::GraphPage::updateRepaintArea(juce::Line<int>& line) {
 //    }
 //}
 
-void drawBezierCurve(juce::Graphics& g, juce::Point<float> endPoint, juce::Point<float> startPoint)
-{
+void drawBezierCurve(juce::Graphics& g, juce::Point<float> endPoint, juce::Point<float> startPoint) {
     float controlPointDistance = std::abs(endPoint.x - startPoint.x) / 3.0f;
 
     juce::Point<float> controlPoint1(startPoint.x + controlPointDistance, startPoint.y);

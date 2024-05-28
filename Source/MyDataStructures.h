@@ -44,19 +44,21 @@
 
 */
 
+struct linkedNode {
+public:
+
+    GraphNode* nodePointer;
+    linkedNode* nextNode = nullptr;
+
+    linkedNode(GraphNode* val) : nodePointer(val) {}
+    linkedNode(GraphNode* val, linkedNode* next) : nodePointer(val), nextNode(next) {}
+
+};
+
 class PriorityQueue : public juce::AudioIODeviceCallback {
 public:
 
-    struct linkedNode {
-    public:
 
-        GraphNode* nodePointer;
-        linkedNode* nextNode = nullptr;
-
-        linkedNode(GraphNode* val) : nodePointer(val) {}
-        linkedNode(GraphNode* val, linkedNode* next) : nodePointer(val), nextNode(next) {}
-
-    };
 
 
     // will be true if the callback function is still running,
@@ -288,7 +290,7 @@ public:
 
 	// stores the head and the tail of the linked list,
 	// it is not a double-sided linked list.
-	linkedNode* head, *tail;
+	linkedNode* head = nullptr, *tail = nullptr;
     // manually created and deleted.
     std::set<juce::AudioBuffer<float>*> bunchOfBuffers;
 

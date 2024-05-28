@@ -31,6 +31,7 @@
 #include "Math/MathClamp.h"
 #include "Math/Absolute.h"
 #include "Math/Mixer.h"
+#include "Math/FM.h"
 
 #include "General/Utility.h"
 #include "General/AddLag.h"
