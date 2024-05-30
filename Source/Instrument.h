@@ -52,8 +52,8 @@ public:
 
 
     // Get instance for the api calls.
-    static void* VoidPointerToPianoComponent;
-    static void* VoidPointerToWheelComponent;
+    [[maybe_unused]] static void* VoidPointerToPianoComponent;
+    [[maybe_unused]] static void* VoidPointerToWheelComponent;
 
     Instrument(int);
     ~Instrument() override;
@@ -387,14 +387,14 @@ public:
     }
 
 private:
-    bool isCanvasPresent;
+    bool isCanvasPresent{};
     std::unique_ptr<juce::Component> Canvas;
 
     std::unique_ptr<juce::Component> editPage;
     std::unique_ptr<juce::Component> graphPage;
     std::unique_ptr<juce::Component> playPage;
 
-    int size_width, size_height;
+    int size_width{}, size_height{};
     int tabWidth;
 
     // The graph node is actually inside this.
@@ -407,7 +407,7 @@ private:
 
 
     // Decides if we should break the present audio processing, set to true when the configuration changes.
-    std::atomic<bool> breakProcessing;
+    std::atomic<bool> breakProcessing{};
 
     // The priority queue we are going to use.(impl in MyDataStructures.h)
 	// this will always be in the first place of the topo sorted node list.

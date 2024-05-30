@@ -54,7 +54,7 @@ public:
         }
     }
 
-    void mini_reset() {
+    void mini_reset() override {
 
         if (!init_phase_done) {
             int voices = InputSockets[0]->getValue()-1;

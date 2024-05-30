@@ -266,13 +266,13 @@ public:
     // we should not pop in both cases.
     // to check for all nodes popped, use `done()` method.
     //O(1)
-    bool isEmpty() {
-        return (sortedNodes.size() == 0);
+    bool isEmpty() const {
+        return (sortedNodes.empty());
     }
 
     // Returns true if the nodes are popped.
     //O(1)
-    bool done() {
+    bool done() const {
         return (totalNodesToProcess == 0);
     }
 
@@ -306,52 +306,59 @@ public:
 		// here we need to make sure that the `from` node is before the `to` node.
 		// we can put the `from` just before node and the order will still be valid.
 
-        // TODO : refactor variable names and remove this scope.
-        // start checking for the first node.
-        linkedNode *current = head;
-        linkedNode *prev = nullptr;
 
-        while (current) {
+        if (from->needsRearrangementFromNode()) {
+            // start checking for the first node.
+            linkedNode *current = head;
+            linkedNode *prev = nullptr;
 
-            // if the `from` node is found first.
-            if (current->nodePointer == from) break;
+            while (current) {
 
-            // if the `to` node is found first, we are going to set the `from` node,
-            // just after the `from` node.
-            if (current->nodePointer == to) {
+                // if the `from` node is found first.
+                if (current->nodePointer == from) break;
 
-                // store the pointer to the `to` node.
-                linkedNode *temp = current;
+                // if the `to` node is found first, we are going to set the `from` node,
+                // just after the `from` node.
+                if (current->nodePointer == to) {
 
-                if (prev) prev->nextNode = current->nextNode;
-                else head = current->nextNode;
+                    // store the pointer to the `to` node.
+                    linkedNode *temp = current;
 
-                // now search for the `from` node which will be present at some point after the
-                // `to` node, if from is found the current will be set to the linkedNode containing `from`.
-                current = current->nextNode;
-                while (current && current->nodePointer != from) {
+                    if (prev) prev->nextNode = current->nextNode;
+                    else head = current->nextNode;
+
+                    // now search for the `from` node which will be present at some point after the
+                    // `to` node, if from is found the current will be set to the linkedNode containing `from`.
                     current = current->nextNode;
+                    while (current && current->nodePointer != from) {
+                        current = current->nextNode;
+                    }
+
+                    // we found `from`
+                    if (current) {
+                        // now the current is set to the `from` node.
+                        // we set the `temp`(to) to be immediate next node after the `from`.
+                        temp->nextNode = current->nextNode;
+                        current->nextNode = temp;
+                    } else {
+                        std::cout << "From node not found in PriorityQueue::newConnection, this should not happen"
+                                  << "\n";
+                    }
+
+                    // edge case if the `from` node is at the tail.
+                    // this should not happen(AUDIO OUT is always the last), but in case.
+                    if (!temp->nextNode) tail = temp;
+
+                    break;
                 }
 
-                // we found `from`
-                if (current) {
-                    // now the current is set to the `from` node.
-                    // we set the `temp`(to) to be immediate next node after the `from`.
-                    temp->nextNode = current->nextNode;
-                    current->nextNode = temp;
-                } else {
-                    std::cout << "From node not found in PriorityQueue::newConnection, this should not happen" << "\n";
-                }
-
-                // edge case if the `from` node is at the tail.
-                // this should not happen(AUDIO OUT is always the last), but in case.
-                if (!temp->nextNode) tail = temp;
-
-                break;
+                prev = current;
+                current = current->nextNode;
             }
 
-            prev = current;
-            current = current->nextNode;
+        } else {
+            nodesToRestTwice.insert(to);
+            nodesToRestTwice.insert(from);
         }
 
         setBuffersToNodes();
@@ -373,12 +380,22 @@ public:
 
         (static_cast<InputMasterGraphNode*>(MIDI_IN))->setInputMIDI(&midiBuffer);
 
+        for (auto i : nodesToRestTwice) {
+            if (bunchOfNodes.find(i) != bunchOfNodes.end()) i->reset();
+        }
+
         while (current) {
             current->nodePointer->reset();
             current = current->nextNode;
         }
 
-        if (WaveShapeDisp::this_instance) WaveShapeDisp::this_instance->changeBufferSize(sampleSize);
+        if (WaveShapeDisp::this_instance) WaveShapeDisp::this_instance->changeBufferSize((int)sampleSize);
+
+        // reset the nodes that need to be reset again because of the
+        // feedback connections.
+        for (auto i : nodesToRestTwice) {
+            if (bunchOfNodes.find(i) != bunchOfNodes.end()) i->reset();
+        }
 
     }
 
@@ -424,7 +441,7 @@ public:
         linkedNode* current = head;
         // stores the number of nodes that are not processed but need this to process.
         std::unordered_map<juce::AudioBuffer<float>*, int> dependentCountMap;
-        std::queue<juce::AudioBuffer<float>*> dependencieFreedBuffers;
+        std::queue<juce::AudioBuffer<float>*> dependencyFreedBuffers;
         std::unordered_map<GraphNode*, std::set<juce::AudioBuffer<float>*>> nodeToDependentBufferMap;
 
 
@@ -438,7 +455,7 @@ public:
         // I have a dumb solution but i'm pretty sure it will deviate far from optimised path when
         // adding connections in a certain way, but this surely works for all the cases.
         for (auto i : bunchOfBuffers) {
-            dependencieFreedBuffers.push(i);
+            dependencyFreedBuffers.push(i);
         }
 
         if (!checkAllGood()) return;
@@ -451,15 +468,15 @@ public:
 
             if (currentNode->needAudioBuffer) {
                 // if there are no free buffers we create one.
-                if (dependencieFreedBuffers.empty()) {
-                    juce::AudioBuffer<float>* t = new juce::AudioBuffer<float>(2, (int)std::ceil(sampleSize));
-                    dependencieFreedBuffers.push(t);
+                if (dependencyFreedBuffers.empty()) {
+                    auto* t = new juce::AudioBuffer<float>(2, (int)std::ceil(sampleSize));
+                    dependencyFreedBuffers.push(t);
                     bunchOfBuffers.insert(t);
                     num_of_buffers_used++;
                 }
 
-                juce::AudioBuffer<float>* temp = dependencieFreedBuffers.front();
-                dependencieFreedBuffers.pop();
+                juce::AudioBuffer<float>* temp = dependencyFreedBuffers.front();
+                dependencyFreedBuffers.pop();
 
                 // we give this buffer that we just popped to the GraphNode.
                 currentNode->setToWriteAudioBuffer(temp);
@@ -476,18 +493,25 @@ public:
                     // other outputs.
                     nodeToDependentBufferMap[i].insert(temp);
                     dependentCountMap[temp]++;
+
+//                    // A quick hack such that this buffer is never reused in the entire thing.
+//                    // the reference count never becomes 0,
+//                    // 5 is just a random number, even 1 should be enough if the algorithm worked exactly
+//                    // as planned
+                    if (currentNode->getCanBeRecycled()) dependentCountMap[temp] += 5;
                 }
 
                 // recycle the node's buffers, whose dependents are processed(we will not be reading that anymore for this block).
                 // instead of leaving it, we assign it to another node.
                 // now this node is processed, so all the buffers it was dependent on should get their
                 // reference count reduced.
-
                 for (auto i : nodeToDependentBufferMap[currentNode]) {
                     dependentCountMap[i]--;
 
                     // this node can be used, all it's dependencies are processed.
-                    if (dependentCountMap[i] == 0) dependencieFreedBuffers.push(i);
+                    // if the node's buffer cannot be reused then we are not going to
+                    // free it.
+                    if (dependentCountMap[i] == 0) dependencyFreedBuffers.push(i);
                 }
 
                 nodeToDependentBufferMap.erase(currentNode);
@@ -614,6 +638,15 @@ public:
 
     std::vector<GraphNode*> sortedNodes;
     std::set<GraphNode*> bunchOfNodes;
+
+    // when we are using feedback loops it
+    // rearranges the order in which we need to reset the nodes,
+    // if there are no directed loops because all the nodes are topo sorted there will
+    // not be any kind of situations where we are reading the set values before
+    // we set them. but when we have a loop the values(setBufferPointer())
+    // will be set after reading. so to make the node work properly we reset the nodes
+    // that are the connected from feedback nodes again, int the resetAll method.
+    std::set<GraphNode*> nodesToRestTwice;
 
 
     // ======================================

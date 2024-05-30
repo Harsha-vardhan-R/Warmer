@@ -37,6 +37,7 @@
 #include "General/AddLag.h"
 #include "General/Convolution.h"
 #include "General/ADSR.h"
+#include "General/Feedback.h"
 
 #include "Effects/Delay.h"
 

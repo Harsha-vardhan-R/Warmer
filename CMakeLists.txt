@@ -18,7 +18,7 @@ include_directories(
 # from Projucer generated MakeFile.
 add_compile_definitions(
         LINUX=1
-        JUCE_DISPLAY_SPLASH_SCREEN=0
+        JUCE_DISPLAY_SPLASH_SCREEN=1
         JUCE_USE_DARK_SPLASH_SCREEN=0
         JUCE_PROJUCER_VERSION=0x70009
         JUCE_MODULE_AVAILABLE_juce_audio_basics=1

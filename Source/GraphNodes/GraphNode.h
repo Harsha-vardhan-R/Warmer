@@ -545,8 +545,18 @@ public :
     // if none exist we are going to return an empty vector.
     std::set<GraphNode*> getAudioBufferDependencies();
 
+    void doNotRecycleBuffer() { canBeRecycled = false; }
+    bool getCanBeRecycled() { return canBeRecycled; }
 
-    int zoomLevel;
+    // a quick kind of hack.
+    // when a new connection is added the variable `needsRearrangement`
+    // on the `from` node is read in the connectionAdded in the Instrument.cpp,
+    // so for nodes like feedback we do not want to rearrange at the
+    // output connection because we want to process the node before nodes it is connected to.
+    // and after the node it is connected from.
+    void noRearrangeAtConnection() { needsRearrangement = false; }
+    bool needsRearrangementFromNode() const { return needsRearrangement; }
+
     juce::OwnedArray<Socket> InputSockets;
 
 
@@ -644,7 +654,7 @@ public :
     void repaintAllInputConnectionsToNode();
 
 
-    juce::AudioBuffer<float>* bufferToWritePointer;
+    juce::AudioBuffer<float>* bufferToWritePointer = nullptr;
     // set false if this node does not send out an audio buffer as an output.
     bool needAudioBuffer = true;
 
@@ -712,7 +722,10 @@ private:
 
     juce::Point<int> lastMouseDownPosition;
 
-
+    bool canBeRecycled = true;
+    // this is read by the connection Added in the Instrument
+    // to see if we need to call the newConnection in the data structure.
+    bool needsRearrangement = true;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GraphNode)
