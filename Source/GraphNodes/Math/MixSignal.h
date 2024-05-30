@@ -89,7 +89,7 @@ public:
         BufferOne = InputSockets[0]->getBufferPointer();
         BufferTwo = InputSockets[1]->getBufferPointer();
 
-        if (InputSockets[2]->isThisConnected()) {
+        if (InputSockets[2]->getConnectionType() == SocketDataType::AudioBufferFloat) {
             callbackFunction = &MixSignal::yesModulation;
         } else {
             callbackFunction = &MixSignal::noModulation;

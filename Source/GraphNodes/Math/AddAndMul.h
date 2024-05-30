@@ -109,8 +109,8 @@ public:
         ModulatingBuffer_add = InputSockets[2]->getBufferPointer();
         ModulatingBuffer_mul = InputSockets[1]->getBufferPointer();
 
-        bool add_mod = InputSockets[2]->isThisConnected();
-        bool mul_mod = InputSockets[1]->isThisConnected();
+        bool add_mod = InputSockets[2]->getConnectionType() == SocketDataType::AudioBufferFloat;
+        bool mul_mod = InputSockets[1]->getConnectionType() == SocketDataType::AudioBufferFloat;
 
         if (add_mod && mul_mod) {
             callbackFunction = &AddAndMul::bothModulating;

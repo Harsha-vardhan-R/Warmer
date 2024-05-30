@@ -120,8 +120,8 @@ public:
         readBuff = InputSockets[0]->getBufferPointer();
         OutputSockets[0]->setBufferPointer(bufferToWritePointer);
 
-        bool upperModulated = InputSockets[1]->isThisConnected();
-        bool lowerModulated = InputSockets[2]->isThisConnected();
+        bool upperModulated = InputSockets[1]->getConnectionType() == SocketDataType::AudioBufferFloat;
+        bool lowerModulated = InputSockets[2]->getConnectionType() == SocketDataType::AudioBufferFloat;
 
         // if not being modulated they will be set to nullptr, not a problem.
         upperBoundModulatingBuffer = InputSockets[1]->getBufferPointer();

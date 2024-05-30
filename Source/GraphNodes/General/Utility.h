@@ -148,11 +148,11 @@ public:
 
         readBuff = InputSockets[0]->getBufferPointer();
 
-        if (InputSockets[1]->isThisConnected() && InputSockets[2]->isThisConnected()) {
+        if (InputSockets[1]->getConnectionType() == SocketDataType::AudioBufferFloat && InputSockets[2]->getConnectionType() == SocketDataType::AudioBufferFloat) {
             callbackFunction = &Utility::bothModulating;
-        } else if (InputSockets[1]->isThisConnected()) {
+        } else if (InputSockets[1]->getConnectionType() == SocketDataType::AudioBufferFloat) {
             callbackFunction = &Utility::onlyGainModulating;
-        } else if (InputSockets[2]->isThisConnected()) {
+        } else if (InputSockets[2]->getConnectionType() == SocketDataType::AudioBufferFloat) {
             callbackFunction = &Utility::onlyPanModulating;
         } else {
             callbackFunction = &Utility::noModulation;

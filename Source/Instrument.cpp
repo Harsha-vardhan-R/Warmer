@@ -568,18 +568,21 @@ void Instrument::GraphPage::updateRepaintArea(juce::Line<int>& line) {
 //}
 
 void drawBezierCurve(juce::Graphics& g, juce::Point<float> endPoint, juce::Point<float> startPoint) {
-    float controlPointDistance = std::abs(endPoint.x - startPoint.x) / 3.0f;
 
-    juce::Point<float> controlPoint1(startPoint.x + controlPointDistance, startPoint.y);
-    juce::Point<float> controlPoint2(endPoint.x - controlPointDistance, endPoint.y);
+    juce::Line<float> line(startPoint, endPoint);
+    g.drawLine(line , 1.0f);
+//    float controlPointDistance = std::abs(endPoint.x - startPoint.x) / 3.0f;
+//
+//    juce::Point<float> controlPoint1(startPoint.x + controlPointDistance, startPoint.y);
+//    juce::Point<float> controlPoint2(endPoint.x - controlPointDistance, endPoint.y);
 
     // Create the path
-    juce::Path path;
-    path.startNewSubPath(startPoint);
-    path.cubicTo(controlPoint1, controlPoint2, endPoint);
-
-
-    g.strokePath(path, juce::PathStrokeType(1.0f));
+//    juce::Path path;
+//    path.startNewSubPath(startPoint);
+//    path.cubicTo(controlPoint1, controlPoint2, endPoint);
+//
+//
+//    g.strokePath(path, juce::PathStrokeType(1.0f));
 }
 
 void Instrument::GraphPage::drawConnections(juce::Graphics &g) {

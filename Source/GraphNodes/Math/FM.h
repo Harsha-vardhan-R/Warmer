@@ -37,41 +37,215 @@ public:
 
         InputSockets.add(new GraphNode::Socket(juce::String("Carrier Freq"), direction::IN, false));
         InputSockets[0]->acceptType(SocketDataType::Floating);
-        InputSockets[0]->addSliderParameterControl(0.0, 10000.0, 1.0);
+        InputSockets[0]->acceptType(SocketDataType::MIDI);
+        InputSockets[0]->addSliderParameterControl(0.0, 10000.0, 440.0);
 
         InputSockets.add(new GraphNode::Socket(juce::String("Harmonic"), direction::IN, false));
         InputSockets[1]->acceptType(SocketDataType::Floating);
+        InputSockets[1]->acceptType(SocketDataType::AudioBufferFloat);
         InputSockets[1]->addSliderParameterControl(0.0, 10.0, 1.0);
 
         InputSockets.add(new GraphNode::Socket(juce::String("Modulator"), direction::IN, true));
-        InputSockets[1]->acceptType(SocketDataType::AudioBufferFloat);
+        InputSockets[2]->acceptType(SocketDataType::AudioBufferFloat);
 
         InputSockets.add(new GraphNode::Socket(juce::String("Modulation Index"), direction::IN, false));
-        InputSockets[2]->acceptType(SocketDataType::Floating);
-        InputSockets[2]->addSliderParameterControl(0.0, 10.0, 1.0);
+        InputSockets[3]->acceptType(SocketDataType::Floating);
+        InputSockets[3]->acceptType(SocketDataType::AudioBufferFloat);
+        InputSockets[3]->addSliderParameterControl(0.0, 10.0, 0.5);
 
         makeAllSocketsVisible();
         resized();
     }
 
-    void processGraphNode() override {
-        float modulationIndex = InputSockets[2]->getValue();
+    void wrapPhase(float& phase) {
+        if (phase >= TAU) phase -= TAU;
+        else if (phase < 0) phase += TAU;
+    }
+
+    template< bool midiInput, bool modulatingHarmonics, bool modulatingModulationIndex>
+    void generateSubProcess() {
         int numSamples = bufferToWritePointer->getNumSamples();
-        float carrierFreq = InputSockets[0]->getValue();
 
         float temp;
 
-        for (int channel = 0; channel < bufferToWritePointer->getNumChannels(); channel++) {
+        for (int channel = 0; channel < 2; channel++) {
             float* channelData = bufferToWritePointer->getWritePointer(channel);
             const float* modulatorChannel = modulator->getReadPointer(channel);
             float local_carrier_phase = carrierPhase;
 
-            for (int i = 0; i < numSamples; ++i) {
-                float instantaneousFrequency = carrierFreq + modulationIndex * modulatorChannel[i];
-                float phaseIncrement = instantaneousFrequency * phaseIncrementRatio;
+            if constexpr (midiInput) {
+                juce::MidiMessage message;
+                int samplePosition;
 
-                local_carrier_phase = std::fmod(local_carrier_phase + phaseIncrement, TAU);
-                channelData[i] = std::sin(carrierPhase);
+                int currentIndexPosition = 0;
+
+                // Iterate through all the messages in the buffer
+                for (const auto metadata : *midiBuffer) {
+                    message = metadata.getMessage();
+                    samplePosition = metadata.samplePosition;
+
+                    // fill the `freqAtSamplePoint_from_MIDI` till here.
+                    // no need to check for less than number of samples because `samplePosition` is always less than the number of samples.
+                    for (; currentIndexPosition < samplePosition; ++currentIndexPosition) freqAtSamplePoint_from_MIDI[currentIndexPosition] = presMIDI_freq;
+
+                    int note = std::clamp(message.getNoteNumber(), 0, 127); // makes sure we do not access outside the `midiFrequencies[128]`
+
+                    // Check if the message is a Note On or Note Off message
+                    if (message.isNoteOn()) {
+                        presMIDI_Note = note;
+                        presMIDI_freq = midiFrequencies[note];
+                    }
+
+                }
+
+                // Fill remaining samples in `freqAtSamplePoint_from_MIDI`
+                for (; currentIndexPosition < bufferToWritePointer->getNumSamples(); ++currentIndexPosition) freqAtSamplePoint_from_MIDI[currentIndexPosition] = presMIDI_freq;
+
+                if constexpr (modulatingHarmonics) {
+                    const float* harmonics_mod_channel = harmonic_mod_buffer->getReadPointer(channel);
+
+                    if constexpr (modulatingModulationIndex) {
+                        const float* modulationIndex_mod_channel = modulating_index_mod_buffer->getReadPointer(channel);
+
+                        for (int i = 0; i < numSamples; ++i) {
+                            float phaseIncrement = freqAtSamplePoint_from_MIDI[i] * phaseIncrementRatio * harmonics_mod_channel[i];
+                            float resultantPhase = local_carrier_phase + modulationIndex_mod_channel[i] * modulatorChannel[i] * TAU;
+
+                            wrapPhase(resultantPhase);
+
+                            local_carrier_phase += phaseIncrement;
+                            wrapPhase(local_carrier_phase);
+
+                            channelData[i] = std::sin(resultantPhase);
+                        }
+                    }
+                    else {
+                        float modulationIndex = InputSockets[3]->getValue();
+
+                        for (int i = 0; i < numSamples; ++i) {
+                            float phaseIncrement = freqAtSamplePoint_from_MIDI[i] * phaseIncrementRatio * harmonics_mod_channel[i];
+                            float resultantPhase = local_carrier_phase + modulationIndex * modulatorChannel[i] * TAU;
+
+                            wrapPhase(resultantPhase);
+
+                            local_carrier_phase += phaseIncrement;
+                            wrapPhase(local_carrier_phase);
+
+                            channelData[i] = std::sin(resultantPhase);
+                        }
+                    }
+                }
+                else {
+                    float harmonic = InputSockets[1]->getValue();
+
+                    if constexpr (modulatingModulationIndex) {
+
+                        const float* modulationIndex_mod_channel = modulating_index_mod_buffer->getReadPointer(channel);
+
+
+                        for (int i = 0; i < numSamples; ++i) {
+                            float phaseIncrement = freqAtSamplePoint_from_MIDI[i] * phaseIncrementRatio * harmonic;
+                            float resultantPhase = local_carrier_phase + modulationIndex_mod_channel[i] * modulatorChannel[i] * TAU;
+
+                            wrapPhase(resultantPhase);
+
+                            local_carrier_phase += phaseIncrement;
+                            wrapPhase(local_carrier_phase);
+
+                            channelData[i] = std::sin(resultantPhase);
+                        }
+                    }
+                    else {
+                        float modulationIndex = InputSockets[3]->getValue();
+
+                        for (int i = 0; i < numSamples; ++i) {
+                            float phaseIncrement = freqAtSamplePoint_from_MIDI[i] * phaseIncrementRatio * harmonic;
+                            float resultantPhase = local_carrier_phase + modulationIndex * modulatorChannel[i] * TAU;
+
+                            wrapPhase(resultantPhase);
+
+                            local_carrier_phase += phaseIncrement;
+                            wrapPhase(local_carrier_phase);
+
+                            channelData[i] = std::sin(resultantPhase);
+                        }
+                    }
+                }
+            }
+            else {
+                float carrierFreq = InputSockets[0]->getValue();
+
+                if constexpr (modulatingHarmonics) {
+
+                    const float* harmonics_mod_channel = harmonic_mod_buffer->getReadPointer(channel);
+                    float freq_times_phase_ratio = carrierFreq * phaseIncrementRatio;
+
+                    if constexpr (modulatingModulationIndex) {
+
+                        const float* modulationIndex_mod_channel = modulating_index_mod_buffer->getReadPointer(channel);
+
+                        for (int i = 0; i < numSamples; ++i) {
+                            float phaseIncrement = freq_times_phase_ratio * harmonics_mod_channel[i];
+                            float resultantPhase = local_carrier_phase + modulationIndex_mod_channel[i] * modulatorChannel[i] * TAU;
+
+                            wrapPhase(resultantPhase);
+
+                            local_carrier_phase += phaseIncrement;
+                            wrapPhase(local_carrier_phase);
+
+                            channelData[i] = std::sin(resultantPhase);
+                        }
+                    }
+                    else {
+                        float modulationIndex = InputSockets[3]->getValue();
+
+                        for (int i = 0; i < numSamples; ++i) {
+                            float phaseIncrement = freq_times_phase_ratio * harmonics_mod_channel[i];
+                            float resultantPhase = local_carrier_phase + modulationIndex * modulatorChannel[i] * TAU;
+
+                            wrapPhase(resultantPhase);
+
+                            local_carrier_phase += phaseIncrement;
+                            wrapPhase(local_carrier_phase);
+
+                            channelData[i] = std::sin(resultantPhase);
+                        }
+                    }
+                }
+                else {
+                    float harmonic = InputSockets[1]->getValue();
+                    float phaseIncrement = carrierFreq * phaseIncrementRatio * harmonic;
+
+                    if constexpr (modulatingModulationIndex) {
+
+                        const float* modulationIndex_mod_channel = modulating_index_mod_buffer->getReadPointer(channel);
+
+                        for (int i = 0; i < numSamples; ++i) {
+                            float resultantPhase = local_carrier_phase + modulationIndex_mod_channel[i] * modulatorChannel[i] * TAU;
+
+                            wrapPhase(resultantPhase);
+
+                            local_carrier_phase += phaseIncrement;
+                            wrapPhase(local_carrier_phase);
+
+                            channelData[i] = std::sin(resultantPhase);
+                        }
+                    }
+                    else {
+                        float modulationIndex = InputSockets[3]->getValue();
+
+                        for (int i = 0; i < numSamples; ++i) {
+                            float resultantPhase = local_carrier_phase + modulationIndex * modulatorChannel[i] * TAU;
+
+                            wrapPhase(resultantPhase);
+
+                            local_carrier_phase += phaseIncrement;
+                            wrapPhase(local_carrier_phase);
+
+                            channelData[i] = std::sin(resultantPhase);
+                        }
+                    }
+                }
             }
 
             temp = local_carrier_phase;
@@ -80,15 +254,56 @@ public:
         carrierPhase = temp;
     }
 
+
+
+    void processGraphNode() override {
+        (this->*CallbackFunction)();
+    }
+
     void releaseResources() override {}
 
     void reset() override {
         OutputSockets[0]->setBufferPointer(bufferToWritePointer);
 
-        modulator = InputSockets[1]->getBufferPointer();
+
+        midiBuffer = InputSockets[0]->getMidiBuffer();
+        harmonic_mod_buffer = InputSockets[1]->getBufferPointer();
+        modulator = InputSockets[2]->getBufferPointer();
+        modulating_index_mod_buffer = InputSockets[3]->getBufferPointer();
 
         phaseIncrementRatio = TAU / sampleRate;
         carrierPhase = 0.0f;
+
+        freqAtSamplePoint_from_MIDI.resize(estimatedSamplesPerBlock);
+
+        bool is_midi = InputSockets[0]->getConnectionType() == SocketDataType::MIDI;
+        bool harmonics_modulating = InputSockets[1]->getConnectionType() == SocketDataType::AudioBufferFloat;
+        bool index_modulating = InputSockets[3]->getConnectionType() == SocketDataType::AudioBufferFloat;
+
+        if (is_midi) {
+            if (harmonics_modulating && index_modulating) {
+                CallbackFunction = &FM::generateSubProcess<true, true, true>;
+            } else if (harmonics_modulating) {
+                CallbackFunction = &FM::generateSubProcess<true, true, false>;
+            } else if (index_modulating) {
+                CallbackFunction = &FM::generateSubProcess<true, false, true>;
+            } else {
+                CallbackFunction = &FM::generateSubProcess<true, false, false>;
+            }
+        } else {
+            if (harmonics_modulating && index_modulating) {
+                CallbackFunction = &FM::generateSubProcess<false, true, true>;
+            } else if (harmonics_modulating) {
+                CallbackFunction = &FM::generateSubProcess<false, true, false>;
+            } else if (index_modulating) {
+                CallbackFunction = &FM::generateSubProcess<false, false, true>;
+            } else {
+                CallbackFunction = &FM::generateSubProcess<false, false, false>;
+            }
+        }
+
+        presMIDI_Note = 0;
+        presMIDI_freq = 0;
     }
 
     ~FM() {};
@@ -97,4 +312,15 @@ private:
     float carrierPhase = 0.0f;
     juce::AudioBuffer<float>* modulator = nullptr;
     float phaseIncrementRatio = 0.0f;
+
+    juce::MidiBuffer* midiBuffer = nullptr;
+
+    std::vector<float> freqAtSamplePoint_from_MIDI;
+
+    void (FM::*CallbackFunction)();
+
+    juce::AudioBuffer<float> *harmonic_mod_buffer = nullptr, *modulating_index_mod_buffer = nullptr;
+
+    int presMIDI_Note = 0;
+    float presMIDI_freq = 0;
 };

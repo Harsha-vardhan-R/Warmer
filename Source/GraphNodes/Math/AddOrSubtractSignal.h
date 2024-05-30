@@ -86,7 +86,7 @@ public:
         BufferOne = InputSockets[0]->getBufferPointer();
         BufferTwo = InputSockets[1]->getBufferPointer();
 
-        if (InputSockets[2]->isThisConnected()) {
+        if (InputSockets[2]->getConnectionType() == SocketDataType::AudioBufferFloat) {
             callbackFunction = &AddOrSubtract::yesModulation;
         } else {
             callbackFunction = &AddOrSubtract::noModulation;

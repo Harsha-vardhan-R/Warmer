@@ -113,8 +113,8 @@ public:
         ModulatingBuffer_high = InputSockets[1]->getBufferPointer();
         ModulatingBuffer_low = InputSockets[2]->getBufferPointer();
 
-        bool high_mod = InputSockets[1]->isThisConnected();
-        bool low_mod = InputSockets[2]->isThisConnected();
+        bool high_mod = InputSockets[1]->getConnectionType() == SocketDataType::AudioBufferFloat;
+        bool low_mod = InputSockets[2]->getConnectionType() == SocketDataType::AudioBufferFloat;
 
         if (high_mod && low_mod) {
             callbackFunction = &ReRamp::bothModulating;

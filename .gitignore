@@ -7,3 +7,8 @@ Warmer
 Warmer.jucer
 /.vscode
 /.idea
+/cmake-build-debug
+/Debug
+/Release
+/Testing
+/.cmake

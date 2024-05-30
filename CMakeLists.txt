@@ -1,21 +1,21 @@
 cmake_minimum_required(VERSION 3.15)
 project(Warmer VERSION 0.1.0)
 
-# Set the C++ standard
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Define build configurations
+
 set(CMAKE_BUILD_TYPE Debug)
 
-# Define include directories
+
 include_directories(
         ${CMAKE_HOME_DIRECTORY}/JuceLibraryCode
         ${CMAKE_HOME_DIRECTORY}/JuceLibraryCode/modules
         ${CMAKE_HOME_DIRECTORY}/Source
 )
 
-# Define preprocessor definitions and compile flags
+# from Projucer generated MakeFile.
 add_compile_definitions(
         LINUX=1
         JUCE_DISPLAY_SPLASH_SCREEN=0
@@ -52,7 +52,7 @@ add_compile_definitions(
         JucePlugin_Build_LV2=0
 )
 
-# Set compiler flags
+
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -ggdb -O2 -pthread")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -flto -Wall -Wcast-align -Wfloat-equal -Wno-ignored-qualifiers -Wsign-compare -Wsign-conversion -Wstrict-aliasing -Wswitch-enum -Wuninitialized -Wunreachable-code -Wunused-parameter -Wmissing-field-initializers -Wextra -Wsign-compare -Wno-implicit-fallthrough -Wno-maybe-uninitialized -Wredundant-decls -Wno-strict-overflow -Wshadow -Woverloaded-virtual -Wreorder -Wzero-as-null-pointer-constant")
 
@@ -91,10 +91,10 @@ set(SOURCES
         ./JuceLibraryCode/include_juce_osc.cpp
 )
 
-# Define the executable
+
 add_executable(Warmer ${SOURCES})
 
-# Link libraries
+
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(ALSA REQUIRED alsa)
 pkg_check_modules(FREETYPE2 REQUIRED freetype2)
