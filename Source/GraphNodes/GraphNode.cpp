@@ -305,20 +305,36 @@ GraphNode::Socket::Socket(juce::String name, direction dir, bool isMust) : param
 
 void GraphNode::Socket::paint(juce::Graphics &g)  {
     // Small square
-    g.setColour(GraphNodeConnectionBoxID);
+    if (isMust) g.setColour(GraphNodeConnectionBoxMustID);
+    else g.setColour(GraphNodeConnectionBoxID);
 
     // one for input socket and other for output socket check.
     if (dir == direction::IN) {
         if (TypesAccepted.size()) g.fillRect(0, 5, 5, 5);
+
+        int a = TypesAccepted.count(SocketDataType::AudioBufferFloat);
+        int b = TypesAccepted.count(SocketDataType::MIDI);
+        int c = TypesAccepted.count(SocketDataType::Floating);
+
+        // set decide the colour for the text.
+        juce::Colour TextColourHere = experimental[a][b][c];
+
         juce::Rectangle<int> bound(10, 0, getWidth()-10, 15);
-        if (isMust) g.setColour(GraphNodeSocketTextMustID);
-        else g.setColour(GraphNodeSocketTextID);
+        g.setColour(TextColourHere);
         g.drawText(name, bound, juce::Justification::centredLeft);
     } else {
         if (type != SocketDataType::NULLType) g.fillRect(getWidth()-5, 5, 5, 5);
+
         juce::Rectangle<int> bound(0, 0, getWidth()-10, 15);
-        if (isMust) g.setColour(GraphNodeSocketTextMustID);
-        else g.setColour(GraphNodeSocketTextID);
+
+        if (type == SocketDataType::AudioBufferFloat) {
+            g.setColour(experimental_colour_single[0]);
+        } else if (type == SocketDataType::MIDI) {
+            g.setColour(experimental_colour_single[1]);
+        } else {
+            g.setColour(experimental_colour_single[2]);
+        }
+
         g.drawText(name, bound, juce::Justification::centredRight);
     }
 
@@ -535,10 +551,23 @@ void GraphNode::Socket::connected(Socket *otherPointer, Connection* connection) 
 
         if (parentNodePointer) parentNodePointer->repaintAllInputConnectionsToNode();
 
+        int a = TypesAccepted.count(SocketDataType::AudioBufferFloat);
+        int b = TypesAccepted.count(SocketDataType::MIDI);
+        int c = TypesAccepted.count(SocketDataType::Floating);
+
+        // set decide the colour for the text.
+        connection->toColour = experimental[a][b][c];
     } else {
         from = this;
         to.insert(otherPointer);
-//        connection->setConnectionParams(type, 0, 0);
+
+        if (type == SocketDataType::AudioBufferFloat) {
+            connection->fromColour = experimental_colour_single[0];
+        } else if (type == SocketDataType::MIDI) {
+            connection->fromColour = experimental_colour_single[1];
+        } else {
+            connection->fromColour = experimental_colour_single[2];
+        }
     }
 
     numberOfSocketsConnectedTo++;

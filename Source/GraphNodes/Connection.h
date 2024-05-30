@@ -86,11 +86,13 @@ public:
     float getFloatValue() { return valueKept; }
     juce::MidiBuffer* getMidiMessage() { return midiMessagePointer; }
 
+    juce::Colour fromColour = juce::Colours::grey , toColour = juce::Colours::grey;
 
 private:
 
     juce::Point<float> from;
     juce::Point<float> to;
+
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Connection)
 };

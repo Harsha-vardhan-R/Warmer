@@ -25,19 +25,19 @@ public:
 
         InputSockets.add(new GraphNode::Socket(juce::String("Attack(ms)"), direction::IN, false));
         InputSockets[1]->acceptType(SocketDataType::Floating);
-        InputSockets[1]->addSliderParameterControl(0.0, 6000.0, 20.0);
+        InputSockets[1]->addSliderParameterControl(0.0, 6000.0, 60.0);
 
         InputSockets.add(new GraphNode::Socket(juce::String("Delay(ms)"), direction::IN, false));
         InputSockets[2]->acceptType(SocketDataType::Floating);
-        InputSockets[2]->addSliderParameterControl(0.0, 6000.0, 20.0);
+        InputSockets[2]->addSliderParameterControl(0.0, 6000.0, 120.0);
 
         InputSockets.add(new GraphNode::Socket(juce::String("Sustain"), direction::IN, false));
         InputSockets[3]->acceptType(SocketDataType::Floating);
-        InputSockets[3]->addSliderParameterControl(0.0, 1.0, 0.4);
+        InputSockets[3]->addSliderParameterControl(0.0, 1.0, 0.75);
 
         InputSockets.add(new GraphNode::Socket(juce::String("Release(ms)"), direction::IN, false));
         InputSockets[4]->acceptType(SocketDataType::Floating);
-        InputSockets[4]->addSliderParameterControl(0.0, 6000.0, 60.0);
+        InputSockets[4]->addSliderParameterControl(0.0, 6000.0, 240.0);
 
         makeAllSocketsVisible();
 

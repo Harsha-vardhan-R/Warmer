@@ -70,17 +70,34 @@ static auto GraphNodeHeadingColourID = juce::Colour(0xffcacaca);
 
 static auto GraphNodeConnectionColourID = juce::Colours::grey;
 static auto GraphSliderBackgroundID = juce::Colours::black;
-static auto GraphSliderThumbID = juce::Colour(0x44e4513d);
+static auto GraphSliderThumbID = juce::Colour(0x33e3102f);
 static auto GraphSliderOutlineID = juce::Colours::darkgrey;
 static auto GraphSliderTextID = juce::Colours::darkgrey;
 
-static auto GraphNodeConnectionBoxID = juce::Colour(0xFF643843);
+static auto GraphNodeConnectionBoxID = juce::Colours::grey;
+static auto GraphNodeConnectionBoxMustID = juce::Colours::maroon;
 static auto GraphNodeSocketTextID = juce::Colour(0xFF8C6A5D);
 static auto GraphNodeSocketTextMustID = juce::Colour(0xFF5F374B);
 
+// Colour of the connections.
+// because we have 3(actual types not null) in the SocketDataTypes,
+// set each permutation of the nodes to a certain colour.
+static const juce::Colour experimental[2][2][2] = {
+        {
+                {juce::Colours::darkgrey, juce::Colours::cadetblue},
+                {juce::Colours::tan, juce::Colours::lavenderblush.withBrightness(0.6f)}
+        },
+        {
+                {juce::Colours::rosybrown, juce::Colours::darkseagreen},
+                {juce::Colours::peachpuff, juce::Colours::mediumaquamarine}
+        }
+};
 
-
-
+static const juce::Colour experimental_colour_single[3] = {
+        juce::Colours::rosybrown, // buffer
+        juce::Colours::tan, // MIDI
+        juce::Colours::cadetblue // Float
+};
 
 //static auto textColourID = juce::Colours::lightgrey; // Inverse of darkgrey for dark theme
 //static auto textSelectedColourID = juce::Colours::white; // Inverse of black for dark theme

@@ -18,7 +18,7 @@ public:
         InputSockets[0]->acceptType(SocketDataType::AudioBufferFloat);
 
         InputSockets.add(new GraphNode::Socket(juce::String("Amount"), direction::IN, false));
-        InputSockets[1]->addSliderParameterControl(0.0, 1.0f, 0.5);
+        InputSockets[1]->addSliderParameterControl(0.0, 1.0f, 0.3);
         InputSockets[1]->acceptType(SocketDataType::Floating);
 
         doNotRecycleBuffer();

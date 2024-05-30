@@ -380,10 +380,6 @@ public:
 
         (static_cast<InputMasterGraphNode*>(MIDI_IN))->setInputMIDI(&midiBuffer);
 
-        for (auto i : nodesToRestTwice) {
-            if (bunchOfNodes.find(i) != bunchOfNodes.end()) i->reset();
-        }
-
         while (current) {
             current->nodePointer->reset();
             current = current->nextNode;

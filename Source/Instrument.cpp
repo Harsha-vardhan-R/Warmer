@@ -557,7 +557,7 @@ void Instrument::GraphPage::updateRepaintArea(juce::Line<int>& line) {
 
 }
 
-void drawBezierCurve(juce::Graphics& g, juce::Point<float> endPoint, juce::Point<float> startPoint) {
+void drawBezierCurve(juce::Graphics& g, juce::Point<float> endPoint, juce::Point<float> startPoint, juce::Colour startGrad, juce::Colour endGrad) {
     float controlPointDistance = std::abs(endPoint.x - startPoint.x) / 3.0f;
     juce::Point<float> controlPoint1(startPoint.x + controlPointDistance, startPoint.y);
     juce::Point<float> controlPoint2(endPoint.x - controlPointDistance, endPoint.y);
@@ -567,7 +567,7 @@ void drawBezierCurve(juce::Graphics& g, juce::Point<float> endPoint, juce::Point
     path.cubicTo(controlPoint1, controlPoint2, endPoint);
 
     // Create a ColourGradient
-    juce::ColourGradient gradient(juce::Colours::blue, startPoint, juce::Colours::red, endPoint, false);
+    juce::ColourGradient gradient(startGrad, startPoint, endGrad, endPoint, false);
 
     // Set the gradient as the fill
     g.setGradientFill(gradient);
@@ -583,11 +583,11 @@ void Instrument::GraphPage::drawConnections(juce::Graphics &g) {
     g.setColour(GraphNodeConnectionColourID);
 
     if (temp) {
-        drawBezierCurve(g, p.getEnd().toFloat(), p.getStart().toFloat());
+        drawBezierCurve(g, p.getEnd().toFloat(), p.getStart().toFloat(), temp->fromColour, temp->toColour);
     }
 
     for (const auto& pair : ConnectionToLineMap) {
-        drawBezierCurve(g, pair.second.getEnd().toFloat(), pair.second.getStart().toFloat());
+        drawBezierCurve(g, pair.second.getEnd().toFloat(), pair.second.getStart().toFloat(), pair.first->fromColour, pair.first->toColour);
     }
 }
 

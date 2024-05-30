@@ -46,6 +46,7 @@ public:
         // frequency.
         InputSockets.add(new GraphNode::Socket(juce::String("Frequency (Hz)"), direction::IN, false));
         InputSockets[1]->acceptType(SocketDataType::MIDI);
+        InputSockets[1]->acceptType(SocketDataType::Floating);
         InputSockets[1]->acceptType(SocketDataType::AudioBufferFloat);
         InputSockets[1]->addSliderParameterControl(0.0, 20000.0, 150.0); // frequency range.
 
