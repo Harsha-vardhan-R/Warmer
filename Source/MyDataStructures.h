@@ -50,12 +50,12 @@ public:
     GraphNode* nodePointer;
     linkedNode* nextNode = nullptr;
 
-    linkedNode(GraphNode* val) : nodePointer(val) {}
+    explicit linkedNode(GraphNode* val) : nodePointer(val) {}
     linkedNode(GraphNode* val, linkedNode* next) : nodePointer(val), nextNode(next) {}
 
 };
 
-class PriorityQueue : public juce::AudioIODeviceCallback {
+class TopoSorter : public juce::AudioIODeviceCallback {
 public:
 
 
@@ -89,12 +89,12 @@ public:
 
     linkedNode* headLinkedNode = nullptr;
 
-    PriorityQueue() {
+    TopoSorter() {
         play.store(0);
         insideCallback.store(false);
     }
 
-    ~PriorityQueue() {
+    ~TopoSorter() {
         insideCallback.store(false);
 
         processingStop();
@@ -103,6 +103,7 @@ public:
         linkedNode* current = head;
 
         for (juce::AudioBuffer<float>* ab : bunchOfBuffers) { delete ab; }
+        for (juce::AudioBuffer<float>* ab : bunchOfBuffersForFeedbacks) { delete ab; }
 
         if (head) recr_delete(current);
     }
@@ -276,7 +277,6 @@ public:
         return (totalNodesToProcess == 0);
     }
 
-
     // checks if every node in the bunch of nodes has isMust sockets connected.
     bool checkAllGood() {
         for (auto i : bunchOfNodes) {
@@ -293,11 +293,12 @@ public:
 	linkedNode* head = nullptr, *tail = nullptr;
     // manually created and deleted.
     std::set<juce::AudioBuffer<float>*> bunchOfBuffers;
+    std::set<juce::AudioBuffer<float>*> bunchOfBuffersForFeedbacks;
 
     bool newConnection(GraphNode *from, GraphNode *to) {
 
         if (!from || !to) {
-            std::cout << "Null pointers passed as arguments in PriorityQueue::newConnection, ERROR" << "\n";
+            std::cout << "Null pointers passed as arguments in TopoSorter::newConnection, ERROR" << "\n";
             return false;
         }
 
@@ -307,6 +308,11 @@ public:
 		// we can put the `from` just before node and the order will still be valid.
 
 
+        // This condition is for the `feedback`,
+        // any connection from or to them does not change the
+        // sorted order. (when these nodes are added they are added to the
+        // back of the list, they will be processed after all the nodes, and store the buffers
+        // that will be used for the next callback)
         if (from->needsRearrangementFromNode()) {
             // start checking for the first node.
             linkedNode *current = head;
@@ -341,7 +347,7 @@ public:
                         temp->nextNode = current->nextNode;
                         current->nextNode = temp;
                     } else {
-                        std::cout << "From node not found in PriorityQueue::newConnection, this should not happen"
+                        std::cout << "From node not found in TopoSorter::newConnection, this should not happen"
                                   << "\n";
                     }
 
@@ -427,6 +433,8 @@ public:
         return true;
     }
 
+    int num_of_buffers_used = 0;
+
 
     void setBuffersToNodes() {
         // Now take the linkedList and give it AudioBufferPointers! to write.
@@ -440,6 +448,8 @@ public:
         std::queue<juce::AudioBuffer<float>*> dependencyFreedBuffers;
         std::unordered_map<GraphNode*, std::set<juce::AudioBuffer<float>*>> nodeToDependentBufferMap;
 
+        std::queue<juce::AudioBuffer<float>*> dependencyFreedBuffersNonRecyclable;
+        for (auto* i : bunchOfBuffersForFeedbacks) dependencyFreedBuffersNonRecyclable.push(i);
 
         // if there are any left-over buffers.
         // we never delete the buffers in between (exception : changing the number of samples in each block)
@@ -456,13 +466,43 @@ public:
 
         if (!checkAllGood()) return;
 
-        int num_of_buffers_used = 0;
-
-
         while (current) {
             GraphNode* currentNode = current->nodePointer;
 
             if (currentNode->needAudioBuffer) {
+
+                // if the node's buffer cannot be recycled
+                // we do not even tell any other node that
+                // this buffer exists we use from a different set of
+                // buffers that are created reserved to only one node.
+                if (!currentNode->getCanBeRecycled()) {
+                    if (dependencyFreedBuffersNonRecyclable.empty()) {
+                        auto* t = new juce::AudioBuffer<float>(2, (int)std::ceil(sampleSize));
+                        dependencyFreedBuffersNonRecyclable.push(t);
+                        bunchOfBuffersForFeedbacks.insert(t);
+                        num_of_buffers_used++;
+                    }
+
+                    juce::AudioBuffer<float>* temp = dependencyFreedBuffersNonRecyclable.front();
+                    dependencyFreedBuffersNonRecyclable.pop();
+
+                    // we give this buffer that we just popped to the GraphNode.
+                    currentNode->setToWriteAudioBuffer(temp);
+
+                    // if this is not set the buffer that this node is reading from never gets freed,
+                    // as the reference will have a minimum value of one or more.
+                    for (auto i : nodeToDependentBufferMap[currentNode]) {
+                        dependentCountMap[i]--;
+
+                        // this node can be used, all it's dependencies are processed.
+                        // if the node's buffer cannot be reused then we are not going to
+                        // free it.
+                        if (dependentCountMap[i] == 0) dependencyFreedBuffers.push(i);
+                    }
+                    current = current->nextNode;
+                    continue;
+                }
+
                 // if there are no free buffers we create one.
                 if (dependencyFreedBuffers.empty()) {
                     auto* t = new juce::AudioBuffer<float>(2, (int)std::ceil(sampleSize));
@@ -489,12 +529,6 @@ public:
                     // other outputs.
                     nodeToDependentBufferMap[i].insert(temp);
                     dependentCountMap[temp]++;
-
-//                    // A quick hack such that this buffer is never reused in the entire thing.
-//                    // the reference count never becomes 0,
-//                    // 5 is just a random number, even 1 should be enough if the algorithm worked exactly
-//                    // as planned
-                    if (currentNode->getCanBeRecycled()) dependentCountMap[temp] += 5;
                 }
 
                 // recycle the node's buffers, whose dependents are processed(we will not be reading that anymore for this block).
@@ -517,7 +551,9 @@ public:
             current = current->nextNode;
         }
 
-        //debugDump();
+//        debugDump();
+
+        std::cout << "Number of Buffers used for this configuration : " << num_of_buffers_used << "\n";
 
     }
 

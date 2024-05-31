@@ -11,6 +11,8 @@
 
 #pragma once
 #include <JuceHeader.h>
+
+#include <memory>
 #include "../ColourPalette.h"
 #include "InputOutputTypesForSokets.h"
 #include "Connection.h"
@@ -124,8 +126,7 @@ public:
 };
 
 // Class that all the nodes inherit.
-class GraphNode : public juce::Component,
-                  public juce::AudioProcessor {
+class GraphNode : public juce::Component {
 public :
 
 
@@ -206,6 +207,8 @@ public :
         void addMenuParameterControl();
         //
         void addSliderParameterControl(float from, float to, float default_);
+        //
+        void addEnvParameterControl();
 
         // If the parameter control is set to MenuListParameterCtrl, this is used to add new types of menu options.
         // else it is not going to change anything and there is no reason to use this method.
@@ -368,7 +371,7 @@ public :
                 valueAtomic.store(0.0);
             }
 
-            ~ParameterCtrl() override {};
+            ~ParameterCtrl() override = default;
 
             // getValue() is the abstraction that is called from process in the respective node to return the
             // selected item or a value.
@@ -385,6 +388,7 @@ public :
 
             int getHeight() {
                 if (parameterType == -1) return 0;
+                else if (parameterType == 3) return 90;
                 else return 30;
             }
 
@@ -394,10 +398,10 @@ public :
                     return;
                 }
 
-                menuList.reset(new juce::ComboBox);
-                menuList.get()->addListener(this);
+                menuList = std::make_unique<juce::ComboBox>();
+                menuList->addListener(this);
 
-                menuList.get()->setLookAndFeel(&styles);
+                menuList->setLookAndFeel(&styles);
 
                 valueAtomic.store(0.0);
                 parameterType = 1;
@@ -417,8 +421,8 @@ public :
             }
 
             void addItemToList(juce::String name) {
-                if (menuList.get()) {
-                    menuList.get()->addItem(name, index);
+                if (menuList) {
+                    menuList->addItem(name, index);
                     index++;
                 }
             }
@@ -430,13 +434,13 @@ public :
                 }
 
                 sliderFloat.reset(new juce::Slider());
-                sliderFloat.get()->setRange(from, to, 0.001);
-                sliderFloat.get()->setValue(val);
-                sliderFloat.get()->setSliderStyle(juce::Slider::LinearBar);
-                sliderFloat.get()->addListener(this);
-                sliderFloat.get()->setNumDecimalPlacesToDisplay(3);
+                sliderFloat->setRange(from, to, 0.001);
+                sliderFloat->setValue(val);
+                sliderFloat->setSliderStyle(juce::Slider::LinearBar);
+                sliderFloat->addListener(this);
+                sliderFloat->setNumDecimalPlacesToDisplay(3);
 
-                sliderFloat.get()->setLookAndFeel(&styles);
+                sliderFloat->setLookAndFeel(&styles);
 
                 this->from = from;
                 this->to = to;
@@ -445,25 +449,29 @@ public :
                 parameterType = 2;
             }
 
+            void addEnvCtrlComponent() {
+                parameterType = 3;
+            }
+
 
             // called from the socket when ready to make it visible.
             void update() {
                 // checking if it is not nullptr.
-                if (menuList.get()) {
-                    menuList.get()->setBounds(getLocalBounds().reduced(4));
+                if (menuList) {
+                    menuList->setBounds(getLocalBounds().reduced(4));
                     addAndMakeVisible(menuList.get());
                     // do not ask me if you did not even add one option, dude.
-                    menuList.get()->setSelectedId(1, juce::sendNotificationSync);
-                } else if (sliderFloat.get()) {
-                    sliderFloat.get()->setBounds(getLocalBounds().reduced(4));
+                    menuList->setSelectedId(1, juce::sendNotificationSync);
+                } else if (sliderFloat) {
+                    sliderFloat->setBounds(getLocalBounds().reduced(4));
                     addAndMakeVisible(sliderFloat.get());
-                    sliderFloat.get()->setValue(value);
+                    sliderFloat->setValue(value);
                 }
             }
 
             void sliderValueChanged(juce::Slider* slider) override {
-                float value = sliderFloat.get()->getValue();
-                valueAtomic.store(value);
+                float value_ = sliderFloat->getValue();
+                valueAtomic.store(value_);
             }
 
             // lock and unlock while reading the values(presently not used anywhere).
@@ -484,6 +492,13 @@ public :
 
         private:
 
+            class envParamCtrl : public juce::Component {
+            public:
+
+
+
+            };
+
             // set from the callbacks and read from get value.
             std::atomic<float> valueAtomic;
 
@@ -502,7 +517,7 @@ public :
             int index = 1;
 
 
-            // THE SLIDER : used by many parameters, look and use inspired by blender's nodes in the graph editor.
+            // THE SLIDER : used by many parameters.
             // we will be able to set the value directly, drag the mouse to change the value or use a other node to control this.
             // when we are sliding or setting the value directly in the node, we do not record what the user is doing so
             // the resolution of changing will be of the buffer size, but connecting to an external node or an UI item will
@@ -664,7 +679,6 @@ public :
     // get the set bufferToWritePointer, if not set, returns nullptr
     juce::AudioBuffer<float>* getToWriteAudioBuffer() { return bufferToWritePointer; }
 
-
     // the master function that is called from the AudioThread fo each audio buffer,
     // Make sure anything you access from this function is either thread synchronised,
     // or you are 100% sure that it is not going to be accessed from any other thread.
@@ -672,36 +686,6 @@ public :
     // The connection has all the stuff you just need, just ask it.
     virtual void processGraphNode() = 0;
 
-    // loading and saving of presets.
-    void getStateInformation(juce::MemoryBlock& destData) override;
-
-    void setStateInformation(const void* data, int sizeInBytes) override;
-
-
-
-    ///|=========================================|
-    // Virtual functions that have their definitions empty.
-    const juce::String getName() const override;
-
-    double getTailLengthSeconds() const override;
-
-    bool acceptsMidi() const override;
-
-    bool producesMidi() const override;
-
-    juce::AudioProcessorEditor* createEditor() override;
-
-    bool hasEditor() const override;
-
-    int getNumPrograms() override;
-
-    int getCurrentProgram() override;
-
-    void setCurrentProgram(int index) override;
-
-    const juce::String getProgramName(int index) override;
-
-    void changeProgramName(int index, const juce::String& newName) override;
 
     // +++++++++++++++++++++++
 

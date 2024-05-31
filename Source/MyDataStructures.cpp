@@ -11,7 +11,7 @@
 #include "MyDataStructures.h"
 #include "Instrument.h"
 
-void PriorityQueue::setNextMidiBuffer() {
+void TopoSorter::setNextMidiBuffer() {
     Instrument* pointerToInstrument = Instrument::getInstance();
 
     if (pointerToInstrument) {

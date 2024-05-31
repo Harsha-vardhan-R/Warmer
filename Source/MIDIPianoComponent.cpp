@@ -41,17 +41,17 @@ void MIDIPianoComponent::resized() {
     setBounds(0, this->offset, getParentWidth(), this->height);
     setSize(getParentWidth(), this->height);
 
-    if (wheelComponent.get() != nullptr) {
-        wheelComponent.get()->setOffset(((getWidth()-1392)/2)-50);
-        wheelComponent.get()->resized();
+    if (wheelComponent != nullptr) {
+        wheelComponent->setOffset(((getWidth()-1400)/2)-50);
+        wheelComponent->resized();
     }
-    if (pianoComponent.get() != nullptr) {
-        pianoComponent.get()->setOffset(((getWidth()-1392)/2)-50);
-        pianoComponent.get()->resized();
+    if (pianoComponent != nullptr) {
+        pianoComponent->setOffset(((getWidth()-1400)/2)-50);
+        pianoComponent->resized();
     }
-    if (sideBar.get() != nullptr) {
-        sideBar.get()->setOffset(((getWidth()-1392)/2)+50);
-        sideBar.get()->resized();
+    if (sideBar != nullptr) {
+        sideBar->setOffset(((getWidth()-1400)/2)+50);
+        sideBar->resized();
     }
 
 }

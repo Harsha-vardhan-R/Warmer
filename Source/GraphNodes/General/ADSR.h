@@ -52,7 +52,7 @@ public:
 
     // SUS
     // sample should NOT be 0
-    float ad_fill(int a, int d, float sus, int sample) {
+    static float ad_fill(int a, int d, float sus, int sample) {
         if (sample < a) { // Attack phase
             return static_cast<float>(sample) / static_cast<float>(a);
         } else if (sample < a + d) { // Decay phase
@@ -62,8 +62,12 @@ public:
         }
     }
 
-    float release_fill(int r, float sus, int sample) {
+    static float release_fill(int r, float sus, int sample) {
         return sus * (1.0f - (static_cast<float>(sample) / static_cast<float>(r)));
+    }
+
+    static float lerp(float start, float end, float t) {
+        return start + t * (end - start);
     }
 
     void processGraphNode() override {
@@ -85,7 +89,7 @@ public:
             if (message.isNoteOn()) {
                 // start creating envelope for this event.
                 pressed_note = note;
-                index = 1;
+                index = 0;
                 current_section = section::AD_section;
                 // get the ADSR values in terms of number of samples
                 // these values will not change until the envelope for this
@@ -101,13 +105,23 @@ public:
 
             // `i` keeps track of the current index in the block that we are processing, while `index` keeps track of the position
             // we are at in the ADSR envelope.
-            if (current_section == section::off) // fill the buffer till now from the last event as 0.
-                for (; i < samplePosition; ++index, ++i) channelData[i] = 0.0;
-            else if (current_section == section::AD_section)
-                for (; i < samplePosition; ++index, ++i) channelData[i] = ad_fill( A_, D_, S_, index);
+            if (current_section == section::off) {// fill the buffer till now from the last event as 0.
+                for (; i < samplePosition; ++index, ++i) {
+                    float targetLevel = 0.0;
+                    currentLevel = lerp(currentLevel, targetLevel, smoothness);
+                    channelData[i] = currentLevel;
+                }
+            } else if (current_section == section::AD_section)
+                for (; i < samplePosition; ++index, ++i) {
+                    float targetLevel = ad_fill(A_, D_, S_, index);
+                    currentLevel = lerp(currentLevel, targetLevel, smoothness);
+                    channelData[i] = currentLevel;
+                }
             else {
                 for (; i < samplePosition; ++index, ++i) {
-                    channelData[i] = release_fill( R_, S_, index);
+                    float targetLevel = release_fill(R_, S_, index);
+                    currentLevel = lerp(currentLevel, targetLevel, smoothness);
+                    channelData[i] = currentLevel;
                     if (index > R_) {
                         current_section = section::off;
                         break;
@@ -121,9 +135,13 @@ public:
             if (current_section == section::off) {
                 channelData[i] = 0.0f;
             } else if (current_section == section::AD_section) {
-                channelData[i] = ad_fill(A_, D_, S_, index);
+                float targetLevel = ad_fill(A_, D_, S_, index);
+                currentLevel = lerp(currentLevel, targetLevel, smoothness);
+                channelData[i] = currentLevel;
             } else if (current_section == section::release_section) {
-                channelData[i] = release_fill(R_, S_, index);
+                float targetLevel = release_fill(R_, S_, index);
+                currentLevel = lerp(currentLevel, targetLevel, smoothness);
+                channelData[i] = currentLevel;
                 if (index >= R_) {
                     current_section = section::off;
                 }
@@ -174,5 +192,9 @@ private:
     section current_section = section::off;
 
     int index = 0; // keep track of at which part of the envelope we are in.
+
+    float smoothness = 0.01;
+
+    float currentLevel = 0.0f; // The current smoothed amplitude
 
 };

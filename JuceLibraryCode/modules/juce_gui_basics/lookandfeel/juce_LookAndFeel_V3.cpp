@@ -190,7 +190,7 @@ void LookAndFeel_V3::createTabTextLayout (const TabBarButton& button, float leng
 
 void LookAndFeel_V3::drawTabButton (TabBarButton& button, Graphics& g, bool isMouseOver, bool isMouseDown)
 {
-    const Rectangle<int> activeArea (button.getActiveArea());
+    const Rectangle<int> activeArea (button.getActiveArea().withTrimmedLeft(3.0f));
 
     const TabbedButtonBar::Orientation o = button.getTabbedButtonBar().getOrientation();
 

@@ -49,6 +49,19 @@ public:
     void reset() override {
         BufferOne = InputSockets[0]->getBufferPointer();
         OutputSockets[0]->setBufferPointer(bufferToWritePointer);
+
+        // we cannot let these things be uninitialised.
+        if (bufferToWritePointer) {
+            for ( int channel = 0; channel < 2; channel++) {
+                const float* signal_1 = BufferOne->getReadPointer(channel);
+                float* writePointer = bufferToWritePointer->getWritePointer(channel);
+
+                for (int i = 0; i < bufferToWritePointer->getNumSamples(); i += 2) {
+                    writePointer[i] = 0.0;
+                    writePointer[i+1] = 0.0;
+                }
+            }
+        }
     }
 
     ~Feedback() {};

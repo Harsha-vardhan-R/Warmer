@@ -26,7 +26,7 @@ public:
 
         InputSockets.add(new GraphNode::Socket(juce::String("Delay Time(ms)"), direction::IN, false));
         InputSockets[1]->acceptType(SocketDataType::Floating);
-        InputSockets[1]->addSliderParameterControl(0.0f, 2000.0f, 0.0f);
+        InputSockets[1]->addSliderParameterControl(0.0f, 2000.0f, 120.0f);
 
         makeAllSocketsVisible();
 

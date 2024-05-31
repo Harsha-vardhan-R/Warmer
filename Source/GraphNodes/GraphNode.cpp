@@ -69,6 +69,8 @@ GraphNode::GraphNode(juce::String name, int pos_x, int pos_y) {
     menu.addItem(1, "Delete Node");
     menu.setLookAndFeel(&menu_style);
 
+    Component::setViewportIgnoreDragFlag(true);
+
     resized();
     repaint();
 }
@@ -229,63 +231,6 @@ GraphNode::~GraphNode() {
     setLookAndFeel(nullptr);
 }
 
-// loading and saving of presets.
-void GraphNode::getStateInformation(juce::MemoryBlock& destData) {
-
-}
-
-void GraphNode::setStateInformation(const void* data, int sizeInBytes) {
-
-}
-
-///|=========================================|
-const juce::String GraphNode::getName() const {
-    return name; // Replace with your node name
-}
-
-double GraphNode::getTailLengthSeconds() const {
-    return 0.0; // No tail
-}
-
-bool GraphNode::acceptsMidi() const {
-    return false; // Change as needed
-}
-
-bool GraphNode::producesMidi() const {
-    return false; // Change as needed
-}
-
-juce::AudioProcessorEditor* GraphNode::createEditor() {
-    // Create and return your custom editor
-    return nullptr; // Return nullptr if no editor
-}
-
-bool GraphNode::hasEditor() const {
-    return false; // Change as needed
-}
-
-int GraphNode::getNumPrograms() {
-    return 0; // No programs
-}
-
-int GraphNode::getCurrentProgram() {
-    return 0; // No programs
-}
-
-void GraphNode::setCurrentProgram(int index) {
-    // Handle setting current program
-}
-
-const juce::String GraphNode::getProgramName(int index) {
-    return {}; // No programs
-}
-
-void GraphNode::changeProgramName(int index, const juce::String& newName) {
-    // Handle changing program name
-}
-
-
-
 
 //////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
@@ -302,6 +247,7 @@ GraphNode::Socket::Socket(juce::String name, direction dir, bool isMust) : param
     menu.addItem(1, "Remove Connection");
     menu.setLookAndFeel(&menu_style);
 }
+
 
 void GraphNode::Socket::paint(juce::Graphics &g)  {
     // Small square
@@ -655,4 +601,8 @@ void GraphNode::Socket::mouseUp(const juce::MouseEvent &event) {
 
 void GraphNode::Socket::setParameterCtrlNoCollapseOnConnection() {
     collapseOnConnection = false;
+}
+
+void GraphNode::Socket::addEnvParameterControl() {
+    parameterController.addEnvCtrlComponent();
 }

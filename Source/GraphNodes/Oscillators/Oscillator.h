@@ -200,7 +200,6 @@ public:
                 }
 
             } else if (freqType == freqInputType::MIDI) {
-                std::unordered_set<int> resetPhaseAt;
 
                 // we create the freqAtSamplePoint_from_MIDI from the midi buffer.
                 juce::MidiMessage message;
@@ -225,7 +224,6 @@ public:
                     if (message.isNoteOn()) {
                         presMIDI_Note = note;
                         presMIDI_freq = midiFrequencies[note];
-                        resetPhaseAt.insert(samplePosition);
                     }
 
                 }
@@ -256,8 +254,6 @@ public:
                                 channelData[i] = square * amplitude;
                             }
 
-                            if (resetPhaseAt.count(i)) current_phase = phase;
-
                         }
                     } else {
                         const float *amplModPointer = amplitudeModBuffer->getReadPointer(channel);
@@ -279,8 +275,6 @@ public:
                                 channelData[i] = square * amplModPointer[i];
                             }
 
-                            if (resetPhaseAt.count(i)) current_phase = phase;
-
                         }
                     }
                     current_phase = current_phase - phase; // if this is not done the phase offset keeps on increasing for every process call.
@@ -291,7 +285,6 @@ public:
                         for (int i = 0; i < bufferToWritePointer->getNumSamples(); ++i) {
                             current_phase += (freqAtSamplePoint_from_MIDI[i] * phaseIncrementRatio) + phaseModPointer[i];
                             current_phase = std::fmod(current_phase, TAU);
-                            if (resetPhaseAt.count(i)) current_phase = 0;
 
                             if constexpr(waveInputType == waveType::sine) {
                                 channelData[i] = std::sin(current_phase) * amplitude;
@@ -313,7 +306,6 @@ public:
                         for (int i = 0; i < bufferToWritePointer->getNumSamples(); ++i) {
                             current_phase += freqAtSamplePoint_from_MIDI[i] * phaseIncrementRatio;
                             current_phase = std::fmod(current_phase, TAU);
-                            if (resetPhaseAt.count(i)) current_phase = 0;
 
                             if constexpr(waveInputType == waveType::sine) {
                                 channelData[i] = std::sin(current_phase) * amplModPointer[i];

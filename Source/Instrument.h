@@ -409,9 +409,8 @@ private:
     // Decides if we should break the present audio processing, set to true when the configuration changes.
     std::atomic<bool> breakProcessing{};
 
-    // The priority queue we are going to use.(impl in MyDataStructures.h)
-	// this will always be in the first place of the topo sorted node list.
-    PriorityQueue nodeProcessingQueue;
+    // impl in 'MyDataStructures.h'
+    TopoSorter nodeProcessingQueue;
 
     juce::OwnedArray<juce::MidiInput> midiInputs;
     std::unique_ptr<juce::DocumentWindow> AudioMIDISettingsJUCE;

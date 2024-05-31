@@ -26,21 +26,6 @@ Instrument* Instrument::instancePtr = nullptr;
 [[maybe_unused]] void* Instrument::VoidPointerToWheelComponent = nullptr;
 [[maybe_unused]] void* Instrument::VoidPointerToPianoComponent = nullptr;
 
-// This maps from the midi input to my representation,
-// anything above 99 is for a black key, whose actual value is (value-100)
-[[maybe_unused]] int MIDI_TO_MINE[113] = {
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-
-        0, 100, 1, 101, 2, 3, 102, 4, 103, 5, 104, 6,
-        7, 105, 8, 106, 9, 10, 107, 11, 108, 12, 109, 13,
-        14, 110, 15, 111, 16, 17, 112, 18, 113, 19, 114, 20,
-        21, 115, 22, 116, 23, 24, 117, 25, 118, 26, 119, 27,
-        28, 120, 29, 121, 30, 31, 122, 32, 123, 33, 124, 34,
-        35, 125, 36, 126, 37, 38, 127, 39, 128, 40, 129, 41,
-        42, 130, 43, 131, 44, 45, 132, 46, 133, 47, 134, 48,
-        48, 135, 49, 136, 50
-};
 
 // Please do not mess with the order of statements.
 Instrument::Instrument(int tabWidth) {
@@ -63,8 +48,7 @@ Instrument::Instrument(int tabWidth) {
     viewport = std::make_unique<juce::Viewport>();
     auto* casted = (GraphPage*)graphPage.get();
     viewport->setViewedComponent(casted->getBackground(), false);
-    //viewport.get()->setScrollOnDragMode(juce::Viewport::ScrollOnDragMode::nonHover);
-
+    viewport->setScrollOnDragMode(juce::Viewport::ScrollOnDragMode::all);
 
     // Initiating and setting the setup for AudioDeviceSetup.
     deviceManager = std::make_unique<juce::AudioDeviceManager>();
@@ -90,6 +74,8 @@ Instrument::Instrument(int tabWidth) {
             midiInputs.add(std::move(midiInput));
         }
     }
+
+    Piano::Instance_Pointer->setMidiNumToListenTo(1);
 
     breakProcessing.store(false);
 
@@ -339,7 +325,7 @@ Instrument::GraphPage::GraphPage() {
     subMenuArray[4]->addItem(501, "Mul & Add Transform");
     subMenuArray[4]->addItem(502, "Add Or Sub Signals");
     subMenuArray[4]->addItem(503, "FM Operator");
-    subMenuArray[4]->addItem(504, "Mix Signals");
+    subMenuArray[4]->addItem(504, "Cross Fade");
     subMenuArray[4]->addItem(505, "Abs Clamp");
     subMenuArray[4]->addItem(506, "Re-Ramp");
     subMenuArray[4]->addItem(507, "Math Clamp");
@@ -566,14 +552,9 @@ void drawBezierCurve(juce::Graphics& g, juce::Point<float> endPoint, juce::Point
     path.startNewSubPath(startPoint);
     path.cubicTo(controlPoint1, controlPoint2, endPoint);
 
-    // Create a ColourGradient
     juce::ColourGradient gradient(startGrad, startPoint, endGrad, endPoint, false);
-
-    // Set the gradient as the fill
     g.setGradientFill(gradient);
-
-    // Draw the path with the gradient
-    g.strokePath(path, juce::PathStrokeType(1.0f));
+    g.strokePath(path, juce::PathStrokeType(1.5f));
 }
 
 void Instrument::GraphPage::drawConnections(juce::Graphics &g) {
@@ -678,7 +659,7 @@ Instrument::AudioMIDISettingClass::AudioMIDISettingClass(juce::AudioDeviceManage
 
 
 void Instrument::ConfigurationChanged() {
-
+	// Do nothing for now.
 }
 
 

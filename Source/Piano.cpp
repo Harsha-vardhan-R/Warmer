@@ -24,7 +24,7 @@ Piano::Piano(juce::MidiKeyboardState& state, juce::KeyboardComponentBase::Orient
 
     setColour(juce::MidiKeyboardComponent::whiteNoteColourId, juce::Colours::white);
     setColour(juce::MidiKeyboardComponent::blackNoteColourId, juce::Colour::fromRGB(100, 100, 100));
-    setColour(juce::MidiKeyboardComponent::keyDownOverlayColourId, juce::Colour(0x22000000));
+    setColour(juce::MidiKeyboardComponent::keyDownOverlayColourId, juce::Colour(0x44000000));
     setColour(juce::MidiKeyboardComponent::mouseOverKeyOverlayColourId, juce::Colours::transparentWhite);
     setColour(juce::MidiKeyboardComponent::textLabelColourId, juce::Colours::grey);
     setColour(juce::MidiKeyboardComponent::keySeparatorLineColourId, juce::Colours::darkgrey);
@@ -40,5 +40,5 @@ Piano::~Piano(){}
 //}
 
 void Piano::resized() {
-    setBounds(200+offset, 0 ,1192, getParentHeight());
+    setBounds(200+offset, 0 ,1400, getParentHeight()-3);
 }

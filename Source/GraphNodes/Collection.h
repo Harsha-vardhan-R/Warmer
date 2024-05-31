@@ -38,6 +38,7 @@
 #include "General/Convolution.h"
 #include "General/ADSR.h"
 #include "General/Feedback.h"
+#include "General/Envelope.h"
 
 #include "Effects/Delay.h"
 

@@ -14,7 +14,7 @@
 #include "Modes.h"
 #include "MenuComponent.h"
 
-class look_and_feel_exp : public juce::LookAndFeel_V1 {
+class look_and_feel_exp : public juce::LookAndFeel_V3 {
 public:
     look_and_feel_exp() {
         setColour(juce::TabbedComponent::backgroundColourId, juce::Colours::white);

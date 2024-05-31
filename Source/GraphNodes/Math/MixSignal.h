@@ -14,7 +14,7 @@
 class MixSignal : public GraphNode {
 public:
 
-    MixSignal(int pos_x, int pos_y) : GraphNode(juce::String("Mix"), pos_x, pos_y) {
+    MixSignal(int pos_x, int pos_y) : GraphNode(juce::String("Cross Fade"), pos_x, pos_y) {
 
         // Output wave.
         OutputSockets.add(new GraphNode::Socket(juce::String("Signal OUT"), direction::OUT, true));
