@@ -66,14 +66,7 @@ Instrument::Instrument(int tabWidth) {
 
 
     // Create and add MidiInput objects to the owned array
-    for (const auto& device : midiDevicesHere) {
-        auto midiInput = juce::MidiInput::openDevice(device.identifier, this);
-        if (midiInput) {
-            midiInput->start(); // start listening to all possible midi in's.
-            deviceManager->setMidiInputDeviceEnabled(device.identifier, true);
-            midiInputs.add(std::move(midiInput));
-        }
-    }
+    listenFromAllMIDIInputs();
 
     Piano::Instance_Pointer->setMidiNumToListenTo(1);
 
@@ -91,16 +84,13 @@ Instrument::Instrument(int tabWidth) {
 
 void Instrument::refreshMIDIDevices() {
     // Firstly remove all the devices.
-    while (midiInputs.size() != 0) {
-        midiInputs.remove(0);
-    }
+    // Remove all the devices.
+    while (midiInputs.size() != 0) midiInputs.remove(0);
 
     // Setting up for the MIDI listening.
-    auto midiDevicesHere = juce::MidiInput::getAvailableDevices();
-
-    for (const auto& device : midiDevicesHere) {
+    auto midiInputDevices = juce::MidiInput::getAvailableDevices();
+    for (const auto& device : midiInputDevices) {
         auto midiInput = juce::MidiInput::openDevice(device.identifier, this);
-        // Checking if the midi input is actually enabled by the user in AudioMIDIsettings.
         if (midiInput != nullptr && deviceManager->isMidiInputDeviceEnabled(device.identifier)) {
             midiInput->start();
             midiInputs.add(std::move(midiInput));
@@ -115,7 +105,6 @@ void Instrument::listenFromAllMIDIInputs() {
         midiInputs.remove(0);
     }
 
-
     // Setting up for the MIDI listening.
     auto midiDevicesHere = juce::MidiInput::getAvailableDevices();
 
@@ -127,11 +116,6 @@ void Instrument::listenFromAllMIDIInputs() {
             midiInputs.add(std::move(midiInput));
         }
     }
-
-//    std::cout << "Listening From : " << "\n";
-//    for (auto i : midiInputs) {
-//        std::cout << i->getName() << "\n";
-//    }
 
     
 }

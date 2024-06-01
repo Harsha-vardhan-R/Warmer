@@ -200,26 +200,16 @@ public:
             int samplePosition = metadata.samplePosition;
             int note = message.getNoteNumber();
 
-            if (message.isNoteOn()) {
+            if (message.isNoteOn() && !FIFO_queue.empty()) {
+                int socket_here = FIFO_queue.front();
+                FIFO_queue.pop();
 
-                int socket_here = 0;
+                int position = 0;
 
-                // if there is any free voice we fill it first without stealing another voice.
-                if (!presently_empty.empty()) {
-                    // take the first socket available here.
-                    socket_here = *presently_empty.begin();
-                    presently_empty.erase(socket_here);
-                } else if (!FIFO_queue.empty()) { // if it is not empty we steal from the oldest note(the condition should never be false if above one is false in reality).
-                    socket_here = FIFO_queue.front();
-                    FIFO_queue.pop();
+                if (samplePosition == 0) samplePosition++;
+                else position = samplePosition-1;
 
-                    int position = 0;
-
-                    if (samplePosition == 0) samplePosition++;
-                    else position = samplePosition-1;
-
-                    midiBufferArray[socket_here].addEvent(juce::MidiMessage::noteOff((int)1, (int)SocketToNoteMap[socket_here], (juce::uint8)0), position);
-                }
+                midiBufferArray[socket_here].addEvent(juce::MidiMessage::noteOff((int)1, (int)SocketToNoteMap[socket_here], (juce::uint8)0), position);
 
                 noteToOutSocketMap[note] = socket_here;
                 SocketToNoteMap[socket_here] = note;
@@ -252,6 +242,7 @@ public:
             for (int i = 0; i < voices; ++i) {
                 presently_empty.insert(i); // insert indexes of the sockets.
                 OutputSockets[i]->setMidiBufferPointer(&midiBufferArray[i]);
+                FIFO_queue.push(i);
             }
 
             readBuff = InputSockets[0]->getMidiBuffer();

@@ -58,9 +58,6 @@ public:
 class TopoSorter : public juce::AudioIODeviceCallback {
 public:
 
-
-
-
     // will be true if the callback function is still running,
     // used for manual synchronisation.
     // by inside callback we mean after the pause statement to the end of the method.
@@ -84,7 +81,7 @@ public:
         while (insideCallback.load()); // infinite loop until we are not inside the callback,
         // processing nodes, now it is safe to delete nodes and such,
         // note that if there was an infinite loop in a node while processing and this is called,
-        // it may cause a program freeze.
+        // it may cause undefined behaviour (freeze or a crash).
     }
 
     linkedNode* headLinkedNode = nullptr;
@@ -296,17 +293,25 @@ public:
     std::set<juce::AudioBuffer<float>*> bunchOfBuffersForFeedbacks;
 
     bool newConnection(GraphNode *from, GraphNode *to) {
-
-        if (!from || !to) {
-            std::cout << "Null pointers passed as arguments in TopoSorter::newConnection, ERROR" << "\n";
-            return false;
-        }
-
         processingStop();
 
 		// here we need to make sure that the `from` node is before the `to` node.
 		// we can put the `from` just before node and the order will still be valid.
+        recrSortChildren(from, to);
 
+        setBuffersToNodes();
+        resetAll();
+        if (checkAllGood()) processingStart();
+
+        return true;
+    }
+
+    void recrSortChildren(GraphNode* from, GraphNode* to) {
+
+        if (!from || !to) {
+            std::cout << "Null pointers passed as arguments in TopoSorter::newConnection, ERROR" << "\n";
+            return;
+        }
 
         // This condition is for the `feedback`,
         // any connection from or to them does not change the
@@ -362,20 +367,16 @@ public:
                 current = current->nextNode;
             }
 
+
+            // recursively sort the nodes that are connected to this.
+            for (auto i : to->getDependents()) recrSortChildren(to, i);
+
         } else {
             nodesToRestTwice.insert(to);
             nodesToRestTwice.insert(from);
         }
 
-        setBuffersToNodes();
 
-        resetAll();
-
-        //debugDump();
-
-        if (checkAllGood()) processingStart();
-
-        return true;
     }
 
 

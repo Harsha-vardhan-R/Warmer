@@ -28,7 +28,7 @@ public:
         InputSockets[1]->acceptType(SocketDataType::Floating);
         InputSockets[1]->addSliderParameterControl(0.0f, 4000.0f, 0.0f);
 
-        InputSockets.add(new GraphNode::Socket(juce::String("Feedback"), direction::IN, false));
+        InputSockets.add(new GraphNode::Socket(juce::String("FeedbackOut"), direction::IN, false));
         InputSockets[2]->acceptType(SocketDataType::Floating);
         InputSockets[2]->addSliderParameterControl(0.0f, 1.0f, 0.2f);
 

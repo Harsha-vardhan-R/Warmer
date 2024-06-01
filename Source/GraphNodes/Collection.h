@@ -43,3 +43,5 @@
 #include "Effects/Delay.h"
 
 #include "MIDI/MIDI_Polyphony.h"
+
+#include "Filters/Digital.h"
