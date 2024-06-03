@@ -55,15 +55,15 @@ public:
     [[maybe_unused]] static void* VoidPointerToPianoComponent;
     [[maybe_unused]] static void* VoidPointerToWheelComponent;
 
-    Instrument(int);
+    explicit Instrument(int);
     ~Instrument() override;
     //++++++++++++++++++
     void paint(juce::Graphics& g) override;
     void resized() override;
     //====== INSTRUMENT'S API's ========
     void OpenAudioAndMIDISettings() {
-        AudioMIDISettingsJUCE.get()->setCentrePosition(getParentWidth()/2, getParentHeight()/2);
-        AudioMIDISettingsJUCE.get()->setVisible(true);
+        AudioMIDISettingsJUCE->setCentrePosition(getParentWidth()/2, getParentHeight()/2);
+        AudioMIDISettingsJUCE->setVisible(true);
     }
 
     void Initialize();
@@ -108,7 +108,7 @@ public:
     // Called from GraphPage when a new node is added.
     void nodeAdded(GraphNode* newNode) {
         if (!newNode) return;
-        GraphPage* casted = (GraphPage*)(graphPage.get());
+        auto* casted = (GraphPage*)(graphPage.get());
         casted->AllNodes.insert(newNode);
         casted->addAndMakeVisible(newNode);
 		nodeProcessingQueue.push(newNode);
@@ -116,7 +116,7 @@ public:
 
     // Called from a GraphNode instance when it is deleted.
     void nodeDeleted(GraphNode* nodePointer) {
-        GraphPage* casted = (GraphPage*)(graphPage.get());
+        auto* casted = (GraphPage*)(graphPage.get());
         // related connections will be erased while destructing the sockets.
         casted->AllNodes.erase(nodePointer);
 		nodeProcessingQueue.remove(nodePointer);
@@ -127,35 +127,35 @@ public:
     // if the connection isn't successful it will be deleted in the socket,
     // child will be automatically removed.
     void connectionInst(Connection* newConnection, juce::Line<int> l) {
-        GraphPage* casted = (GraphPage*)(graphPage.get());
+        auto* casted = (GraphPage*)(graphPage.get());
         casted->connectionInit(newConnection, l);
     }
 
     void connectionInitFail() {
-        GraphPage* casted = (GraphPage*)(graphPage.get());
+        auto* casted = (GraphPage*)(graphPage.get());
         casted->connectionInitFail();
     }
 
     // calls similar function in graph page to change the connection `Line`.
     void connectionPositionUpdated(Connection* connectionPointer,
                                    juce::Line<int> newLinePosition) {
-        GraphPage* casted = (GraphPage*)(graphPage.get());
+        auto* casted = (GraphPage*)(graphPage.get());
         casted->updateConnectionLine(connectionPointer, newLinePosition);
     }
 
     void triggerGraphPageRepaint() {
-        GraphPage* casted = (GraphPage*)(graphPage.get());
+        auto* casted = (GraphPage*)(graphPage.get());
         casted->triggerRepaint();
     }
 
     void connectionAdded(Connection* newConnection) {
-        GraphPage* casted = (GraphPage*)(graphPage.get());
+        auto* casted = (GraphPage*)(graphPage.get());
         casted->connectionAdded(newConnection);
         ConfigurationChanged();
     }
 
     void connectionRemoved(Connection* connectionObjPointer) {
-        GraphPage* casted = (GraphPage*)(graphPage.get());
+        auto* casted = (GraphPage*)(graphPage.get());
         casted->connectionRemoved(connectionObjPointer);
         ConfigurationChanged();
     }
@@ -168,6 +168,10 @@ public:
      * nodeProcessingQueue.
      */
     bool updateTreeParams();
+
+
+    // keyboard state that the Piano uses.
+    juce::MidiKeyboardState keyboardState;
 
     /////##################################
 

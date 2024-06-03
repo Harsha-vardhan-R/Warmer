@@ -39,7 +39,8 @@ static auto operator< (const Font& a, const Font& b)
 template <typename T>
 static auto operator< (const Rectangle<T>& a, const Rectangle<T>& b)
 {
-    const auto tie = [] (auto& t) { return std::make_tuple (t.getX(), t.getY(), t.getWidth(), t.getHeight()); };
+    const auto tie = [] (auto& t) { return std::make_tuple (t.getX(), t.getY(), t.getWidth(),
+                                                            t.getHeight()); };
     return tie (a) < tie (b);
 }
 

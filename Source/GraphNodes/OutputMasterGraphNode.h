@@ -52,7 +52,7 @@ public:
 
     }
 
-    ~OutputMasterGraphNode() {
+    ~OutputMasterGraphNode() override {
         if (displayBuff) delete displayBuff;
     };
 
@@ -78,8 +78,8 @@ public:
 private:
     juce::CriticalSection lock;
 
-    juce::AudioBuffer<float>* readBuff;
+    juce::AudioBuffer<float>* readBuff = nullptr;
 
-    juce::AudioBuffer<float>* displayBuff;
+    juce::AudioBuffer<float>* displayBuff = nullptr;
 
 };

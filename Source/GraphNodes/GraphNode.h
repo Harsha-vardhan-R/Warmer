@@ -16,6 +16,7 @@
 #include "../ColourPalette.h"
 #include "InputOutputTypesForSokets.h"
 #include "Connection.h"
+#include "MyParameterCtrls.h"
 
 #define PI 3.1415926
 #define PI_HALF 1.5707963
@@ -249,7 +250,7 @@ public :
         // adding a new connection.
         void mouseUp(const juce::MouseEvent& event) override;
 
-        bool isThisConnected() { return isConnected; }
+        bool isThisConnected() const { return isConnected; }
 
         void resized() override;
 
@@ -259,7 +260,7 @@ public :
         int repaintConnection();
 
         // internal API call to  delete the connections from a socket,
-        // if called on a input socket delete only the connection,
+        // if called on an input socket delete only the connection,
         // for an output socket we delete all the connections from it.
         void deleteConnections();
 
@@ -286,8 +287,8 @@ public :
         }
 
 
-        // This is the function that is going to get called from the,
-        // Parameter Ctrl if if the method `triggerSocketsTrigger` is called in the listener method.
+        // This is the function that is going to get called from the
+        // Parameter Ctrl if the method `triggerSocketsTrigger` is called in the listener method.
         // this call then sends the signal to the parent Graph node,
         // where we change callback or something similar based on the changed state.
         static void triggerGraphNodeMiniReset(Socket* thisInstance) {
@@ -360,12 +361,13 @@ public :
         // invisible container that contains other controls.
         class ParameterCtrl : public juce::Component,
                               private juce::Slider::Listener,
-                              private juce::ComboBox::Listener {
+                              private juce::ComboBox::Listener,
+                              public envParamCtrl::Listener {
         public:
 
             Socket* parentInstance = nullptr;
 
-            ParameterCtrl(Socket* parentInstance) {
+            explicit ParameterCtrl(Socket* parentInstance) {
                 this->parentInstance = parentInstance;
                 setVisible(false);
                 valueAtomic.store(0.0);
@@ -377,18 +379,18 @@ public :
             // selected item or a value.
             //
             // and because floating points can have precision errors better to compare with a greater than or less than
-            // rather than equals to if you mean to return a integer.
+            // rather than equals to if you mean to return an integer.
             float getValue() {
                 return valueAtomic.load();
             };
 
-            int getType() {
+            int getType() const {
                 return parameterType;
             }
 
-            int getHeight() {
+            int getHeight() const {
                 if (parameterType == -1) return 0;
-                else if (parameterType == 3) return 90;
+                else if (parameterType == 3) return 80;
                 else return 30;
             }
 
@@ -409,7 +411,7 @@ public :
 
             // call this if you need to call the mini reset on the graph node
             // that this parameterController is in.
-            void triggerParent() {
+            void triggerParent() const {
                 triggerGraphNodeMiniReset(parentInstance);
             }
 
@@ -420,21 +422,21 @@ public :
                 triggerParent();
             }
 
-            void addItemToList(juce::String name) {
+            void addItemToList(juce::String name_) {
                 if (menuList) {
-                    menuList->addItem(name, index);
+                    menuList->addItem(name_, index);
                     index++;
                 }
             }
 
-            void createTextEditor(float from , float to , float val) {
+            void createTextEditor(float from_ , float to_ , float val) {
                 if (parameterType != -1) {
                     std::cout << "Trying to rewrite the parameterCtrl type, not possible" << "\n";
                     return;
                 }
 
-                sliderFloat.reset(new juce::Slider());
-                sliderFloat->setRange(from, to, 0.001);
+                sliderFloat = std::make_unique<juce::Slider>();
+                sliderFloat->setRange(from_, to_, 0.001);
                 sliderFloat->setValue(val);
                 sliderFloat->setSliderStyle(juce::Slider::LinearBar);
                 sliderFloat->addListener(this);
@@ -442,17 +444,17 @@ public :
 
                 sliderFloat->setLookAndFeel(&styles);
 
-                this->from = from;
-                this->to = to;
+                this->from = from_;
+                this->to = to_;
                 this->value = val;
 
                 parameterType = 2;
             }
 
             void addEnvCtrlComponent() {
+                envelopeCtrl = std::make_unique<envParamCtrl>(this);
                 parameterType = 3;
             }
-
 
             // called from the socket when ready to make it visible.
             void update() {
@@ -466,12 +468,25 @@ public :
                     sliderFloat->setBounds(getLocalBounds().reduced(4));
                     addAndMakeVisible(sliderFloat.get());
                     sliderFloat->setValue(value);
+                } else if (envelopeCtrl) {
+                    envelopeCtrl->setBounds(4, 4, getWidth()-8 , 72);
+                    addAndMakeVisible(envelopeCtrl.get());
                 }
+
+            }
+
+            // returns the pointer to envParameterCtrl.
+            envParamCtrl* getEnvParameterCtrlPointer() {
+                return envelopeCtrl.get();
             }
 
             void sliderValueChanged(juce::Slider* slider) override {
-                float value_ = sliderFloat->getValue();
+                auto value_ = (float)sliderFloat->getValue();
                 valueAtomic.store(value_);
+            }
+
+            void envParamCtrltListenerTriggered() override {
+                triggerParent();
             }
 
             // lock and unlock while reading the values(presently not used anywhere).
@@ -480,27 +495,16 @@ public :
             void unlock() { mutex.unlock(); }
 
             void paint(juce::Graphics& g) override {}
+
             void resized() override {}
 
             int parameterType = -1; // means nothing.
             // ^ 1 for menu and two for the text input.
 
-            void tellParentsParentToCallMiniReset() {
-
-            }
-
-
         private:
 
-            class envParamCtrl : public juce::Component {
-            public:
-
-
-
-            };
-
             // set from the callbacks and read from get value.
-            std::atomic<float> valueAtomic;
+            std::atomic<float> valueAtomic{};
 
             parameterCtrlLookAndFeel styles;
 
@@ -513,18 +517,23 @@ public :
             // THE MENU
             // basically a list of values from which one can be selected.
             // The discrete knob outputs an integer value that can be used to set the selected value.
-            std::unique_ptr<juce::ComboBox> menuList;
+            std::unique_ptr<juce::ComboBox> menuList = nullptr;
             int index = 1;
 
 
             // THE SLIDER : used by many parameters.
-            // we will be able to set the value directly, drag the mouse to change the value or use a other node to control this.
+            // we will be able to set the value directly, drag the mouse to change the value or use another node to control this.
             // when we are sliding or setting the value directly in the node, we do not record what the user is doing so
-            // the resolution of changing will be of the buffer size, but connecting to an external node or an UI item will
+            // the resolution of changing will be of the buffer size, but connecting to an external node or a UI item will
             // give a smooth change in the controls - this is how it is designed to work, NOT a BUG.
             // value is always floating.
-            std::unique_ptr<juce::Slider> sliderFloat;
-            float from, to, value;
+            std::unique_ptr<juce::Slider> sliderFloat = nullptr;
+            float from{}, to{}, value{};
+
+
+            // used to create the envelope.
+            // used in Envelope.h
+            std::unique_ptr<envParamCtrl> envelopeCtrl = nullptr;
 
 
             JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ParameterCtrl)
@@ -561,7 +570,7 @@ public :
     std::set<GraphNode*> getAudioBufferDependencies();
 
     void doNotRecycleBuffer() { canBeRecycled = false; }
-    bool getCanBeRecycled() { return canBeRecycled; }
+    bool getCanBeRecycled() const { return canBeRecycled; }
 
     // a quick kind of hack.
     // when a new connection is added the variable `needsRearrangement`
@@ -631,9 +640,9 @@ public :
     int estimatedSamplesPerBlock;
 
     // Pure virtual functions from the juce::AudioProcessor.
-    void prepareToPlay(double sampleRate, int estimatedSamplesPerBlock) {
-        this->sampleRate = sampleRate;
-        this->estimatedSamplesPerBlock = estimatedSamplesPerBlock;
+    void prepareToPlay(double sampleRate_, int estimatedSamplesPerBlock_) {
+        this->sampleRate = sampleRate_;
+        this->estimatedSamplesPerBlock = estimatedSamplesPerBlock_;
     }
 
     // called while destructing the node,
@@ -677,7 +686,7 @@ public :
     void setToWriteAudioBuffer(juce::AudioBuffer<float>* b) { bufferToWritePointer = b; }
 
     // get the set bufferToWritePointer, if not set, returns nullptr
-    juce::AudioBuffer<float>* getToWriteAudioBuffer() { return bufferToWritePointer; }
+    juce::AudioBuffer<float>* getToWriteAudioBuffer() const { return bufferToWritePointer; }
 
     // the master function that is called from the AudioThread fo each audio buffer,
     // Make sure anything you access from this function is either thread synchronised,

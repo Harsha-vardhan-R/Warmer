@@ -438,6 +438,9 @@ public:
 
 
     void setBuffersToNodes() {
+
+        std::set<juce::AudioBuffer<float>*> totSetHere;
+
         // Now take the linkedList and give it AudioBufferPointers! to write.
         // this is not the most efficient way per se, but it is miles better than giving an
         // individual AudioBuffer to each and every node that needs it.
@@ -461,6 +464,7 @@ public:
         // may look inefficient, but still coming up with better ideas.
         // I have a dumb solution but i'm pretty sure it will deviate far from optimised path when
         // adding connections in a certain way, but this surely works for all the cases.
+        // best solution cannot be guaranteed as topo sort can have multiple solutions.
         for (auto i : bunchOfBuffers) {
             dependencyFreedBuffers.push(i);
         }
@@ -481,11 +485,11 @@ public:
                         auto* t = new juce::AudioBuffer<float>(2, (int)std::ceil(sampleSize));
                         dependencyFreedBuffersNonRecyclable.push(t);
                         bunchOfBuffersForFeedbacks.insert(t);
-                        num_of_buffers_used++;
                     }
 
                     juce::AudioBuffer<float>* temp = dependencyFreedBuffersNonRecyclable.front();
                     dependencyFreedBuffersNonRecyclable.pop();
+                    totSetHere.insert(temp);
 
                     // we give this buffer that we just popped to the GraphNode.
                     currentNode->setToWriteAudioBuffer(temp);
@@ -514,6 +518,7 @@ public:
 
                 juce::AudioBuffer<float>* temp = dependencyFreedBuffers.front();
                 dependencyFreedBuffers.pop();
+                totSetHere.insert(temp);
 
                 // we give this buffer that we just popped to the GraphNode.
                 currentNode->setToWriteAudioBuffer(temp);
@@ -554,7 +559,7 @@ public:
 
 //        debugDump();
 
-        std::cout << "Number of Buffers used for this configuration : " << num_of_buffers_used << "\n";
+        std::cout << "Number of Buffers used for this configuration : " << totSetHere.size() << "\n";
 
     }
 
@@ -569,7 +574,11 @@ public:
         std::unordered_map<GraphNode*, int> indegree;  // In-degree counter for each node
         std::queue<GraphNode*> zeroDependencyQueue;    // Queue for nodes with zero dependencies
 
-        bunchOfBuffers.clear();// TODO : NEED TO ALSO FREE THE GIVEN MEMORY.
+
+        for (auto a : bunchOfBuffers) delete a;
+        for (auto a : bunchOfBuffersForFeedbacks) delete a;
+        bunchOfBuffers.clear();
+        bunchOfBuffersForFeedbacks.clear();
 
         if (!checkAllGood()) return false;
 
@@ -646,7 +655,7 @@ public:
     }
 
 
-    std::vector<GraphNode*> getTopoSortedNodes() {
+    std::vector<GraphNode*> getTopoSortedNodes() const {
         return sortedNodes;
     }
 
@@ -664,7 +673,8 @@ public:
 
     void recrPrint(linkedNode* node) {
         if (node) {
-            std::cout << node->nodePointer->name << ", Pointer value : " << node->nodePointer << ", Buffer used : " << node->nodePointer->getToWriteAudioBuffer() << "\n";
+            std::cout << node->nodePointer->name << ", Pointer value : " << node->nodePointer << ", Buffer used : "
+                << node->nodePointer->getToWriteAudioBuffer() << "\n";
             recrPrint(node->nextNode);
         }
     }

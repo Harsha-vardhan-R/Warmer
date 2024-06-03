@@ -21,7 +21,7 @@ MIDIPianoComponent::MIDIPianoComponent(int offset, int height) {
     wheelComponent = std::make_unique<Wheels>();
     addAndMakeVisible(wheelComponent.get());
 
-    pianoComponent = std::make_unique<Piano>(keyboardState, juce::KeyboardComponentBase::Orientation::horizontalKeyboard);
+    pianoComponent = std::make_unique<Piano>(Instrument::instancePtr->keyboardState, juce::KeyboardComponentBase::Orientation::horizontalKeyboard, ((getWidth()-1400)/2)-50);
     addAndMakeVisible(pianoComponent.get());
     Instrument::VoidPointerToPianoComponent = (void*)pianoComponent.get();
 

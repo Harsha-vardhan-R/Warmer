@@ -18,7 +18,7 @@ public:
 
     static Piano* Instance_Pointer;
 
-    Piano(juce::MidiKeyboardState& state, juce::KeyboardComponentBase::Orientation orientation);
+    Piano(juce::MidiKeyboardState& state, juce::KeyboardComponentBase::Orientation orientation, int n);
     ~Piano() override;
 
 //    void paint(juce::Graphics& g) override;

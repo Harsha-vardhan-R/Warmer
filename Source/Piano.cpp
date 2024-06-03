@@ -14,7 +14,7 @@ int Wheels::TRANSPOSE = 0;
 
 Piano* Piano::Instance_Pointer = nullptr;
 
-Piano::Piano(juce::MidiKeyboardState& state, juce::KeyboardComponentBase::Orientation orientation)  : juce::MidiKeyboardComponent(state, orientation) {
+Piano::Piano(juce::MidiKeyboardState& state, juce::KeyboardComponentBase::Orientation orientation , int n)  : juce::MidiKeyboardComponent(state, orientation) , offset(n) {
 
     Piano::Instance_Pointer = this;
 

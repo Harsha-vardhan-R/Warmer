@@ -26,8 +26,6 @@ public:
     void paint(juce::Graphics& g) override;
     void resized() override;
 
-    juce::MidiKeyboardState keyboardState;
-
 private:
     int offset;
     int height;

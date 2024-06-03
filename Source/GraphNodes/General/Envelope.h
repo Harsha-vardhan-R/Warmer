@@ -19,7 +19,6 @@ public:
 
     Envelope(int pos_x, int pos_y) : GraphNode(juce::String("Envelope"), pos_x, pos_y)  {
 
-
         OutputSockets.add(new GraphNode::Socket(juce::String("Envelope"), direction::OUT, true));
         OutputSockets[0]->setOutputType(SocketDataType::AudioBufferFloat);
 
@@ -28,15 +27,18 @@ public:
         InputSockets[0]->addMenuItem("Trigger");
         InputSockets[0]->addMenuItem("Trigger & Hold");
         InputSockets[0]->addMenuItem("Loop");
-        InputSockets[0]->addMenuItem("Continue");
+        InputSockets[0]->addMenuItem("Loop Continue");
 
+
+        InputSockets.add(new GraphNode::Socket(juce::String("Trigger"), direction::IN, true));
+        InputSockets[1]->acceptType(SocketDataType::MIDI);
 
         InputSockets.add(new GraphNode::Socket(juce::String("Duration(ms)"), direction::IN, false));
-        InputSockets[1]->acceptType(SocketDataType::Floating);
-        InputSockets[1]->addSliderParameterControl(0.0, 2000.0, 25.0);
+        InputSockets[2]->acceptType(SocketDataType::Floating);
+        InputSockets[2]->addSliderParameterControl(0.0, 2000.0, 120.0);
 
-        InputSockets.add(new GraphNode::Socket(juce::String("Shape"), direction::IN, false));
-        InputSockets[2]->addEnvParameterControl();
+        InputSockets.add(new GraphNode::Socket(juce::String("      Envelope   "), direction::IN, false));
+        InputSockets[3]->addEnvParameterControl();
 
         makeAllSocketsVisible();
         resized();
@@ -44,14 +46,14 @@ public:
 
 
     void mini_reset() override {
-        callbackFunction_type callBackTempPointer;
-
-        callBackFunctionEnvelope.store(callBackTempPointer);
+//        callbackFunction_type callBackTempPointer;
+//
+//        callBackFunctionEnvelope.store(callBackTempPointer);
     }
 
     void processGraphNode() override {
-        callbackFunction_type callback = callBackFunctionEnvelope.load();
-        (this->*callBackFunctionEnvelope)();
+//        callbackFunction_type callback = callBackFunctionEnvelope.load();
+//        (this->*callBackFunctionEnvelope)();
     }
 
     void releaseResources() override {}

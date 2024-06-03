@@ -285,7 +285,7 @@ Instrument::GraphPage::GraphPage() {
     subMenuArray[0]->addItem(102, "Convolution");
     subMenuArray[0]->addItem(103, "Latency"); // constant lag.
     subMenuArray[0]->addItem(104, "ADSR");
-    subMenuArray[0]->addItem(105, "LFO");
+    subMenuArray[0]->addItem(105, "Envelope");
     subMenuArray[0]->addItem(106, "Feedback");
 
     subMenuArray[1]->addItem(201, "Oscillator");
@@ -385,6 +385,8 @@ void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *g
         temp = new Latency(pos_x, pos_y);
     } else if (result == 104) {
         temp = new ADSR(pos_x, pos_y);
+    } else if (result == 105) {
+        temp = new Envelope(pos_x, pos_y);
     } else if (result == 106) {
         temp = new Feedback(pos_x, pos_y);
     } else if (result == 201) {
@@ -542,8 +544,6 @@ void drawBezierCurve(juce::Graphics& g, juce::Point<float> endPoint, juce::Point
 }
 
 void Instrument::GraphPage::drawConnections(juce::Graphics &g) {
-
-    //Profiler("Draw connections in graphPage");
 
     g.setColour(GraphNodeConnectionColourID);
 

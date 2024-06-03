@@ -37,7 +37,7 @@ public:
     std::set<int> presently_empty_order;
 
     std::queue<int> FIFO_queue;
-
+//
 //    template<steal_type type>
 //    void subProcessGenerator() {
 //
@@ -53,34 +53,24 @@ public:
 //            int note = message.getNoteNumber();
 //
 //            if constexpr (type == steal_type::Latest) {
+//                // Iterate through all the messages in the buffer
+//                if (message.isNoteOn() && !FIFO_queue.empty()) {
+//                    int socket_here = FIFO_queue.front();
+//                    FIFO_queue.pop();
 //
-//                if (message.isNoteOn()) {
+//                    int position = 0;
 //
-//                    int socket_here = 0;
+//                    if (samplePosition == 0) samplePosition++;
+//                    else position = samplePosition-1;
 //
-//                    // if there is any free voice we fill it first without stealing another voice.
-//                    if (!presently_empty.empty()) {
-//                        // take the first socket available here.
-//                        socket_first = *presently_empty.begin();
-//                        presently_empty.erase(socket_first);
-//                    } else if (!FIFO_queue.empty()) { // if it is not empty we steal from the oldest note(the condition should never be false if above one is false in reality).
-//                        socket_first = FIFO_queue.first();
-//                        FIFO_queue.pop();
+//                    midiBufferArray[socket_here].addEvent(juce::MidiMessage::noteOff((int)1, (int)SocketToNoteMap[socket_here], (juce::uint8)100), position);
 //
-//                        int position = 0;
-//
-//                        if (samplePosition == 0) samplePosition++;
-//                        else position = samplePosition-1;
-//
-//                        midiBufferArray[socket_first].addEvent(juce::MidiMessage::noteOff(1, SocketToNoteMap[socket_first], 0), position);
-//                    }
-//
-//                    noteToOutSocketMap[note] = socket_first;
-//                    SocketToNoteMap[socket_first] = note;
-//                    FIFO_queue.push(socket_first);
+//                    noteToOutSocketMap[note] = socket_here;
+//                    SocketToNoteMap[socket_here] = note;
+//                    FIFO_queue.push(socket_here);
 //
 //                    juce::MidiMessage create_message(message, samplePosition);
-//                    midiBufferArray[socket_first].addEvent(create_message, samplePosition);
+//                    midiBufferArray[socket_here].addEvent(create_message, samplePosition);
 //                } else if (message.isNoteOff()) {
 //                    // if we have the node on, we send a noteOff event.
 //                    // the opposing can happen in two ways, stray midi off message,
@@ -95,7 +85,6 @@ public:
 //                        noteToOutSocketMap.erase(note);
 //                    }
 //                }
-//
 //            } else if (type == steal_type::Stack) {
 //                if (message.isNoteOn()) {
 //
@@ -189,7 +178,7 @@ public:
 //    }
 
     void processGraphNode() override {
-        // clear all buffers
+
         for (int i = 0; i < voices; ++i) midiBufferArray[i].clear();
 
         juce::MidiMessage message;

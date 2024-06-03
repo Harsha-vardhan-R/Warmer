@@ -18,6 +18,7 @@ class look_and_feel_exp : public juce::LookAndFeel_V3 {
 public:
     look_and_feel_exp() {
         setColour(juce::TabbedComponent::backgroundColourId, juce::Colours::white);
+        setColour(juce::TabbedComponent::outlineColourId, juce::Colours::grey);
     }
 };
 

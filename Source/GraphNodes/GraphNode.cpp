@@ -309,7 +309,7 @@ void GraphNode::Socket::acceptType(SocketDataType type) { TypesAccepted.insert(t
 bool GraphNode::Socket::accepts(SocketDataType type) { return TypesAccepted.find(type) != TypesAccepted.end(); }
 
 void GraphNode::Socket::update() {
-    parameterController.setBounds(0, 15, getWidth(), 35);
+    parameterController.setBounds(0, 15, getWidth(), getTotHeight()-15);
     parameterController.update();
     addAndMakeVisible(&parameterController);
 }

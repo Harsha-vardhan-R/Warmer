@@ -20,6 +20,8 @@
 //        window.reset(new juce::dsp::WindowingFunction<float>(fftSize, juce::dsp::WindowingFunction<float>::hann));
 //        fftData.resize(2 * fftSize, 0.0f);
 //        tempData.resize(fftSize, 0.0f);
+//
+//        for (auto& a : filterCoefficients) a = 1.0;
 //    }
 //
 //    void processGraphNode() override {
@@ -54,15 +56,18 @@
 //    }
 //
 //    void reset() override {
-//
+//        int samples = (int)estimatedSamplesPerBlock;
 //    }
 //
 //private:
 //
 //    juce::dsp::FFT forwardFFT, inverseFFT;
+//
 //    int fftSize;
 //    int fftOrder;
+//
 //    std::vector<float> fftData, tempData;
+//
 //    std::unique_ptr<juce::dsp::WindowingFunction<float>> window;
 //    std::array<float, 513> filterCoefficients;
 //
