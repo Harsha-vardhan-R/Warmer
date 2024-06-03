@@ -173,3 +173,104 @@ private:
     void (Utility::*callbackFunction)(float, float) = nullptr;
 
 };
+
+
+
+class BpmDivToMs : public GraphNode {
+public:
+
+    BpmDivToMs(int pos_x, int pos_y) : GraphNode(juce::String("BPM to MS"), pos_x, pos_y) {
+
+        // Output wave.
+        OutputSockets.add(new GraphNode::Socket(juce::String("Milli-Seconds"), direction::OUT, true));
+        OutputSockets[0]->setOutputType(SocketDataType::Floating);
+
+        InputSockets.add(new GraphNode::Socket(juce::String("BPM"), direction::IN, false));
+        InputSockets[0]->acceptType(SocketDataType::Floating);
+        InputSockets[0]->addSliderParameterControl(1.0, 400.0, 120.0);
+
+        InputSockets.add(new GraphNode::Socket(juce::String("Divisions"), direction::IN, false));
+        InputSockets[1]->addMenuParameterControl();
+        InputSockets[1]->addMenuItem("1/64"); // 1
+        InputSockets[1]->addMenuItem("1/32");
+        InputSockets[1]->addMenuItem("1/16");
+        InputSockets[1]->addMenuItem("1/8");
+        InputSockets[1]->addMenuItem("1/4");
+        InputSockets[1]->addMenuItem("1/2");
+        InputSockets[1]->addMenuItem("1/1"); // 7
+        InputSockets[1]->addMenuItem("2/1");
+        InputSockets[1]->addMenuItem("4/1");
+        InputSockets[1]->addMenuItem("8/1");
+        InputSockets[1]->addMenuItem("16/1");
+        InputSockets[1]->addMenuItem("32/1");
+        InputSockets[1]->addMenuItem("64/1");
+
+        makeAllSocketsVisible();
+        resized();
+    }
+
+    void processGraphNode() override {
+        float bpm = std::clamp(InputSockets[0]->getValue(), 1.0f, 400.0f);
+        float divisions = div.load();
+        float out_ms = (60000 / bpm) * (std::pow(2.0f, divisions-7));
+        OutputSockets[0]->setFloatValue(out_ms);
+    }
+
+    void releaseResources() override {}
+
+    void reset() override {}
+
+
+    void mini_reset() override {
+        div.store(InputSockets[1]->getValue());
+    }
+
+    ~BpmDivToMs() {};
+
+private:
+    std::atomic<float> div = 1.0f;
+};
+
+
+class FloatingConstant : public GraphNode {
+public:
+
+    FloatingConstant(int pos_x, int pos_y) : GraphNode(juce::String("Constant"), pos_x, pos_y) {
+
+        // Output wave.
+        OutputSockets.add(new GraphNode::Socket(juce::String("Value OUT"), direction::OUT, true));
+        OutputSockets[0]->setOutputType(SocketDataType::Floating);
+
+        InputSockets.add(new GraphNode::Socket(juce::String("Value"), direction::IN, false));
+        InputSockets[0]->acceptType(SocketDataType::Floating);
+        InputSockets[0]->addSliderParameterControl(0.0, 1.0, 0.2);
+
+        InputSockets.add(new GraphNode::Socket(juce::String("Multiply"), direction::IN, false));
+        InputSockets[1]->acceptType(SocketDataType::Floating);
+        InputSockets[1]->addSliderParameterControl(-100.0, 100.0, 1.0);
+
+        InputSockets.add(new GraphNode::Socket(juce::String("Add"), direction::IN, false));
+        InputSockets[2]->acceptType(SocketDataType::Floating);
+        InputSockets[2]->addSliderParameterControl(-100.0, 100.0, 0.0);
+
+        makeAllSocketsVisible();
+        resized();
+    }
+
+    void processGraphNode() override {
+        float val = InputSockets[0]->getValue();
+        float mul = InputSockets[1]->getValue();
+        float add = InputSockets[2]->getValue();
+
+        OutputSockets[0]->setFloatValue(val * mul + add);
+    }
+
+    void releaseResources() override {}
+
+    void reset() override {}
+
+    ~FloatingConstant() {};
+
+private:
+
+};

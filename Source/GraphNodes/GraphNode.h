@@ -302,6 +302,11 @@ public :
 
         bool collapseOnConnection = true;
 
+        // returns pointer from the parameterCtrl class.
+        void* getPointerToPresentParameterCtrlController() {
+            return parameterController.getPresentParameterCtrlPointer();
+        }
+
     private:
 
         juce::Component* editPage;
@@ -476,8 +481,10 @@ public :
             }
 
             // returns the pointer to envParameterCtrl.
-            envParamCtrl* getEnvParameterCtrlPointer() {
-                return envelopeCtrl.get();
+            void* getPresentParameterCtrlPointer() {
+                if (envelopeCtrl) return envelopeCtrl.get();
+                else if (sliderFloat) return sliderFloat.get();
+                else return menuList.get();
             }
 
             void sliderValueChanged(juce::Slider* slider) override {

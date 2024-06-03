@@ -320,7 +320,8 @@ Instrument::GraphPage::GraphPage() {
     subMenuArray[5]->addItem(602, "Arpeggiator");
     subMenuArray[5]->addItem(603, "Polyphony");
 
-    subMenuArray[6]->addItem(701, "Single Signal"); // takes in an audio buffer and sends out only one side of it.
+    subMenuArray[6]->addItem(701, "Constant");
+    subMenuArray[6]->addItem(702, "bpm & divisions->ms");
 
     AddNodesPopupMenu->addSubMenu("General", *subMenuArray[0]);
     AddNodesPopupMenu->addSubMenu("Oscillators", *subMenuArray[1]);
@@ -417,6 +418,10 @@ void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *g
         temp = new Mixer(pos_x, pos_y);
     } else if (result == 603) {
         temp = new Polyphony(pos_x, pos_y);
+    } else if (result == 701) {
+        temp = new FloatingConstant(pos_x, pos_y);
+    } else if (result == 702) {
+        temp = new BpmDivToMs(pos_x, pos_y);
     } else if (result == 0) {
         /* DO NOTHING */
         return;

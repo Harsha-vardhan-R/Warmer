@@ -87,8 +87,6 @@ set(SOURCES
         ./JuceLibraryCode/include_juce_gui_basics.cpp
         ./JuceLibraryCode/include_juce_gui_extra.cpp
         ./JuceLibraryCode/include_juce_midi_ci.cpp
-        ./JuceLibraryCode/include_juce_opengl.cpp
-        ./JuceLibraryCode/include_juce_osc.cpp
 )
 
 

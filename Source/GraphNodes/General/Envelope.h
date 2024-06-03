@@ -42,6 +42,19 @@ public:
 
         makeAllSocketsVisible();
         resized();
+
+        envelope = static_cast<envParamCtrl*>(InputSockets[3]->getPointerToPresentParameterCtrlController());
+
+        if (!envelope) std::cout << "Dayum, Did not work out!" << "\n";
+    }
+
+    template<int type>
+    void subProcessGenerator() {
+
+
+        if (type == 1) {
+
+        }
     }
 
 
@@ -61,12 +74,17 @@ public:
     void reset() override {
         OutputSockets[0]->setBufferPointer(bufferToWritePointer);
 
-
     }
 
     ~Envelope() {};
 
 private:
-
     std::atomic<callbackFunction_type> callBackFunctionEnvelope = nullptr;
+
+    envParamCtrl* envelope = nullptr;
+
+
+    // time from 0 -> 1
+    // we just
+    float timeCoordinate = 0.0f;
 };

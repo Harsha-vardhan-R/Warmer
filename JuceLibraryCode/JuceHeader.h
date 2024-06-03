@@ -26,8 +26,6 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <juce_gui_extra/juce_gui_extra.h>
 #include <juce_midi_ci/juce_midi_ci.h>
-#include <juce_opengl/juce_opengl.h>
-#include <juce_osc/juce_osc.h>
 
 
 #if defined (JUCE_PROJUCER_VERSION) && JUCE_PROJUCER_VERSION < JUCE_VERSION
