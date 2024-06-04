@@ -12,3 +12,4 @@ Warmer.jucer
 /Release
 /Testing
 /.cmake
+/cmake-build-release/

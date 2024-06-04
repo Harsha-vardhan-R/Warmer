@@ -18,7 +18,7 @@ public:
     VolumeBarLookAndFeel() {
         setColour(juce::Slider::ColourIds::textBoxTextColourId, juce::Colour(0xFF2C3333));
         setColour(juce::Slider::ColourIds::backgroundColourId, juce::Colours::white);
-        setColour(juce::Slider::ColourIds::thumbColourId, juce::Colour(0xFFB9F8D3));
+        setColour(juce::Slider::ColourIds::thumbColourId, juce::Colour(0xFFaffa96));
         setColour(juce::Slider::ColourIds::textBoxOutlineColourId, juce::Colours::grey);
     }
 

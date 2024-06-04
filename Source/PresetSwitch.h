@@ -10,6 +10,8 @@
 
 #pragma once
 #include <JuceHeader.h>
+
+#include <memory>
 #include "MenuComponent.h"
 #include "ColourPalette.h"
 #include "VolumeLevel.h"
@@ -26,40 +28,40 @@ public:
 
     PresetSwitch() {
         instrumentSelect = std::make_unique<juce::ComboBox>();
-        instrumentSelect.get()->setJustificationType(juce::Justification::centred);
-        instrumentSelect.get()->setColour(juce::ComboBox::textColourId, ComboBoxTextSelectedColourID);
-        instrumentSelect.get()->setText("Select Instrument");
+        instrumentSelect->setJustificationType(juce::Justification::centred);
+        instrumentSelect->setColour(juce::ComboBox::textColourId, ComboBoxTextSelectedColourID);
+        instrumentSelect->setText("Select Instrument");
         addAndMakeVisible(instrumentSelect.get());
 
         presetSelect = std::make_unique<juce::ComboBox>();
-        presetSelect.get()->setJustificationType(juce::Justification::centred);
-        presetSelect.get()->setColour(juce::ComboBox::textColourId, ComboBoxTextSelectedColourID);
+        presetSelect->setJustificationType(juce::Justification::centred);
+        presetSelect->setColour(juce::ComboBox::textColourId, ComboBoxTextSelectedColourID);
         // will change the text when you are changing the instrument.
-        presetSelect.get()->setText("Select Preset");
+        presetSelect->setText("Select Preset");
         addAndMakeVisible(presetSelect.get());
 
-        volumeBars.reset(new VolumeLevel());
+        volumeBars = std::make_unique<VolumeLevel>();
         addAndMakeVisible(volumeBars.get());
         VolumeLevel::instance = volumeBars.get();
 
-        waveShape.reset(new WaveShapeDisp(2));
+        waveShape = std::make_unique<WaveShapeDisp>(2);
         addAndMakeVisible(waveShape.get());
 
-        juce::Image myImage = juce::ImageFileFormat::loadFrom(juce::File("./Assets/Icons/icon.png"));
+        juce::Image myImage = juce::ImageFileFormat::loadFrom(juce::File("./WarmerLogo.png"));
         logo = std::make_unique<juce::ImageComponent>();
-        logo.get()->setImage(myImage);
+        logo->setImage(myImage);
         addAndMakeVisible(logo.get());
 
-        styles.reset(new MenuComponent());
+        styles = std::make_unique<MenuComponent>();
         setLookAndFeel(styles.get());
 
         resized();
     };
 
     /* Call from outside when the instruments are being loaded */
-    void addInstrument(juce::String instrumentName) {
+    void addInstrument(const juce::String& instrumentName) {
         instrument_number_count++;
-        instrumentSelect.get()->addItem(instrumentName, instrument_number_count);
+        instrumentSelect->addItem(instrumentName, instrument_number_count);
     }
 
     ~PresetSwitch() override {
@@ -73,11 +75,12 @@ public:
     void resized() override {
         setSize(getParentWidth(), 35);
 
-        if (instrumentSelect.get() != nullptr) instrumentSelect.get()->setBounds(130, 1, (getParentWidth()-130)*0.4f, 33);
-        if (logo.get() != nullptr) logo.get()->setBounds(10, 2, 115, 31);
-        if (presetSelect.get() != nullptr) presetSelect.get()->setBounds(130+instrumentSelect.get()->getWidth(), 1, (getParentWidth()-130)*0.25f, 33);
-        if (volumeBars.get() != nullptr) volumeBars.get()->setBounds(presetSelect.get()->getX()+presetSelect.get()->getWidth()+1, 2, getWidth()-(367+instrumentSelect.get()->getWidth()+presetSelect.get()->getWidth()), 31);
-        if (waveShape.get() != nullptr) waveShape.get()->setBounds(getWidth()-234, 2, 232, 31);
+        if (instrumentSelect != nullptr) instrumentSelect->setBounds(130, 1, (getParentWidth()-130)*0.4f, 33);
+        if (logo != nullptr) logo->setBounds(10, 2, 115, 31);
+        if (presetSelect != nullptr) presetSelect->setBounds(130+instrumentSelect->getWidth(), 1, (getParentWidth()-130)*0.25f, 33);
+        if (volumeBars != nullptr)
+            volumeBars->setBounds(presetSelect->getX()+presetSelect.get()->getWidth()+1, 2, getWidth()-(367+instrumentSelect->getWidth()+presetSelect->getWidth()), 31);
+        if (waveShape != nullptr) waveShape->setBounds(getWidth()-234, 2, 232, 31);
 
     };
 

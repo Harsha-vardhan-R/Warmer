@@ -179,7 +179,7 @@ public:
                         const float *amplModPointer = amplitudeModBuffer->getReadPointer(channel);
 
                         for (int i = 0; i < bufferToWritePointer->getNumSamples(); ++i) {
-                            current_phase += freqModBuffer[i] * phaseIncrementRatio;
+                            current_phase += freqModBuffer[i] * phaseIncrementRatio + phaseModPointer[i];
                             current_phase = std::fmod(current_phase, TAU);
 
                             if constexpr(waveInputType == waveType::sine) {
@@ -304,7 +304,7 @@ public:
                         const float *amplModPointer = amplitudeModBuffer->getReadPointer(channel);
 
                         for (int i = 0; i < bufferToWritePointer->getNumSamples(); ++i) {
-                            current_phase += freqAtSamplePoint_from_MIDI[i] * phaseIncrementRatio;
+                            current_phase += freqAtSamplePoint_from_MIDI[i] * phaseIncrementRatio + phaseModPointer[i];
                             current_phase = std::fmod(current_phase, TAU);
 
                             if constexpr(waveInputType == waveType::sine) {
@@ -414,7 +414,7 @@ public:
 
                         for (int i = 0; i < bufferToWritePointer->getNumSamples(); ++i) {
 
-                            current_phase += freq * phaseIncrementRatio;
+                            current_phase += freq * phaseIncrementRatio + phaseModPointer[i];
                             current_phase = std::fmod(current_phase, TAU);
 
                             if constexpr(waveInputType == waveType::sine)

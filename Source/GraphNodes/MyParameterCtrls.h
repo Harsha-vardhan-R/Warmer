@@ -15,6 +15,8 @@ public:
     };
 
     envParamCtrl(Listener* parent) {
+        lockMutex();
+
         // Initialize with first and last points
         points.push_back({ 0.00f, 0.0f });
         points.push_back({ 1.0f, 1.0f });
@@ -25,9 +27,9 @@ public:
         addListener(parent);
     }
 
-
-
     void paint(juce::Graphics& g) override {
+        lockMutex();
+
         g.fillAll(juce::Colours::white);
 
         g.setColour(juce::Colours::lightgrey);
@@ -74,6 +76,8 @@ public:
         if (event.mods.isRightButtonDown()) {
             removePoint(event.position);
         } else {
+            lockMutex();
+
             if (!SelectPoint(event.position)) {
                 // Determine which curve segment to adjust
                 for (int i = 1; i < points.size(); ++i) {
@@ -88,6 +92,8 @@ public:
     }
 
     void mouseDoubleClick(const juce::MouseEvent& event) override {
+        lockMutex();
+
         if (event.mods.isLeftButtonDown()) {
             auto normalizedPosition = juce::Point<float>(event.position.x / getWidth(), event.position.y / getHeight());
 
@@ -134,6 +140,7 @@ public:
             adjustCurve(event.position);
         }
         lastMousePosition = event.position;
+        triggerParentSocket();
     }
 
     void mouseUp(const juce::MouseEvent&) override {
@@ -147,18 +154,38 @@ public:
     void removeListener(Listener* listener) { listeners.remove(listener); }
 
 
+    struct Point { float x, y; };
+
+
+    void copyData(std::vector<Point>& points_, std::vector<float>& controlLevels_) {
+        lockMutex();
+
+        points_.resize(points.size());
+        for (int i = 0; i < points.size(); ++i) {
+            points_[i] = {points[i].x, 1.0f - points[i].y};
+        }
+        controlLevels_ = controlLevels;
+    }
+
+    void lockMutex() {
+        std::lock_guard<std::mutex> lock(mtx);
+    }
+
+
 private:
+
+    std::mutex mtx;
 
     void triggerParentSocket() { listeners.call([](Listener& l) { l.envParamCtrltListenerTriggered(); }); }
 
     juce::ListenerList<Listener> listeners;
 
-
-    struct Point { float x, y; };
-
+    // these things NEED to set or read only by locking the mutex.
+    ////////////////////////////////
     std::vector<Point> points;
     // Stores how much curve is in the path between two points
     std::vector<float> controlLevels;
+    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
     int draggingPointIndex = -1;
     int draggingAreaIndex = -1;
@@ -171,6 +198,8 @@ private:
     }
 
     bool SelectPoint(juce::Point<float> position) {
+        lockMutex();
+
         for (size_t i = 0; i < points.size(); ++i) {
             auto pointPos = getPointPosition(points[i]);
 
@@ -185,6 +214,8 @@ private:
     }
 
     void movePoint(juce::Point<float> position) {
+        lockMutex();
+
         auto normalizedPosition = juce::Point<float>(position.x / getWidth(), position.y / getHeight());
 
         if (draggingPointIndex == 0 || draggingPointIndex == points.size() - 1) {
@@ -200,6 +231,8 @@ private:
     }
 
     void adjustCurve(juce::Point<float> position) {
+        lockMutex();
+
         // Adjust curve sensitivity
         if (draggingAreaIndex != -1) {
             float sensitivityFactor = 0.004f;
@@ -210,6 +243,7 @@ private:
     }
 
     void removePoint(juce::Point<float> position) {
+        lockMutex();
 
         for (size_t i = 0; i < points.size(); ++i) {
             auto pointPos = getPointPosition(points[i]);

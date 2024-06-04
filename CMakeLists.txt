@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.15)
 project(Warmer VERSION 0.1.0)
 
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-
-set(CMAKE_BUILD_TYPE Debug)
-
+# Set build type to Release by default
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
 
 include_directories(
         ${CMAKE_HOME_DIRECTORY}/JuceLibraryCode
@@ -15,7 +15,7 @@ include_directories(
         ${CMAKE_HOME_DIRECTORY}/Source
 )
 
-# from Projucer generated MakeFile.
+# From Projucer generated MakeFile.
 add_compile_definitions(
         LINUX=1
         JUCE_DISPLAY_SPLASH_SCREEN=1
@@ -52,9 +52,9 @@ add_compile_definitions(
         JucePlugin_Build_LV2=0
 )
 
-
+# Compiler flags for debug and release builds
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -ggdb -O2 -pthread")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -flto -Wall -Wcast-align -Wfloat-equal -Wno-ignored-qualifiers -Wsign-compare -Wsign-conversion -Wstrict-aliasing -Wswitch-enum -Wuninitialized -Wunreachable-code -Wunused-parameter -Wmissing-field-initializers -Wextra -Wsign-compare -Wno-implicit-fallthrough -Wno-maybe-uninitialized -Wredundant-decls -Wno-strict-overflow -Wshadow -Woverloaded-virtual -Wreorder -Wzero-as-null-pointer-constant")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -flto -Wall -Wcast-align -Wfloat-equal -Wno-ignored-qualifiers -Wsign-compare -Wsign-conversion -Wstrict-aliasing -Wswitch-enum -Wuninitialized -Wunreachable-code -Wunused-parameter -Wmissing-field-initializers -Wextra -Wsign-compare -Wno-implicit-fallthrough -Wno-maybe-uninitialized -Wredundant-decls -Wno-strict-overflow -Wshadow -Woverloaded-virtual -Wreorder -Wzero-as-null-pointer-constant -s")
 
 # Add source files
 set(SOURCES
@@ -89,9 +89,7 @@ set(SOURCES
         ./JuceLibraryCode/include_juce_midi_ci.cpp
 )
 
-
 add_executable(Warmer ${SOURCES})
-
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(ALSA REQUIRED alsa)
@@ -123,12 +121,18 @@ target_include_directories(Warmer PRIVATE
         ${GTK_INCLUDE_DIRS}
 )
 
+# Strip the binary after building (only in Release mode)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_custom_command(TARGET Warmer POST_BUILD
+            COMMAND ${CMAKE_STRIP} $<TARGET_FILE:Warmer>
+            COMMENT "Stripping symbols to reduce binary size.")
+endif()
+
 # Add custom command to clean
 add_custom_target(clean-all
         COMMAND ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/cmake_clean_target.cmake
         COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/CMakeFiles
-        COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/CMakeScripts
-        COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/Makefile
+        COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/Makefile
         COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/CMakeCache.txt
         COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/cmake_install.cmake
 )
