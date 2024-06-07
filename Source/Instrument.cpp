@@ -304,7 +304,7 @@ Instrument::GraphPage::GraphPage() {
 
     subMenuArray[3]->addItem(401, "ButterWorth");
     subMenuArray[3]->addItem(402, "Chebyshev");
-    subMenuArray[3]->addItem(403, "Digital");
+    subMenuArray[3]->addItem(403, "Digital Filter");
 
     subMenuArray[4]->addItem(501, "Mul & Add Transform");
     subMenuArray[4]->addItem(502, "Add Or Sub Signals");
@@ -398,6 +398,8 @@ void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *g
         temp = new RandomOscillator(pos_x, pos_y);
     } else if (result == 302) {
         temp = new Delay(pos_x, pos_y);
+    } else if (result == 403) {
+        temp = new DigitalFilter(pos_x, pos_y);
     } else if (result == 501) {
         temp = new AddAndMul(pos_x, pos_y);
     } else if (result == 502) {
@@ -545,7 +547,7 @@ void drawBezierCurve(juce::Graphics& g, juce::Point<float> endPoint, juce::Point
 
     juce::ColourGradient gradient(startGrad, startPoint, endGrad, endPoint, false);
     g.setGradientFill(gradient);
-    g.strokePath(path, juce::PathStrokeType(1.5f));
+    g.strokePath(path, juce::PathStrokeType(1.0f));
 }
 
 void Instrument::GraphPage::drawConnections(juce::Graphics &g) {

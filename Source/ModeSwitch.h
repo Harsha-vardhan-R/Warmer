@@ -32,16 +32,16 @@ public:
 
     look_and_feel_exp s;
 
-    ModeSwitch() : juce::TabbedComponent(juce::TabbedButtonBar::Orientation::TabsAtLeft) {
-        //setSize(getParentWidth(), getParentHeight());
+    ModeSwitch() : instrument(30),
+                    juce::TabbedComponent(juce::TabbedButtonBar::Orientation::TabsAtLeft) {
+
         auto colour_here = juce::Colours::white;
 
         this->setTabBarDepth(30);
-        this->instrument = std::make_unique<Instrument>(getTabBarDepth());
 
-        addTab("Play", colour_here, this->instrument.get()->getPlayPage() , true);
-        addTab("Graph", colour_here, this->instrument.get()->getGraphPage() , true);// viewport is set as the component.
-        addTab("Edit", colour_here, this->instrument.get()->getEditPage() , true);
+        addTab("Play", colour_here, instrument.getPlayPage() , true);
+        addTab("Graph", colour_here, instrument.getGraphPage() , true);// viewport is set as the component.
+        addTab("Edit", colour_here, instrument.getEditPage() , true);
 
 //        styles.reset(new MenuComponent());
 //        setLookAndFeel(styles.get());
@@ -64,24 +64,23 @@ public:
     //==============
     // Called when the tab is switched, this will call the instrument's setMode()
     void currentTabChanged(int newTabIndex, const juce::String& newTabName) override {
-        if (instrument.get() == nullptr) return ;
-
         switch (newTabIndex) {
             case 0:
-                instrument.get()->setMode(Mode::Play);
+                instrument.setMode(Mode::Play);
                 break;
             case 1:
-                instrument.get()->setMode(Mode::Graph);
+                instrument.setMode(Mode::Graph);
                 break;
             case 2:
-                instrument.get()->setMode(Mode::Edit);
+                instrument.setMode(Mode::Edit);
                 break;
         }
     }
 
 
 private:
-    std::unique_ptr<Instrument> instrument;
+    Instrument instrument;
+
     bool instrumentPresent;
     std::unique_ptr<juce::LookAndFeel_V4> styles;
 

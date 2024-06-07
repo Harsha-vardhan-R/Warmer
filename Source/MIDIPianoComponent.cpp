@@ -14,25 +14,24 @@
 
 // This is always going to be of the same height
 // The offset is to tell how low it should start.
-MIDIPianoComponent::MIDIPianoComponent(int offset, int height) {
+MIDIPianoComponent::MIDIPianoComponent(int offset, int height) :
+        pianoComponent(Instrument::getInstance()->keyboardState, juce::KeyboardComponentBase::Orientation::horizontalKeyboard, ((getWidth()-1400)/2)-50) {
+
     this->offset = offset;
     this->height = height;
 
-    wheelComponent = std::make_unique<Wheels>();
-    addAndMakeVisible(wheelComponent.get());
+    addAndMakeVisible(wheelComponent);
 
-    pianoComponent = std::make_unique<Piano>(Instrument::instancePtr->keyboardState, juce::KeyboardComponentBase::Orientation::horizontalKeyboard, ((getWidth()-1400)/2)-50);
-    addAndMakeVisible(pianoComponent.get());
-    Instrument::VoidPointerToPianoComponent = (void*)pianoComponent.get();
+    addAndMakeVisible(pianoComponent);
 
-    sideBar.reset(new PianoSideBar());
-    addAndMakeVisible(sideBar.get());
+
+    addAndMakeVisible(sideBar);
 
     resized();
 
 }
 
-MIDIPianoComponent::~MIDIPianoComponent() {}
+MIDIPianoComponent::~MIDIPianoComponent() = default;
 
 void MIDIPianoComponent::paint(juce::Graphics &g) {}
 
@@ -41,17 +40,13 @@ void MIDIPianoComponent::resized() {
     setBounds(0, this->offset, getParentWidth(), this->height);
     setSize(getParentWidth(), this->height);
 
-    if (wheelComponent != nullptr) {
-        wheelComponent->setOffset(((getWidth()-1400)/2)-50);
-        wheelComponent->resized();
-    }
-    if (pianoComponent != nullptr) {
-        pianoComponent->setOffset(((getWidth()-1400)/2)-50);
-        pianoComponent->resized();
-    }
-    if (sideBar != nullptr) {
-        sideBar->setOffset(((getWidth()-1400)/2)+50);
-        sideBar->resized();
-    }
+    wheelComponent.setOffset(((getWidth()-1400)/2)-50);
+    wheelComponent.resized();
+
+    pianoComponent.setOffset(((getWidth()-1400)/2)-50);
+    pianoComponent.resized();
+
+    sideBar.setOffset(((getWidth()-1400)/2)+50);
+    sideBar.resized();
 
 }

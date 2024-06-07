@@ -9,6 +9,8 @@
 */
 
 #include "GraphNode.h"
+
+#include <utility>
 #include "../Instrument.h"
 
 Instrument* instrument_ptr = nullptr;
@@ -56,7 +58,7 @@ GraphNode::GraphNode(juce::String name, int pos_x, int pos_y) {
 
     setLookAndFeel(&style);
 
-    this->name = name;
+    this->name = std::move(name);
 
     UIWidth = 0;
     UIHeight = 0;

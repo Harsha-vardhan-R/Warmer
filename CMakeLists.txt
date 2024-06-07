@@ -34,8 +34,6 @@ add_compile_definitions(
         JUCE_MODULE_AVAILABLE_juce_gui_basics=1
         JUCE_MODULE_AVAILABLE_juce_gui_extra=1
         JUCE_MODULE_AVAILABLE_juce_midi_ci=1
-        JUCE_MODULE_AVAILABLE_juce_opengl=1
-        JUCE_MODULE_AVAILABLE_juce_osc=1
         JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1
         JUCE_STRICT_REFCOUNTEDPOINTER=1
         JUCE_STANDALONE_APPLICATION=1
@@ -53,7 +51,7 @@ add_compile_definitions(
 )
 
 # Compiler flags for debug and release builds
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -ggdb -O2 -pthread")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O2 -ggdb -pthread")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -flto -Wall -Wcast-align -Wfloat-equal -Wno-ignored-qualifiers -Wsign-compare -Wsign-conversion -Wstrict-aliasing -Wswitch-enum -Wuninitialized -Wunreachable-code -Wunused-parameter -Wmissing-field-initializers -Wextra -Wsign-compare -Wno-implicit-fallthrough -Wno-maybe-uninitialized -Wredundant-decls -Wno-strict-overflow -Wshadow -Woverloaded-virtual -Wreorder -Wzero-as-null-pointer-constant -s")
 
 # Add source files
@@ -121,12 +119,12 @@ target_include_directories(Warmer PRIVATE
         ${GTK_INCLUDE_DIRS}
 )
 
-# Strip the binary after building (only in Release mode)
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_custom_command(TARGET Warmer POST_BUILD
-            COMMAND ${CMAKE_STRIP} $<TARGET_FILE:Warmer>
-            COMMENT "Stripping symbols to reduce binary size.")
-endif()
+
+#if(CMAKE_BUILD_TYPE STREQUAL "Release")
+#    add_custom_command(TARGET Warmer POST_BUILD
+#            COMMAND ${CMAKE_STRIP} $<TARGET_FILE:Warmer>
+#            COMMENT "Stripping symbols to reduce binary size.")
+#endif()
 
 # Add custom command to clean
 add_custom_target(clean-all

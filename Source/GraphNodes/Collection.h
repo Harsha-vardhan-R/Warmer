@@ -41,6 +41,7 @@
 #include "General/Envelope.h"
 
 #include "Effects/Delay.h"
+#include "Effects/Distortion.h"
 
 #include "MIDI/MIDI_Polyphony.h"
 

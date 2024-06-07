@@ -394,6 +394,11 @@ private:
     bool isCanvasPresent{};
     std::unique_ptr<juce::Component> Canvas;
 
+    // do not try to make these class members,
+    // they are kind of a little interconnected with  constructors
+    // making them class members will initialise before the constructor.
+    // if you want to do it please keep in mind it at least will waste a day of your life.
+    // with build getting crashed, even gdb does not know where the errors come from.
     std::unique_ptr<juce::Component> editPage;
     std::unique_ptr<juce::Component> graphPage;
     std::unique_ptr<juce::Component> playPage;

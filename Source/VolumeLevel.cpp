@@ -36,7 +36,7 @@ VolumeLevel::VolumeLevel() {
 
 void VolumeLevel::sliderValueChanged(juce::Slider *slider) {
     if (slider == &volumeSlider) {
-        Instrument::getInstance()->setAudioDeviceVolume(slider->getValue());
+        if (Instrument::getInstance()) Instrument::getInstance()->setAudioDeviceVolume(slider->getValue());
     }
 }
 
@@ -45,10 +45,7 @@ void* VolumeLevel::getInstance() {
     if (instance != nullptr) {
         return (void*)VolumeLevel::instance;
     }
-    int h;
-    int *b = nullptr;
     std::cout << "Isinstance() called before creating, in the VolumeLevel Class" << std::endl;
-    h = *b;
     return nullptr;
 }
 

@@ -40,9 +40,6 @@ public:
         InputSockets.add(new GraphNode::Socket(juce::String("      Envelope   "), direction::IN, false));
         InputSockets[3]->addEnvParameterControl();
 
-        InputSockets.add(new GraphNode::Socket(juce::String("Smooth"), direction::IN, false));
-        InputSockets[4]->acceptType(SocketDataType::Floating);
-        InputSockets[4]->addSliderParameterControl(0.0f, 0.1, 0.01);
 
         makeAllSocketsVisible();
         resized();
@@ -52,13 +49,9 @@ public:
         if (!envelope) std::cout << "Dayum, Did not work out! Envelope.h :48" << "\n";
     }
 
-    static float lerp(float start, float end, float t) {
-        return start + t * (end - start);
-    }
 
     template<int type>
     void subProcessGenerator() {
-        float smoothness = std::clamp<float>(InputSockets[4]->getValue(), 0.0f, 0.1);
 
         if (needsReloading.load()) {
             envelope->copyData(points, controlLevels);
@@ -81,39 +74,28 @@ public:
 
                 if constexpr (type == 1) {
                     if (presMIDI_Note != -1) {
-                        float targetLevel = getYForX(timeCoordinate);
-                        channelData[currentIndexPosition] = lerp(currentLevel, targetLevel, smoothness);
-                        currentLevel = targetLevel;
+                        channelData[currentIndexPosition] = getYForX(timeCoordinate);
                         timeCoordinate += timeCoordinateIncrement;
                     } else {
-                        float targetLevel = 0.0;
-                        channelData[currentIndexPosition] = lerp(currentLevel, targetLevel, smoothness);
-                        currentLevel = targetLevel;
+                        channelData[currentIndexPosition] = 0.0f;
                     }
                 } else if (type == 2) {
                     // it keeps on increasing, after 1.0 we are goin to get the same last y value,
                     // which is what we want.
-                    float targetLevel = getYForX(timeCoordinate);
-                    channelData[currentIndexPosition] = lerp(currentLevel, targetLevel, smoothness);
-                    currentLevel = targetLevel;
+                    channelData[currentIndexPosition] = getYForX(timeCoordinate);
                     timeCoordinate += timeCoordinateIncrement;
                 } else if (type == 3) {
                     // if some note is pressed run the loop else stop it.
                     if (presMIDI_Note != -1) {
-                        float targetLevel = getYForX(timeCoordinate);
-                        channelData[currentIndexPosition] = lerp(currentLevel, targetLevel, smoothness);
-                        currentLevel = targetLevel;
+                        channelData[currentIndexPosition] = getYForX(timeCoordinate);
                         timeCoordinate += timeCoordinateIncrement;
                         if (timeCoordinate > 1.0f) timeCoordinate -= 1.0f;
                     } else {
                         float targetLevel = 0.0;
-                        channelData[currentIndexPosition] = lerp(currentLevel, targetLevel, smoothness);
-                        currentLevel = targetLevel;
+                        channelData[currentIndexPosition] = getYForX(timeCoordinate);
                     }
                 } else {
-                    float targetLevel = getYForX(timeCoordinate);
-                    channelData[currentIndexPosition] = lerp(currentLevel, targetLevel, smoothness);
-                    currentLevel = targetLevel;
+                    channelData[currentIndexPosition] = getYForX(timeCoordinate);
                     timeCoordinate += timeCoordinateIncrement;
                     if (timeCoordinate > 1.0f) timeCoordinate -= 1.0f;
                 }
@@ -137,39 +119,28 @@ public:
 
             if constexpr (type == 1) {
                 if (presMIDI_Note != -1) {
-                    float targetLevel = getYForX(timeCoordinate);
-                    channelData[currentIndexPosition] = lerp(currentLevel, targetLevel, smoothness);
-                    currentLevel = targetLevel;
+                    channelData[currentIndexPosition] = getYForX(timeCoordinate);
                     timeCoordinate += timeCoordinateIncrement;
                 } else {
-                    float targetLevel = 0.0;
-                    channelData[currentIndexPosition] = lerp(currentLevel, targetLevel, smoothness);
-                    currentLevel = targetLevel;
+                    channelData[currentIndexPosition] = 0.0f;
                 }
             } else if (type == 2) {
                 // it keeps on increasing, after 1.0 we are goin to get the same last y value,
                 // which is what we want.
-                float targetLevel = getYForX(timeCoordinate);
-                channelData[currentIndexPosition] = lerp(currentLevel, targetLevel, smoothness);
-                currentLevel = targetLevel;
+                channelData[currentIndexPosition] = getYForX(timeCoordinate);
                 timeCoordinate += timeCoordinateIncrement;
             } else if (type == 3) {
                 // if some note is pressed run the loop else stop it.
                 if (presMIDI_Note != -1) {
-                    float targetLevel = getYForX(timeCoordinate);
-                    channelData[currentIndexPosition] = lerp(currentLevel, targetLevel, smoothness);
-                    currentLevel = targetLevel;
+                    channelData[currentIndexPosition] = getYForX(timeCoordinate);
                     timeCoordinate += timeCoordinateIncrement;
                     if (timeCoordinate > 1.0f) timeCoordinate -= 1.0f;
                 } else {
                     float targetLevel = 0.0;
-                    channelData[currentIndexPosition] = lerp(currentLevel, targetLevel, smoothness);
-                    currentLevel = targetLevel;
+                    channelData[currentIndexPosition] = getYForX(timeCoordinate);
                 }
             } else {
-                float targetLevel = getYForX(timeCoordinate);
-                channelData[currentIndexPosition] = lerp(currentLevel, targetLevel, smoothness);
-                currentLevel = targetLevel;
+                channelData[currentIndexPosition] = getYForX(timeCoordinate);
                 timeCoordinate += timeCoordinateIncrement;
                 if (timeCoordinate > 1.0f) timeCoordinate -= 1.0f;
             }
@@ -197,6 +168,8 @@ public:
             else callBackFunctionEnvelope.store(&Envelope::subProcessGenerator<4>);
             presentSelectedCallback = (int)option;
         }
+
+        presMIDI_Note = -1;
     }
 
     void processGraphNode() override {
@@ -213,6 +186,8 @@ public:
         midiBuffer = InputSockets[1]->getMidiBuffer();
 
         needsReloading.store(true);
+
+        presMIDI_Note = -1;
 
         int option = (int)InputSockets[0]->getValue();
 
@@ -263,8 +238,6 @@ private:
 
         return 0.0f;
     }
-
-    float currentLevel = 0.0f; // The current smoothed amplitude
 
     // time from 0 -> 1
     // we just increment this based on the time and sample rate.

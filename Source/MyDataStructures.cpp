@@ -14,6 +14,7 @@
 void TopoSorter::setNextMidiBuffer() {
     Instrument* pointerToInstrument = Instrument::getInstance();
 
+
     if (pointerToInstrument) {
         pointerToInstrument->removeNextBlockOfMessages(midiBuffer, sampleSize);
         pointerToInstrument->keyboardState.processNextMidiBuffer(midiBuffer, 0, sampleSize, true);

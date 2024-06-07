@@ -439,7 +439,7 @@ public:
 
     void setBuffersToNodes() {
 
-        std::set<juce::AudioBuffer<float>*> totSetHere;
+//        std::set<juce::AudioBuffer<float>*> totSetHere;
 
         // Now take the linkedList and give it AudioBufferPointers! to write.
         // this is not the most efficient way per se, but it is miles better than giving an
@@ -489,7 +489,7 @@ public:
 
                     juce::AudioBuffer<float>* temp = dependencyFreedBuffersNonRecyclable.front();
                     dependencyFreedBuffersNonRecyclable.pop();
-                    totSetHere.insert(temp);
+//                    totSetHere.insert(temp);
 
                     // we give this buffer that we just popped to the GraphNode.
                     currentNode->setToWriteAudioBuffer(temp);
@@ -518,7 +518,7 @@ public:
 
                 juce::AudioBuffer<float>* temp = dependencyFreedBuffers.front();
                 dependencyFreedBuffers.pop();
-                totSetHere.insert(temp);
+//                totSetHere.insert(temp);
 
                 // we give this buffer that we just popped to the GraphNode.
                 currentNode->setToWriteAudioBuffer(temp);
@@ -559,7 +559,7 @@ public:
 
 //        debugDump();
 
-        std::cout << "Number of Buffers used for this configuration : " << totSetHere.size() << "\n";
+//        std::cout << "Number of Buffers used for this configuration : " << totSetHere.size() << "\n";
 
     }
 

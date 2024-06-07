@@ -211,6 +211,11 @@ public :
         //
         void addEnvParameterControl();
 
+
+        // if this is called you will have a mini_reset callback from a slider value
+        // change.
+        void setSilderCallbackWanted() { parameterController.setSilderWantedCallback(); }
+
         // If the parameter control is set to MenuListParameterCtrl, this is used to add new types of menu options.
         // else it is not going to change anything and there is no reason to use this method.
         void addMenuItem(juce::String name);
@@ -487,9 +492,16 @@ public :
                 else return menuList.get();
             }
 
+
+            void setSilderWantedCallback() {
+                wantCallbackFromSlider = true;
+            }
+
             void sliderValueChanged(juce::Slider* slider) override {
                 auto value_ = (float)sliderFloat->getValue();
                 valueAtomic.store(value_);
+
+                if (wantCallbackFromSlider) triggerParent();
             }
 
             void envParamCtrltListenerTriggered() override {
@@ -536,6 +548,7 @@ public :
             // value is always floating.
             std::unique_ptr<juce::Slider> sliderFloat = nullptr;
             float from{}, to{}, value{};
+            bool wantCallbackFromSlider = false;
 
 
             // used to create the envelope.

@@ -30,9 +30,9 @@ private:
     int offset;
     int height;
 
-    std::unique_ptr<Wheels> wheelComponent;
-    std::unique_ptr<Piano> pianoComponent;
-    std::unique_ptr<PianoSideBar> sideBar;
+    Wheels wheelComponent;
+    Piano pianoComponent;
+    PianoSideBar sideBar;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MIDIPianoComponent)
 };
