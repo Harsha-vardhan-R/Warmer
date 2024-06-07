@@ -267,3 +267,74 @@ private:
         }
     }
 };
+
+class filterTransferFunctionDisp : public juce::Component {
+public:
+
+    filterTransferFunctionDisp() = default;
+
+    void paint(juce::Graphics& g) override {
+        g.fillAll(juce::Colours::white);
+
+        g.setColour(juce::Colours::lightgrey);
+        // draw the guide-lines.
+        for (int i = 1; i < 4; ++i) {
+            g.drawRect(juce::Rectangle<int>(0, (getHeight() / 4) * i, getWidth(), 1));
+        }
+
+        for (int i = 1; i < 4; ++i) {
+            g.drawRect(juce::Rectangle<int>((getWidth() / 4) * i, 0, 1, getHeight()));
+        }
+
+        juce::Path path;
+        path.startNewSubPath(0, (0.98f - (this->*callback_function)(a, b, c, 0.01f)) * getHeight());
+
+        for (size_t i = 1; i < getWidth(); ++i) {
+            float normalizedX = (float)i / (float)getWidth();
+            float logX = std::pow(10.0f, normalizedX * 2.0f - 2.0f);
+            path.lineTo(i, (0.98f - (this->*callback_function)(a, b, c, logX)) * getHeight());
+        }
+
+        g.setColour(juce::Colours::cornflowerblue);
+        g.strokePath(path, juce::PathStrokeType(1.5f));
+
+        g.setColour(juce::Colours::grey);
+        g.drawRect(getLocalBounds());
+    }
+
+    void setValues (float k, float l, float m) {
+        a = k;
+        b = l;
+        c = m;
+        repaint();
+    }
+
+    void setValues (float k, float l, float m, float o, float p) {
+        a = k;
+        b = l;
+        c = m;
+        d = o;
+        e = p;
+        repaint();
+    }
+
+private:
+
+    float a = 0.0f, b = 0.0f, c = 0.0f, d = 0.0f, e = 0.0f;
+
+
+    // filter transfer functions :
+    float onePoleSimple(float cutoff, float mode, float mix, float x) {
+        float s = x / cutoff;
+        float power = std::pow(s , mode);
+        return (( mix * power + 1.0f ) / ( power + 1.0f )) * 0.5;
+    }
+
+    float (filterTransferFunctionDisp::*callback_function)(  float val,
+                                                            float val2,
+                                                            float val3,
+                                                            float val4 ) = &filterTransferFunctionDisp::onePoleSimple;
+
+
+
+};

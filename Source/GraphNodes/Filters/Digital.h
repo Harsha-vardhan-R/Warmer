@@ -37,7 +37,7 @@ public:
         overlapStore[1] = new::juce::AudioBuffer<float>(2, fftSize);
         overlapStore[2] = new::juce::AudioBuffer<float>(2, fftSize);
 
-        std::fill(filterCoefficients.begin(), filterCoefficients.end(), SQRT_TWO);
+        std::fill(filterCoefficients.begin(), filterCoefficients.end(), 0.0f);
 
         OutputSockets.add(new GraphNode::Socket(juce::String("Signal OUT"), direction::OUT, true));
         OutputSockets[0]->setOutputType(SocketDataType::AudioBufferFloat);
@@ -47,8 +47,24 @@ public:
 
         InputSockets.add(new GraphNode::Socket(juce::String("Cutoff"), direction::IN, false));
         InputSockets[1]->acceptType(SocketDataType::Floating);
-        InputSockets[1]->addSliderParameterControl(0.0, 1.0, 0.33);
+        InputSockets[1]->addSliderParameterControl(20.0, 20000.0, 400.0f);
+
+        InputSockets.add(new GraphNode::Socket(juce::String("Mode"), direction::IN, false));
+        InputSockets[2]->acceptType(SocketDataType::Floating);
+        InputSockets[2]->addSliderParameterControl(-8.0f, 8.0, 3.0f);
+
+        InputSockets.add(new GraphNode::Socket(juce::String("Mix"), direction::IN, false));
+        InputSockets[3]->acceptType(SocketDataType::Floating);
+        InputSockets[3]->addSliderParameterControl(0.0, 1.0, 0.0);
+
         InputSockets[1]->setSilderCallbackWanted();
+        InputSockets[2]->setSilderCallbackWanted();
+        InputSockets[3]->setSilderCallbackWanted();
+
+        InputSockets.add(new GraphNode::Socket(juce::String("Transfer Function"), direction::IN, false));
+        InputSockets[4]->addFilterDisplayControl();
+
+        displayPointer = (filterTransferFunctionDisp*)InputSockets[4]->getPointerToPresentParameterCtrlController();
 
         needsReloading.store(true);
 
@@ -56,6 +72,8 @@ public:
 
         resized();
     }
+
+    filterTransferFunctionDisp* displayPointer = nullptr;
 
     void releaseResources() override {}
 
@@ -69,9 +87,10 @@ public:
         bufferToWritePointer->clear();
 
         while ((accumulation - maxAccumulation) >= 0) {
-            if (needsReloading.load()) {
-                updateFilterCoefficients();
-                needsReloading.store(false);
+            float cutoff = InputSockets[1]->getValue() / 20000.0f;
+            if (cutoff != prevCutoff) {
+                updateFilterCoefficients(cutoff);
+                prevCutoff = cutoff;
             }
 
             for (int channel = 0; channel < 2; ++channel) {
@@ -103,12 +122,12 @@ public:
                 forwardFFT.performRealOnlyForwardTransform(tempDataChannel);
 
                 // Multiply with the corresponding filter coefficients.
-                for (int i = 0; i < fftSize / 2 + 1; ++i) {
+                int half_plus_one = fftSize / 2 + 1;
+                for (int i = 0; i < half_plus_one; ++i) {
                     float realPart = tempDataChannel[2 * i];
                     float imagPart = tempDataChannel[2 * i + 1];
-                    float filterCoeff = filterCoefficients[i];
-                    tempDataChannel[2 * i] = realPart * filterCoeff;
-                    tempDataChannel[2 * i + 1] = imagPart * filterCoeff;
+                    tempDataChannel[2 * i] = realPart * filterCoefficients[i];
+                    tempDataChannel[2 * i + 1] = imagPart * filterCoefficients[half_plus_one + i];
                 }
 
                 // Perform the inverse FFT
@@ -126,6 +145,9 @@ public:
                 std::copy(tempDataChannel, tempDataChannel + fftSize, overlapBuffer1);
             }
 
+            // change the order of the pointers as
+            // from     [1 2 3]
+            // to       [2 3 1]
             juce::AudioBuffer<float>* temp = overlapStore[0];
             overlapStore[0] = overlapStore[1];
             overlapStore[1] = overlapStore[2];
@@ -234,41 +256,55 @@ public:
         BiggerOrEqualBufferSize();
     }
 
-    void updateFilterCoefficients() {
-        // Placeholder: Adjust this method to compute your filter coefficients
-        float cutoffFrequency = InputSockets[1]->getValue() * 20000.0f;
+    void updateFilterCoefficients(float cutoff) {
+        float mode = InputSockets[2]->getValue();
+        float mix = InputSockets[3]->getValue();
 
-        for (int i = 0; i < fftSize / 2 + 1; ++i) {
+        displayPointer->setValues(cutoff, mode, mix);
+
+
+        float cutoffFrequency = std::clamp(cutoff * 20000.0f, 20.0f, 20000.0f);
+
+        int half_plus_one = fftSize / 2 + 1;
+
+        for (int i = 0; i < half_plus_one; ++i) {
             float frequency = (float)i * ((float)sampleRate / (float)fftSize);
-            // Example: Ideal low-pass filter
-            if (frequency <= cutoffFrequency) {
-                filterCoefficients[i] = 1.0f;
-            } else {
-                filterCoefficients[i] = 0.0f;
-            }
+
+            float s = frequency / cutoffFrequency;
+            float power;
+
+            if (mode >= 0.0f) power = std::pow(s , mode);
+            else power = 1.0f / std::pow(s , std::abs(mode));
+
+            float val = safeClamp(( mix * power + 1.0f ) / ( power + 1.0f ), 0.0f, 1.0f);
+            filterCoefficients[i] = val;
+            filterCoefficients[half_plus_one + i] = val;
         }
 
-        needsReloading.store(false);
+    }
+
+    static float safeClamp(float value, float lower, float upper) {
+        if (std::isnan(value)) {
+            // Handle NaN case, e.g., return lower bound, upper bound, or a specific value
+            return lower; // or return a specific default value
+        }
+        return std::clamp(value, lower, upper);
     }
 
     void reset() override {
         OutputSockets[0]->setBufferPointer(bufferToWritePointer);
         accumulation = 0;
         readBuff = InputSockets[0]->getBufferPointer();
-//
-//        if ((int)estimatedSamplesPerBlock < maxAccumulation) {
-//            callback_pointer = &DigitalFilter::SmallerBufferSize;
-//        } else {
-//            callback_pointer = &DigitalFilter::BiggerOrEqualBufferSize;
-//        }
 
         for (auto i : overlapStore) i->clear();
 
         partBufferFillIndex = 0;
+
+        prevCutoff = -1.0f;
     }
 
     void mini_reset() override {
-        needsReloading.store(true);
+        updateFilterCoefficients(InputSockets[1]->getValue() / 20000.0f);
     }
 
 private:
@@ -278,6 +314,8 @@ private:
     std::atomic<bool> needsReloading{};
 
     juce::dsp::FFT forwardFFT, inverseFFT;
+
+    int oo = 1;
 
     const int fftSize;
     const int fftOrder;
@@ -299,6 +337,8 @@ private:
     const int maxAccumulation = 256;
 
     juce::AudioBuffer<float>* overlapStore[3] = { nullptr, nullptr , nullptr };
+
+    float prevCutoff = -1.0f;
 
 };
 

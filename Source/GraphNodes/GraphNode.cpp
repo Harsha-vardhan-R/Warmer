@@ -608,3 +608,7 @@ void GraphNode::Socket::setParameterCtrlNoCollapseOnConnection() {
 void GraphNode::Socket::addEnvParameterControl() {
     parameterController.addEnvCtrlComponent();
 }
+
+void GraphNode::Socket::addFilterDisplayControl() {
+    parameterController.addFilterDisplayComponent();
+}

@@ -210,6 +210,8 @@ public :
         void addSliderParameterControl(float from, float to, float default_);
         //
         void addEnvParameterControl();
+        //
+        void addFilterDisplayControl();
 
 
         // if this is called you will have a mini_reset callback from a slider value
@@ -400,7 +402,7 @@ public :
 
             int getHeight() const {
                 if (parameterType == -1) return 0;
-                else if (parameterType == 3) return 80;
+                else if (parameterType == 3 || parameterType == 4) return 80;
                 else return 30;
             }
 
@@ -466,6 +468,11 @@ public :
                 parameterType = 3;
             }
 
+            void addFilterDisplayComponent() {
+                filterDisplay = std::make_unique<filterTransferFunctionDisp>();
+                parameterType = 4;
+            }
+
             // called from the socket when ready to make it visible.
             void update() {
                 // checking if it is not nullptr.
@@ -481,6 +488,9 @@ public :
                 } else if (envelopeCtrl) {
                     envelopeCtrl->setBounds(4, 4, getWidth()-8 , 72);
                     addAndMakeVisible(envelopeCtrl.get());
+                } else if (filterDisplay) {
+                    filterDisplay->setBounds(4, 4, getWidth()-8 , 72);
+                    addAndMakeVisible(filterDisplay.get());
                 }
 
             }
@@ -489,6 +499,7 @@ public :
             void* getPresentParameterCtrlPointer() {
                 if (envelopeCtrl) return envelopeCtrl.get();
                 else if (sliderFloat) return sliderFloat.get();
+                else if (filterDisplay) return filterDisplay.get();
                 else return menuList.get();
             }
 
@@ -527,20 +538,19 @@ public :
 
             parameterCtrlLookAndFeel styles;
 
-
             // This is to lock this when others are reading or setting it.
-            // not used anywhere in the code base now
+            // not used anywhere in the code base now (but some parameter controls have mutex locks though)
             // because we process nodes one by one we do not set and get on the same socket at the same time.
             std::mutex mutex;
 
+
             // THE MENU
             // basically a list of values from which one can be selected.
-            // The discrete knob outputs an integer value that can be used to set the selected value.
             std::unique_ptr<juce::ComboBox> menuList = nullptr;
             int index = 1;
 
 
-            // THE SLIDER : used by many parameters.
+            // THE SLIDER : used to control many parameters.
             // we will be able to set the value directly, drag the mouse to change the value or use another node to control this.
             // when we are sliding or setting the value directly in the node, we do not record what the user is doing so
             // the resolution of changing will be of the buffer size, but connecting to an external node or a UI item will
@@ -554,6 +564,10 @@ public :
             // used to create the envelope.
             // used in Envelope.h
             std::unique_ptr<envParamCtrl> envelopeCtrl = nullptr;
+
+
+            // display the transfer function in a Component(non-interactive)
+            std::unique_ptr<filterTransferFunctionDisp> filterDisplay = nullptr;
 
 
             JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ParameterCtrl)
