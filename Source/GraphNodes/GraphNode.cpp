@@ -332,6 +332,10 @@ void GraphNode::Socket::addMenuItem(juce::String name) {
     parameterController.addItemToList(name);
 }
 
+void GraphNode::Socket::selectMenuItem(int val) {
+    parameterController.selectMenuItem(val);
+}
+
 void GraphNode::Socket::setOutputType(SocketDataType a) {
     if (dir == direction::IN) {
         std::cout << "Trying to set the Output type of a Socket that has In direction, but why??" << "\n";

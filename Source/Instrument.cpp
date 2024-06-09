@@ -317,9 +317,11 @@ Instrument::GraphPage::GraphPage() {
     subMenuArray[4]->addItem(508, "Abs");
     subMenuArray[4]->addItem(509, "Mixer");
 
-    subMenuArray[5]->addItem(601, "MIDI");
+    subMenuArray[5]->addItem(601, "Invert Events");
     subMenuArray[5]->addItem(602, "Arpeggiator");
     subMenuArray[5]->addItem(603, "Polyphony");
+    subMenuArray[5]->addItem(604, "Transpose");
+    subMenuArray[5]->addItem(605, "Note Velocity");
 
     subMenuArray[6]->addItem(701, "Constant");
     subMenuArray[6]->addItem(702, "BPM TO MS");
@@ -423,10 +425,14 @@ void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *g
         temp = new Absolute(pos_x, pos_y);
     } else if (result == 509) {
         temp = new Mixer(pos_x, pos_y);
+    } else if (result == 601) {
+        temp = new Invert(pos_x, pos_y);
     } else if (result == 603) {
         temp = new Polyphony(pos_x, pos_y);
-    } else if (result == 701) {
-        temp = new FloatingConstant(pos_x, pos_y);
+    } else if (result == 604) {
+        temp = new Transpose(pos_x, pos_y);
+    } else if (result == 605) {
+        temp = new Velocity(pos_x, pos_y);
     } else if (result == 702) {
         temp = new BpmDivToMs(pos_x, pos_y);
     } else if (result == 0) {

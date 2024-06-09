@@ -222,6 +222,8 @@ public :
         // else it is not going to change anything and there is no reason to use this method.
         void addMenuItem(juce::String name);
 
+        void selectMenuItem(int index);
+
         // setting the type of output node,
         // this is the type that is checked against the set of input types that can be
         // accepted from an input node.
@@ -438,6 +440,12 @@ public :
                 if (menuList) {
                     menuList->addItem(name_, index);
                     index++;
+                }
+            }
+
+            void selectMenuItem(int val) {
+                if (menuList) {
+                    menuList->setSelectedId(val);
                 }
             }
 
