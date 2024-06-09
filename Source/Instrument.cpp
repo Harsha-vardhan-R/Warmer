@@ -304,7 +304,8 @@ Instrument::GraphPage::GraphPage() {
 
     subMenuArray[3]->addItem(401, "ButterWorth");
     subMenuArray[3]->addItem(402, "Chebyshev");
-    subMenuArray[3]->addItem(403, "Digital Filter");
+    subMenuArray[3]->addItem(403, "Non-Resonant Filter");
+    subMenuArray[3]->addItem(404, "Resonating Filter");
 
     subMenuArray[4]->addItem(501, "Mul & Add Transform");
     subMenuArray[4]->addItem(502, "Add Or Sub Signals");
@@ -321,7 +322,7 @@ Instrument::GraphPage::GraphPage() {
     subMenuArray[5]->addItem(603, "Polyphony");
 
     subMenuArray[6]->addItem(701, "Constant");
-    subMenuArray[6]->addItem(702, "bpm & divisions->ms");
+    subMenuArray[6]->addItem(702, "BPM TO MS");
 
     AddNodesPopupMenu->addSubMenu("General", *subMenuArray[0]);
     AddNodesPopupMenu->addSubMenu("Oscillators", *subMenuArray[1]);
@@ -398,8 +399,12 @@ void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *g
         temp = new RandomOscillator(pos_x, pos_y);
     } else if (result == 302) {
         temp = new Delay(pos_x, pos_y);
+    } else if (result == 303) {
+        temp = new Distort(pos_x, pos_y);
     } else if (result == 403) {
         temp = new DigitalFilter(pos_x, pos_y);
+    } else if (result == 404) {
+        temp = new ResonatingFilter(pos_x, pos_y);
     } else if (result == 501) {
         temp = new AddAndMul(pos_x, pos_y);
     } else if (result == 502) {
@@ -635,9 +640,9 @@ Instrument::AudioMIDISettingClass::AudioMIDISettingClass(juce::AudioDeviceManage
     setup.useDefaultInputChannels = false;
     setup.inputChannels.clear();
     deviceManager.setAudioDeviceSetup(setup, true);
+//    setResizable(true, false);
 
-
-    settingPage = std::make_unique<juce::AudioDeviceSelectorComponent>(deviceManager,0, 0, 0,256, true, false, true, false);
+    settingPage = std::make_unique<juce::AudioDeviceSelectorComponent>(deviceManager,0, 0, 2,256, true, false, true, false);
     settingPage->setBounds(0, 0, getWidth(), getHeight());
 
     styles.setColour(juce::PopupMenu::highlightedBackgroundColourId, juce::Colours::lightgrey);
@@ -646,7 +651,11 @@ Instrument::AudioMIDISettingClass::AudioMIDISettingClass(juce::AudioDeviceManage
     settingPage->setLookAndFeel(&styles);
 
     setContentOwned(settingPage.get(), true);
+
+    setSize(450, 1200);
+
 }
+
 
 
 void Instrument::ConfigurationChanged() {

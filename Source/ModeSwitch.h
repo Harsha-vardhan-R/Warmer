@@ -43,6 +43,7 @@ public:
         addTab("Graph", colour_here, instrument.getGraphPage() , true);// viewport is set as the component.
         addTab("Edit", colour_here, instrument.getEditPage() , true);
 
+        setCurrentTabIndex(1, false);
 //        styles.reset(new MenuComponent());
 //        setLookAndFeel(styles.get());
 

@@ -18,9 +18,9 @@
 #include "Connection.h"
 #include "MyParameterCtrls.h"
 
-#define PI 3.1415926
-#define PI_HALF 1.5707963
-#define TAU 6.2831853
+#define PI 3.141592653589793238462643f
+#define PI_HALF 1.57079632679f
+#define TAU 6.28318530718f
 
 class EmptyLookAndFeel : public juce::LookAndFeel_V4 {
 public:

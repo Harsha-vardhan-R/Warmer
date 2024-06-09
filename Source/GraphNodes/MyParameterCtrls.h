@@ -338,3 +338,54 @@ private:
 
 
 };
+
+
+class sequencer : public juce::Component {
+public:
+
+    sequencer() = default;
+
+    void paint(juce::Graphics& g) override {
+
+        g.setColour(juce::Colours::grey);
+        g.drawRect(getLocalBounds());
+    }
+
+    void setValues (float k, float l, float m) {
+        a = k;
+        b = l;
+        c = m;
+        repaint();
+    }
+
+    void setValues (float k, float l, float m, float o, float p) {
+        a = k;
+        b = l;
+        c = m;
+        d = o;
+        e = p;
+        repaint();
+    }
+
+    float a = 0.0f, b = 0.0f, c = 0.0f, d = 0.0f, e = 0.0f;
+
+private:
+
+    class note : public juce::Component {
+    public:
+
+        note() = default;
+
+        void paint(juce::Graphics& g) override {
+
+        }
+
+        void resized() override {
+
+        }
+
+    private:
+
+    };
+
+};

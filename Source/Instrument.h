@@ -346,23 +346,24 @@ public:
 
     class AudioMIDISettingClass : public juce::DocumentWindow {
     public:
-        AudioMIDISettingClass(juce::AudioDeviceManager&);
+        explicit AudioMIDISettingClass(juce::AudioDeviceManager&);
+
         ~AudioMIDISettingClass() override {
-            settingPage.get()->setLookAndFeel(nullptr);
+            settingPage->setLookAndFeel(nullptr);
         }
 
         void closeButtonPressed() override {
             // try to listen from any new MIDI inputs that are selected.
             Instrument::getInstance()->refreshMIDIDevices();
-            Instrument:;getInstance()->updateTreeParams();
+            Instrument::getInstance()->updateTreeParams();
+            getInstance()->updateTreeParams();
             setVisible(false); // Hide the window when close button is pressed
-
         }
 
     private:
         std::unique_ptr<juce::Component> settingPage;
 
-        juce::LookAndFeel_V3 styles;
+        juce::LookAndFeel_V2 styles;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioMIDISettingClass)
     };
