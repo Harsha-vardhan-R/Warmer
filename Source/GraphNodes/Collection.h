@@ -44,5 +44,6 @@
 #include "Effects/Distortion.h"
 
 #include "MIDI/MIDI_Polyphony.h"
+#include "MIDI/MIDI_Transpose.h"
 
 #include "Filters/Digital.h"

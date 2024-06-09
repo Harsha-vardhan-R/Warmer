@@ -37,7 +37,7 @@ public:
         overlapStore[1] = new::juce::AudioBuffer<float>(2, fftSize);
         overlapStore[2] = new::juce::AudioBuffer<float>(2, fftSize);
 
-        std::fill(filterCoefficients.begin(), filterCoefficients.end(), 1.0f);
+        std::fill(filterCoefficients.begin(), filterCoefficients.end(), 0.0f);
 
         OutputSockets.add(new GraphNode::Socket(juce::String("Signal OUT"), direction::OUT, true));
         OutputSockets[0]->setOutputType(SocketDataType::AudioBufferFloat);
@@ -87,7 +87,7 @@ public:
         bufferToWritePointer->clear();
 
         while ((accumulation - maxAccumulation) >= 0) {
-            float cutoff = InputSockets[1]->getValue() / 20000.0f;
+            float cutoff = InputSockets[1]->getValue() / 19980.0f;
             if (cutoff != prevCutoff) {
                 updateFilterCoefficients(cutoff);
                 prevCutoff = cutoff;
@@ -134,7 +134,7 @@ public:
                 inverseFFT.performRealOnlyInverseTransform(tempDataChannel);
 
                 for (int i = 0; i < fftSize; ++i) {
-                    tempDataChannel[i] = fftDataChannel[i] * windowCoefficients[i];
+                    tempDataChannel[i] = tempDataChannel[i] * windowCoefficients[i];
                 }
 
                 // Overlap-add the processed samples into the output buffer
@@ -142,7 +142,7 @@ public:
                     channelData[sampleIndex + i] += (float)(tempDataChannel[i] +
                                                             overlapBuffer3[i + maxAccumulation] +
                                                             overlapBuffer2[i + 2 * maxAccumulation] +
-                                                            overlapBuffer1[i + 3 * maxAccumulation]) * 0.666f;
+                                                            overlapBuffer1[i + 3 * maxAccumulation]) * 0.25f;
                 }
 
                 // Store the new overlap samples
@@ -162,98 +162,6 @@ public:
         }
     }
 
-
-    // this method should work for any smaller buffer size.
-    void Generalised() {
-        const int numSamples = bufferToWritePointer->getNumSamples();
-        accumulation += numSamples;
-        int sampleIndex = 0;
-
-        while (accumulation >= maxAccumulation) {
-            float cutoff = InputSockets[1]->getValue() / 20000.0f;
-            if (cutoff != prevCutoff) {
-                updateFilterCoefficients(cutoff);
-                prevCutoff = cutoff;
-            }
-
-            for (int channel = 0; channel < 2; ++channel) {
-                float* channelData = bufferToWritePointer->getWritePointer(channel);
-                const float* rawData = readBuff->getReadPointer(channel);
-                float* fftDataChannel = fftData[channel].data();
-                float* tempDataChannel = tempData[channel].data();
-
-                float* overlapBuffer1 = overlapStore[0]->getWritePointer(channel);
-                float* overlapBuffer2 = overlapStore[1]->getWritePointer(channel);
-                float* overlapBuffer3 = overlapStore[2]->getWritePointer(channel);
-
-                // Shift the previous samples forward
-                for (int i = 0; i < fftSize - maxAccumulation; ++i) {
-                    fftDataChannel[i] = fftDataChannel[i + maxAccumulation];
-                }
-
-                // Append new samples to the end of the fftData buffer
-                int numSamplesToProcess = std::min(maxAccumulation, accumulation);
-                for (int i = 0; i < numSamplesToProcess; ++i) {
-                    fftDataChannel[fftSize - maxAccumulation + i] = rawData[sampleIndex + i];
-                }
-
-                // Apply windowing function
-                for (int i = 0; i < fftSize; ++i) {
-                    tempDataChannel[i] = fftDataChannel[i] * windowCoefficients[i];
-                }
-
-                // Perform FFT
-                forwardFFT.performRealOnlyForwardTransform(tempDataChannel);
-
-                // Apply filter coefficients
-                int half_plus_one = fftSize / 2 + 1;
-                for (int i = 0; i < half_plus_one; ++i) {
-                    float realPart = tempDataChannel[2 * i];
-                    float imagPart = tempDataChannel[2 * i + 1];
-                    tempDataChannel[2 * i] = realPart * filterCoefficients[i];
-                    tempDataChannel[2 * i + 1] = imagPart * filterCoefficients[half_plus_one + i];
-                }
-
-                // Perform inverse FFT
-                inverseFFT.performRealOnlyInverseTransform(tempDataChannel);
-
-                // Overlap-add
-                for (int i = 0; i < numSamplesToProcess; ++i) {
-                    channelData[sampleIndex + i] += (tempDataChannel[i] +
-                                                     overlapBuffer3[i + maxAccumulation] +
-                                                     overlapBuffer2[i + 2 * maxAccumulation] +
-                                                     overlapBuffer1[i + 3 * maxAccumulation]) / 4.0f;
-                }
-
-                // Store the new overlap samples
-                std::copy(tempDataChannel, tempDataChannel + fftSize, overlapBuffer1);
-            }
-
-            // Rotate the overlap buffers
-            juce::AudioBuffer<float>* temp = overlapStore[0];
-            overlapStore[0] = overlapStore[1];
-            overlapStore[1] = overlapStore[2];
-            overlapStore[2] = temp;
-
-            sampleIndex += maxAccumulation;
-            accumulation -= maxAccumulation;
-        }
-
-        // Process any remaining samples less than maxAccumulation
-        if (accumulation > 0) {
-            for (int channel = 0; channel < 2; ++channel) {
-                float* fftDataChannel = fftData[channel].data();
-                const float* rawData = readBuff->getReadPointer(channel);
-
-                for (int i = 0; i < accumulation; ++i) {
-                    fftDataChannel[fftSize - accumulation + i] = rawData[sampleIndex + i];
-                }
-            }
-        }
-
-    }
-
-
     // while processing we calculate the fft for 1024 samples
     // at a time, and we process for every 256 samples.
     //
@@ -262,7 +170,7 @@ public:
     // and for 64 samples we wait till they get accumulated till
     // 256 samples.
     void processGraphNode() override {
-        Generalised();
+        BiggerOrEqualBufferSize();
     }
 
     void updateFilterCoefficients(float cutoff) {
@@ -271,7 +179,7 @@ public:
 
         displayPointer->setValues(cutoff, mode, mix);
 
-        float cutoffFrequency = std::clamp(cutoff * 20000.0f, 20.0f, 20000.0f);
+        float cutoffFrequency = std::clamp(cutoff * 19980.0f, 20.0f, 20000.0f);
 
         int half_plus_one = fftSize / 2 + 1;
 

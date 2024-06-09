@@ -27,7 +27,6 @@ public:
     enum class steal_type {
         Revolver, // circular, does not care if non-consecutive voice is empty.
         Latest, // oldest gets replaced.
-        Stack
     };
 
     std::unordered_map<int, int> noteToOutSocketMap;
@@ -37,148 +36,11 @@ public:
     std::set<int> presently_empty_order;
 
     std::queue<int> FIFO_queue;
-//
-//    template<steal_type type>
-//    void subProcessGenerator() {
-//
-//        // clear all buffers
-//        for (int i = 0; i < voices; ++i) midiBufferArray[i].clear();
-//
-//        juce::MidiMessage message;
-//
-//        // Iterate through all the messages in the buffer
-//        for (const auto metadata : *readBuff) {
-//            message = metadata.getMessage();
-//            int samplePosition = metadata.samplePosition;
-//            int note = message.getNoteNumber();
-//
-//            if constexpr (type == steal_type::Latest) {
-//                // Iterate through all the messages in the buffer
-//                if (message.isNoteOn() && !FIFO_queue.empty()) {
-//                    int socket_here = FIFO_queue.front();
-//                    FIFO_queue.pop();
-//
-//                    int position = 0;
-//
-//                    if (samplePosition == 0) samplePosition++;
-//                    else position = samplePosition-1;
-//
-//                    midiBufferArray[socket_here].addEvent(juce::MidiMessage::noteOff((int)1, (int)SocketToNoteMap[socket_here], (juce::uint8)100), position);
-//
-//                    noteToOutSocketMap[note] = socket_here;
-//                    SocketToNoteMap[socket_here] = note;
-//                    FIFO_queue.push(socket_here);
-//
-//                    juce::MidiMessage create_message(message, samplePosition);
-//                    midiBufferArray[socket_here].addEvent(create_message, samplePosition);
-//                } else if (message.isNoteOff()) {
-//                    // if we have the node on, we send a noteOff event.
-//                    // the opposing can happen in two ways, stray midi off message,
-//                    // where there is no on, or the note is released after being stolen from another.
-//                    if (noteToOutSocketMap.count(note)) {
-//                        presently_empty.insert(noteToOutSocketMap[note]);
-//
-//                        juce::MidiMessage create_message(message, samplePosition);
-//                        midiBufferArray[noteToOutSocketMap[note]].addEvent(create_message, samplePosition);
-//
-//                        SocketToNoteMap.erase(noteToOutSocketMap[note]);
-//                        noteToOutSocketMap.erase(note);
-//                    }
-//                }
-//            } else if (type == steal_type::Stack) {
-//                if (message.isNoteOn()) {
-//
-//                    int socket_here = 0;
-//
-//                    // if there is any free voice we fill it first without stealing another voice.
-//                    if (!presently_empty.empty()) {
-//                        // take the first socket available here.
-//                        socket_first = *presently_empty.begin();
-//                        presently_empty.erase(socket_first);
-//                    } else if (!FIFO_queue.empty()) { // if it is not empty we steal from the oldest note(the condition should never be false if above one is false in reality).
-//                        socket_first = FIFO_queue.first();
-//                        FIFO_queue.pop();
-//
-//                        int position = 0;
-//
-//                        if (samplePosition == 0) samplePosition++;
-//                        else position = samplePosition-1;
-//
-//                        midiBufferArray[socket_first].addEvent(juce::MidiMessage::noteOff(1, SocketToNoteMap[socket_first], 0), position);
-//                    }
-//
-//                    noteToOutSocketMap[note] = socket_first;
-//                    SocketToNoteMap[socket_first] = note;
-//                    FIFO_queue.push(socket_first);
-//
-//                    juce::MidiMessage create_message(message, samplePosition);
-//                    midiBufferArray[socket_first].addEvent(create_message, samplePosition);
-//                } else if (message.isNoteOff()) {
-//                    // if we have the node on, we send a noteOff event.
-//                    // the opposing can happen in two ways, stray midi off message,
-//                    // where there is no on, or the note is released after being stolen from another.
-//                    if (noteToOutSocketMap.count(note)) {
-//                        presently_empty.insert(noteToOutSocketMap[note]);
-//
-//                        juce::MidiMessage create_message(message, samplePosition);
-//                        midiBufferArray[noteToOutSocketMap[note]].addEvent(create_message, samplePosition);
-//
-//                        SocketToNoteMap.erase(noteToOutSocketMap[note]);
-//                        noteToOutSocketMap.erase(note);
-//                    }
-//                }
-//            } else {
-//                if (message.isNoteOn()) {
-//
-//                    int socket_here = 0;
-//
-//                    // if there is any free voice we fill it first without stealing another voice.
-//                    if (!presently_empty.empty()) {
-//                        // take the first socket available here.
-//                        socket_first = *presently_empty.begin();
-//                        presently_empty.erase(socket_first);
-//                    } else if (!FIFO_queue.empty()) { // if it is not empty we steal from the oldest note(the condition should never be false if above one is false in reality).
-//                        socket_first = FIFO_queue.first();
-//                        FIFO_queue.pop();
-//
-//                        int position = 0;
-//
-//                        if (samplePosition == 0) samplePosition++;
-//                        else position = samplePosition-1;
-//
-//                        midiBufferArray[socket_first].addEvent(juce::MidiMessage::noteOff(1, SocketToNoteMap[socket_first], 0), position);
-//                    }
-//
-//                    noteToOutSocketMap[note] = socket_first;
-//                    SocketToNoteMap[socket_first] = note;
-//                    FIFO_queue.push(socket_first);
-//
-//                    juce::MidiMessage create_message(message, samplePosition);
-//                    midiBufferArray[socket_first].addEvent(create_message, samplePosition);
-//                } else if (message.isNoteOff()) {
-//                    // if we have the node on, we send a noteOff event.
-//                    // the opposing can happen in two ways, stray midi off message,
-//                    // where there is no on, or the note is released after being stolen from another.
-//                    if (noteToOutSocketMap.count(note)) {
-//                        presently_empty.insert(noteToOutSocketMap[note]);
-//
-//                        juce::MidiMessage create_message(message, samplePosition);
-//                        midiBufferArray[noteToOutSocketMap[note]].addEvent(create_message, samplePosition);
-//
-//                        SocketToNoteMap.erase(noteToOutSocketMap[note]);
-//                        noteToOutSocketMap.erase(note);
-//                    }
-//                }
-//            }
-//
-//
-//        }
-//
-//
-//    }
 
-    void processGraphNode() override {
+    template<steal_type type>
+    void subProcessGenerator() {
 
+        // clear all buffers
         for (int i = 0; i < voices; ++i) midiBufferArray[i].clear();
 
         juce::MidiMessage message;
@@ -189,39 +51,85 @@ public:
             int samplePosition = metadata.samplePosition;
             int note = message.getNoteNumber();
 
-            if (message.isNoteOn() && !FIFO_queue.empty()) {
-                int socket_here = FIFO_queue.front();
-                FIFO_queue.pop();
+            if constexpr (type == steal_type::Latest) {
 
-                int position = 0;
+                if (message.isNoteOn() && !FIFO_queue.empty()) {
+                    int socket_here = FIFO_queue.front();
+                    FIFO_queue.pop();
 
-                if (samplePosition == 0) samplePosition++;
-                else position = samplePosition-1;
+                    int position = 0;
 
-                midiBufferArray[socket_here].addEvent(juce::MidiMessage::noteOff((int)1, (int)SocketToNoteMap[socket_here], (juce::uint8)0), position);
+                    if (samplePosition == 0) samplePosition++;
+                    else position = samplePosition-1;
 
-                noteToOutSocketMap[note] = socket_here;
-                SocketToNoteMap[socket_here] = note;
-                FIFO_queue.push(socket_here);
+                    midiBufferArray[socket_here].addEvent(juce::MidiMessage::noteOff((int)1, (int)SocketToNoteMap[socket_here], (juce::uint8)0), position);
 
-                juce::MidiMessage create_message(message, samplePosition);
-                midiBufferArray[socket_here].addEvent(create_message, samplePosition);
-            } else if (message.isNoteOff()) {
-                // if we have the node on, we send a noteOff event.
-                // the opposing can happen in two ways, stray midi off message,
-                // where there is no on, or the note is released after being stolen from another.
-                if (noteToOutSocketMap.count(note)) {
-                    presently_empty.insert(noteToOutSocketMap[note]);
+                    noteToOutSocketMap[note] = socket_here;
+                    SocketToNoteMap[socket_here] = note;
+                    FIFO_queue.push(socket_here);
 
                     juce::MidiMessage create_message(message, samplePosition);
-                    midiBufferArray[noteToOutSocketMap[note]].addEvent(create_message, samplePosition);
+                    midiBufferArray[socket_here].addEvent(create_message, samplePosition);
+                } else if (message.isNoteOff()) {
+                    // if we have the node on, we send a noteOff event.
+                    // the opposing can happen in two ways, stray midi off message,
+                    // where there is no on, or the note is released after being stolen from another.
+                    if (noteToOutSocketMap.count(note)) {
+                        presently_empty.insert(noteToOutSocketMap[note]);
 
-                    SocketToNoteMap.erase(noteToOutSocketMap[note]);
-                    noteToOutSocketMap.erase(note);
+                        juce::MidiMessage create_message(message, samplePosition);
+                        midiBufferArray[noteToOutSocketMap[note]].addEvent(create_message, samplePosition);
+
+                        SocketToNoteMap.erase(noteToOutSocketMap[note]);
+                        noteToOutSocketMap.erase(note);
+                    }
                 }
+
+            } else {
+
+                if (message.isNoteOn()) {
+                    int socket_here = (lastSelectedSocket++ % voices);
+                    int position = 0;
+
+                    std::cout << socket_here << "\n";
+
+                    if (samplePosition == 0) samplePosition++;
+                    else position = samplePosition-1;
+
+                    midiBufferArray[socket_here].addEvent(juce::MidiMessage::noteOff((int)1, (int)SocketToNoteMap[socket_here], (juce::uint8)0), position);
+
+                    noteToOutSocketMap[note] = socket_here;
+                    SocketToNoteMap[socket_here] = note;
+
+                    juce::MidiMessage create_message(message, samplePosition);
+                    midiBufferArray[socket_here].addEvent(create_message, samplePosition);
+                } else if (message.isNoteOff()) {
+                    // if we have the node on, we send a noteOff event.
+                    // the opposing can happen in two ways, stray midi off message,
+                    // where there is no on, or the note is released after being stolen from another.
+                    if (noteToOutSocketMap.count(note)) {
+                        presently_empty.insert(noteToOutSocketMap[note]);
+
+                        juce::MidiMessage create_message(message, samplePosition);
+                        midiBufferArray[noteToOutSocketMap[note]].addEvent(create_message, samplePosition);
+
+                        SocketToNoteMap.erase(noteToOutSocketMap[note]);
+                        noteToOutSocketMap.erase(note);
+                    }
+                }
+
             }
 
         }
+
+
+    }
+
+    typedef void (Polyphony::*callbackFunc_Type)();
+
+    void processGraphNode() override {
+        callbackFunc_Type here = callback.load();
+        (this->*here)();
     }
 
     void releaseResources() override {}
@@ -235,6 +143,10 @@ public:
             }
 
             readBuff = InputSockets[0]->getMidiBuffer();
+
+            lastSelectedSocket = 0;
+
+            mini_reset();
         }
     }
 
@@ -263,7 +175,6 @@ public:
             InputSockets[1]->addMenuParameterControl();
             InputSockets[1]->addMenuItem(juce::String("Latest"));
             InputSockets[1]->addMenuItem(juce::String("Revolver"));
-            InputSockets[1]->addMenuItem(juce::String("Stack"));
 
             midiBufferArray.resize(voices);
 
@@ -275,6 +186,13 @@ public:
 
         } else {
 
+            if ((int)InputSockets[1]->getValue() == 1) {
+                callback.store(&Polyphony::subProcessGenerator<steal_type::Latest>);
+            } else {
+                callback.store(&Polyphony::subProcessGenerator<steal_type::Revolver>);
+            }
+
+            lastSelectedSocket = 0;
         }
 
     }
@@ -282,6 +200,8 @@ public:
     ~Polyphony() {};
 
 private:
+
+    std::atomic<callbackFunc_Type> callback = nullptr;
 
     bool init_phase_done = false;
 
@@ -292,4 +212,6 @@ private:
     int number_of_voices = -1;
 
     int voices = -1;
+
+    int lastSelectedSocket = 0;
 };

@@ -67,9 +67,9 @@ public:
                 }
 
             } else {
-                float amount = std::clamp(InputSockets[2]->getValue(), 1.0f, 5.0f);
+                float amount = std::clamp(InputSockets[2]->getValue(), 1.0f, 4.9f);
                 float am_5 = amount * 5.0f;
-                float disc_ = (5.0f - amount) * 5.2f;
+                float disc_ = (5.0f - amount) * 5.0f;
                 float div_div = 1.0f/disc_;
 
                 for (int i = 0; i < bufferToWritePointer->getNumSamples(); ++i) {
