@@ -405,8 +405,6 @@ void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *g
         temp = new Distort(pos_x, pos_y);
     } else if (result == 403) {
         temp = new DigitalFilter(pos_x, pos_y);
-    } else if (result == 404) {
-        temp = new ResonatingFilter(pos_x, pos_y);
     } else if (result == 501) {
         temp = new AddAndMul(pos_x, pos_y);
     } else if (result == 502) {

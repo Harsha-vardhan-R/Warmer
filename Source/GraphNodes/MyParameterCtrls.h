@@ -282,10 +282,6 @@ public:
             g.drawRect(juce::Rectangle<int>(0, (getHeight() / 4) * i, getWidth(), 1));
         }
 
-        for (int i = 1; i < 4; ++i) {
-            g.drawRect(juce::Rectangle<int>((getWidth() / 4) * i, 0, 1, getHeight()));
-        }
-
         juce::Path path;
         path.startNewSubPath(0, (0.98f - (this->*callback_function)(a, b, c, 0.01f)) * getHeight());
 
