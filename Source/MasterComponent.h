@@ -16,7 +16,7 @@
 
 class MasterComponent : public juce::Component {
 public:
-
+    
     MasterComponent(int upperComponent, int otherComponentCumulativeHeight);
     ~MasterComponent() override;
     //++++++++++++++++++++++++++++++++++++++

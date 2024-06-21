@@ -17,6 +17,8 @@
 #include "InputOutputTypesForSokets.h"
 #include "Connection.h"
 #include "MyParameterCtrls.h"
+#include "../XML_Handling.h"
+
 
 #define PI 3.141592653589793238462643f
 #define PI_HALF 1.57079632679f
@@ -127,9 +129,32 @@ public:
 };
 
 // Class that all the nodes inherit.
-class GraphNode : public juce::Component {
+class GraphNode : public juce::Component,
+                  public makeParseXML {
 public :
 
+
+
+    // the menu id of this particular node.
+    // will be set after constructing a node in the add Node callback.
+    int menuResultID = 0;
+
+    void setMenuResultID(int a) {
+        menuResultID = a;
+    }
+
+    int getMenuResultID() const {
+        if (menuResultID == 0) {
+            std::cout << "GetMenuResultId is called on " << name << " before assigning it" << "\n";
+            return 0;
+        }
+        return menuResultID;
+    }
+
+    juce::String getAddressAsString() {
+        auto pointer_val = reinterpret_cast<uint64_t>(this);
+        return juce::String(pointer_val);
+    }
 
     class menuStyleJuce : public juce::LookAndFeel_V3 {
     public:
@@ -138,10 +163,27 @@ public :
         }
     };
 
+    juce::XmlElement * makeXML() override;
+    // here we only set the parameter values and not any connections,
+    // connections are set through XMLParseHelper.
+    void parseXMLChildren(juce::XmlElement* x) override;
+    // special function that can do special things(probably the most useless comment).
+    // used for automating connections.
+    // map_ contains the information about the unique ID and it's present address.
+    void XMLParseHelper(juce::XmlElement* xmlEle, const std::unordered_map<juce::String, GraphNode*>& map_);
+    // Some nodes need extra information to store
+    // this method needs to be overridden to let that happen.
+    virtual void mini_makeXML(juce::XmlElement*) {}
+    // similarly this is called before the connections are made
+    // and the parameters are set so any extra information that
+    // is exclusively stored can be parsed and processed accordingly.
+    virtual void mini_parseXMLChildren(juce::XmlElement* x) {}
+
     // Socket is a block inside the GraphNode.
     // contrary to the name you can actually have a parameterCtrl without the socket to control,
     // the behaviour will be controlled from the value.
-    class Socket : public juce::Component {
+    class Socket : public juce::Component,
+                   public makeParseXML {
     public:
 
         menuStyleJuce menu_style;
@@ -153,6 +195,15 @@ public :
 
         juce::String name;
 
+        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        // xml related stuff.
+        juce::XmlElement * makeXML() override {
+            return parameterController.makeXML();
+        }
+
+        void parseXMLChildren(juce::XmlElement* x) override {
+            parameterController.parseXMLChildren(x->getFirstChildElement());
+        }
 
         // +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
         // API calls used from the GraphNode while processing.
@@ -182,7 +233,7 @@ public :
         void acceptType(SocketDataType type);
 
         // called after a successful connection , sets the variables and others.
-        void connected(Socket* otherPointer, Connection* connection);
+        void connected(Socket* otherPointer, Connection* connection, bool flag = true);
 
         // check if this node can accept this type.
         bool accepts(SocketDataType type) ;
@@ -216,7 +267,7 @@ public :
 
         // if this is called you will have a mini_reset callback from a slider value
         // change.
-        void setSilderCallbackWanted() { parameterController.setSilderWantedCallback(); }
+        void setSliderCallbackWanted() { parameterController.setSilderWantedCallback(); }
 
         // If the parameter control is set to MenuListParameterCtrl, this is used to add new types of menu options.
         // else it is not going to change anything and there is no reason to use this method.
@@ -295,6 +346,10 @@ public :
             parentNodePointer = nodeParent;
         }
 
+        GraphNode* getParent() const {
+            return parentNodePointer;
+        }
+
 
         // This is the function that is going to get called from the
         // Parameter Ctrl if the method `triggerSocketsTrigger` is called in the listener method.
@@ -316,7 +371,17 @@ public :
             return parameterController.getPresentParameterCtrlPointer();
         }
 
+        void thisSocketsIndexIs(int a) {
+            indexAtParent = a;
+        }
+
+        int getSocketsIndexInParent() {
+            return indexAtParent;
+        }
+
     private:
+
+        int indexAtParent = -1;
 
         juce::Component* editPage;
 
@@ -376,8 +441,125 @@ public :
         class ParameterCtrl : public juce::Component,
                               private juce::Slider::Listener,
                               private juce::ComboBox::Listener,
-                              public envParamCtrl::Listener {
+                              public envParamCtrl::Listener,
+                              public makeParseXML {
         public:
+
+            inline juce::String arrayToDelimitedString(const std::vector<float>& vec) {
+                juce::String new_;
+                int flag = 0;
+
+                for (auto i : vec) {
+                    if (flag) new_ += juce::String(",");
+                    new_ += juce::String(i);
+                    flag = 1;
+                }
+
+                return new_;
+            }
+
+            static inline juce::String pointArrayToDelimitedString(const std::vector<envParamCtrl::Point>& vec) {
+                juce::String new_;
+                int flag = 0;
+
+                for (auto i : vec) {
+                    if (flag) new_ += juce::String(",");
+                    new_ += juce::String("(");
+                    new_ += juce::String(i.x);
+                    new_ += juce::String(",");
+                    new_ += juce::String(i.y);
+                    new_ += juce::String(")");
+                    flag = 1;
+                }
+
+                return new_;
+            }
+
+            static std::vector<envParamCtrl::Point> delimitedStringToPointArray(const juce::String& str) {
+                std::vector<envParamCtrl::Point> vec;
+                juce::String currentPoint;
+                juce::String strCopy = str;
+
+                for (char c : strCopy) {
+                    if (c == '(') {
+                        currentPoint = "(";
+                    } else if (c == ')') {
+                        int commaIndex = currentPoint.indexOf(0, ",");
+                        float x = currentPoint.substring(1, commaIndex - 1).getFloatValue();
+                        float y = currentPoint.substring(commaIndex + 1, currentPoint.length() - commaIndex - 2).getFloatValue();
+                        vec.push_back({x , y});
+                        currentPoint = "";
+                    } else {
+                        currentPoint += c;
+                    }
+                }
+
+                return vec;
+            }
+
+            juce::XmlElement* makeXML() override {
+                auto* parameterValue = new juce::XmlElement("Parameter");
+                auto* parameterValueStore = new juce::XmlElement("valueStore");
+                parameterValue->addChildElement(parameterValueStore);
+
+                if (parameterType == -1) {
+                    parameterValue->setAttribute("Type", "NULL");
+                } else if (parameterType == 3) {
+                    parameterValue->setAttribute("Type", "Envelope");
+                    std::vector<envParamCtrl::Point> pointArray;
+                    std::vector<float> controlStore;
+
+                    if (envelopeCtrl) {
+                        envelopeCtrl->copyData(pointArray, controlStore);
+                    }
+
+                    parameterValueStore->setAttribute("Controls", arrayToDelimitedString(controlStore));
+                    parameterValueStore->setAttribute("Points", pointArrayToDelimitedString(pointArray));
+
+                } else {
+                    parameterValue->setAttribute("Type", "Value");
+                    parameterValueStore->setAttribute("Value", getValue());
+                }
+
+                return parameterValue;
+            }
+
+            void parseXMLChildren(juce::XmlElement* x) override {
+
+                std::cout << x->toString() << "\n";
+
+                if (parameterType == -1) return;
+                juce::XmlElement* child = x->getFirstChildElement();
+
+                std::cout << child->toString() << "\n";
+
+                if (parameterType == 1) {
+                    // list.
+                    int option = child->getIntAttribute("Value");
+                    if (menuList) {
+                        menuList->setSelectedId(option);
+                    }
+                } else if (parameterType == 2) {
+                    double option = child->getDoubleAttribute("Value");
+                    if (sliderFloat) {
+                        sliderFloat->setValue(option);
+                    }
+                } else if (parameterType == 3) {
+                    std::vector<float> controls;
+
+                    for (juce::String& i : juce::StringArray::fromTokens(child->getStringAttribute("Controls"), ",", ""))
+                        controls.push_back(i.juce::String::getFloatValue());
+
+                    std::vector<envParamCtrl::Point> points = delimitedStringToPointArray(child->getStringAttribute("Points"));
+
+                    if (envelopeCtrl) {
+                        envelopeCtrl->setData(points, controls);
+                    }
+                } else {
+                    std::cout << "What is this parameter?, I do not even know what it is?" << "\n";
+                }
+
+            }
 
             Socket* parentInstance = nullptr;
 
@@ -629,6 +811,18 @@ public :
     // YOU CAN HAVE AT-MOST ONE SOCKET OF THE TYPE SocketDataType::AudioBufferFloat
     juce::OwnedArray<Socket> OutputSockets;
 
+
+    // returns the address of the Input Socket at the provided index.
+    // used when loading instruments and parsing the files.
+    Socket* getInputSocketAtIndex(int index) {
+        if (index < 0 || index >= InputSockets.size()) {
+            std::cout << "Trying to ask for the address of a socket that does not exist(Index out of Bounds)" << "\n";
+            return nullptr;
+        }
+
+        return InputSockets[index];
+    }
+
     // The dimensions will be decided by the number of sockets.
     int UIWidth, UIHeight;
 
@@ -638,6 +832,11 @@ public :
 
     // need to give the proportions for the node.
     GraphNode(juce::String name, int pos_x, int pos_y);
+
+    juce::String getCurrentPosition() {
+        juce::Point<int> p = getPosition();
+        return juce::String(p.x)+juce::String(",")+juce::String(p.y);
+    }
 
     // returns true if all the Input Sockets that are `isMust` are connected.
     virtual bool allGood();

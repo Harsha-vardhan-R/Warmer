@@ -20,6 +20,7 @@
 #include "Piano.h"
 #include "GraphNodes/Collection.h"
 #include "MyDataStructures.h"
+#include "XML_Handling.h"
 
 
 
@@ -29,7 +30,8 @@
     Everything from loading an instrument, saving it, playing it and painting it on the component.
 */
 class Instrument : public juce::Component,
-                   public juce::MidiMessageCollector {
+                   public juce::MidiMessageCollector,
+                   public makeParseXML {
 public:
 
     // Maintaining a global static variable for the instance pointer,
@@ -85,6 +87,13 @@ public:
         nodeProcessingQueue.setVolumeLevel(val);
     }
 
+    // top of the recursive calls that
+    void createRootTag();
+
+    juce::XmlElement* makeXML() override;
+    void parseXMLChildren(juce::XmlElement* x) override;
+
+
     /////##################################
     /// DATA STRUCTURES
     /////##################################
@@ -110,7 +119,7 @@ public:
         if (!newNode) return;
         auto* casted = (GraphPage*)(graphPage.get());
         casted->AllNodes.insert(newNode);
-        casted->addAndMakeVisible(newNode);
+//        casted->addAndMakeVisible(newNode);
 		nodeProcessingQueue.push(newNode);
     }
 
@@ -148,9 +157,9 @@ public:
         casted->triggerRepaint();
     }
 
-    void connectionAdded(Connection* newConnection) {
+    void connectionAdded(Connection* newConnection, bool flag = true) {
         auto* casted = (GraphPage*)(graphPage.get());
-        casted->connectionAdded(newConnection);
+        casted->connectionAdded(newConnection, flag);
         ConfigurationChanged();
     }
 
@@ -199,7 +208,8 @@ public:
     };
 
     // Will contain the paint methods for the page, the data what to show will be in the parent(in hierarchy) class.
-    class EditPage : public juce::Component {
+    class EditPage : public juce::Component,
+                     public makeParseXML  {
     public:
 
         EditPage();
@@ -207,6 +217,9 @@ public:
 
         void paint(juce::Graphics& g) override;
         void resized() override;
+
+        juce::XmlElement* makeXML() override;
+        void parseXMLChildren(juce::XmlElement* x) override;
 
         // Makes sure the numbers in the text boxes are valid,
         // Creates a canvas if they are.
@@ -226,10 +239,14 @@ public:
     };
 
     // Will contain the paint methods for the page, the data what to show will be in the parent(in hierarchy) class.
-    class GraphPage : public juce::Component {
+    class GraphPage : public juce::Component,
+                      public makeParseXML  {
     public:
         GraphPage();
         ~GraphPage() override;
+
+        juce::XmlElement* makeXML() override;
+        void parseXMLChildren(juce::XmlElement* x) override;
 
         void paint(juce::Graphics& g) override;
         void resized() override;
@@ -247,7 +264,7 @@ public:
 
         // add new connection, object is created elsewhere,
         // we take ownership in abstraction.
-        void connectionAdded(Connection* newConnection);
+        void connectionAdded(Connection* newConnection, bool flag);
 
         // delete this connection and erase it from screen.
         void connectionRemoved(Connection* connectionPointer);
@@ -329,10 +346,14 @@ public:
 
 
     // Will contain the paint methods for the page, the data what to show will be in the parent(in hierarchy) class.
-    class PlayPage : public juce::Component {
+    class PlayPage : public juce::Component,
+                     public makeParseXML  {
     public:
         PlayPage();
         ~PlayPage() override {}
+
+        juce::XmlElement* makeXML() override;
+        void parseXMLChildren(juce::XmlElement* x) override;
 
         void paint(juce::Graphics& g) override;
         void resized() override;
@@ -432,6 +453,8 @@ private:
 
     // if the instrument class is being destructed.
     bool isBeingDestructed = false;
+
+    std::unique_ptr<juce::FileChooser> _chooser;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Instrument)

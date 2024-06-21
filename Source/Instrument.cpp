@@ -9,6 +9,18 @@
 */
 
 
+
+
+
+
+#define CURRENT_WARMER_VERSION "0.6.0"
+
+
+
+
+
+
+
 #include "Instrument.h"
 #include "MyLookAndFeel.h"
 #include "Modes.h"
@@ -141,8 +153,7 @@ Instrument::~Instrument() {
     nodeProcessingQueue.flush();
 
     delete InputNode;
-
-
+    
 //    delete OutputNode;
 }
 
@@ -159,6 +170,121 @@ void Instrument::setMode(Mode mode) {
     presentMode = mode;
     repaint();
 }
+
+void Instrument::createRootTag() {
+    if (!nodeProcessingQueue.checkAllGood()) {
+        std::cout << "The configuration is incomplete, please connect all the required sockets to save to a file." << "\n";
+        return;
+    }
+
+    juce::FileChooser fileChooser("Save Instrument", juce::File::getSpecialLocation(juce::File::currentExecutableFile), "*.xml");
+
+    bool selected = fileChooser.browseForFileToSave(true);
+
+    if (selected) {
+        juce::XmlElement* hereNotForLong = makeXML();
+
+        juce::File selectedFile = fileChooser.getResult();
+
+        // Create an output stream to the selected file
+        std::unique_ptr<juce::FileOutputStream> outputStream(selectedFile.createOutputStream());
+
+        if (outputStream != nullptr) {
+            hereNotForLong->writeTo(*outputStream, {});
+        }
+        else {
+            juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "Error", "Could not create output stream to the selected file.");
+        }
+    }
+
+}
+
+juce::XmlElement *Instrument::makeXML() {
+
+
+    nodeProcessingQueue.processingStop();
+
+    auto* root = new juce::XmlElement("Instrument");
+
+    auto* casted = (GraphPage*)graphPage.get();
+    root->prependChildElement(casted->makeXML());
+
+    auto* casted_ = (EditPage*)editPage.get();
+    root->prependChildElement(casted_->makeXML());
+
+    auto* casted2 = (PlayPage*)playPage.get();
+    root->prependChildElement(casted2->makeXML());
+
+    root->addTextElement("This File is Meant to be opened by Warmer");
+    root->setAttribute("Version", CURRENT_WARMER_VERSION);
+
+    return root;
+}
+
+
+void Instrument::parseXMLChildren(juce::XmlElement* x) {
+    // we are not setting any constraints to the file extensions so
+    // you can name it what ever you want.
+//    juce::FileChooser fileChooser("Load Instrument", juce::File::getSpecialLocation(juce::File::currentExecutableFile), "");
+//
+//    bool selected = fileChooser.browseForFileToOpen();
+
+    Profiler("Instrument");
+
+    juce::String defaultPath = juce::File::getSpecialLocation(juce::File::SpecialLocationType::currentExecutableFile).getFullPathName();
+    juce::File defaultDirectory = juce::File(defaultPath);
+    _chooser = std::make_unique<juce::FileChooser>("Choose file", defaultDirectory, "");
+
+    int chooserFlags = juce::FileBrowserComponent::openMode
+                       | juce::FileBrowserComponent::canSelectFiles;
+
+    _chooser->launchAsync(chooserFlags, [this](const juce::FileChooser& fc) {
+        auto selectedFile = fc.getResult();
+        if (selectedFile != juce::File{}) {
+
+            std::unique_ptr<juce::FileInputStream> inputStream(selectedFile.createInputStream());
+
+            if (inputStream != nullptr) {
+
+                if (inputStream->openedOk()) {
+
+                    juce::String fileContents = inputStream->readEntireStreamAsString();
+
+//                    std::cout << fileContents << std::endl;
+
+                    // because all the pointers to the function calls
+                    // happen before this goes out of scope,
+                    // It will live long enough.
+                    juce::XmlDocument xmlDoc(fileContents);
+                    std::unique_ptr<juce::XmlElement> xmlElementRoot(xmlDoc.getDocumentElement());
+
+                    if (xmlElementRoot != nullptr) {
+
+                        // send the related information to each page to be parsed and .
+                        auto* casted = (GraphPage*)graphPage.get();
+                        casted->parseXMLChildren(xmlElementRoot->getChildByName("GraphPage"));
+
+                        auto* casted_ = (EditPage*)editPage.get();
+                        casted_->parseXMLChildren(xmlElementRoot->getChildByName("EditPage"));
+
+                        auto* casted2 = (PlayPage*)playPage.get();
+                        casted2->parseXMLChildren(xmlElementRoot->getChildByName("PlayPage"));
+
+                    } else {
+                        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "Error", "Failed to parse XML content.");
+                    }
+                }
+                else {
+                    juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "Error", "Could not open the selected file.");
+                }
+            } else {
+                juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "Error", "Could not create input stream for the selected file.");
+            }
+        }
+    });
+
+}
+
 
 void Instrument::resized() {
     auto* parent = (juce::TabbedComponent*)getParentComponent();
@@ -213,6 +339,21 @@ void Instrument::EditPage::resized() {
 
     if (instrumentCanvas != nullptr) instrumentCanvas->resized();
 }
+
+juce::XmlElement *Instrument::EditPage::makeXML() {
+    auto* graphData = new juce::XmlElement("EditPage");
+
+    return graphData;
+}
+
+void Instrument::EditPage::parseXMLChildren(juce::XmlElement* ooo) {
+    if (!ooo) {
+        std::cout << "EditPage Information not found in the file" << "\n";
+        return;
+    }
+}
+
+
 
 void Instrument::EditPage::paint(juce::Graphics &g) {
     g.fillAll(EditPageBackColourOneID);
@@ -286,7 +427,6 @@ Instrument::GraphPage::GraphPage() {
     subMenuArray[0]->addItem(103, "Latency"); // constant lag.
     subMenuArray[0]->addItem(104, "ADSR");
     subMenuArray[0]->addItem(105, "Envelope");
-    subMenuArray[0]->addItem(106, "Feedback");
 
     subMenuArray[1]->addItem(201, "Oscillator");
     subMenuArray[1]->addItem(202, "Custom Oscillator");
@@ -297,13 +437,9 @@ Instrument::GraphPage::GraphPage() {
     subMenuArray[2]->addItem(301, "Reverb");
     subMenuArray[2]->addItem(302, "Delay");
     subMenuArray[2]->addItem(303, "Distortion");
-    subMenuArray[2]->addItem(304, "Saturate");
-    subMenuArray[2]->addItem(305, "Equalizer");
-    subMenuArray[2]->addItem(306, "Analog-ify");
-    subMenuArray[2]->addItem(307, "Amplify");
 
-    subMenuArray[3]->addItem(401, "ButterWorth");
-    subMenuArray[3]->addItem(402, "Chebyshev");
+    subMenuArray[3]->addItem(401, "Ladder");
+    subMenuArray[3]->addItem(402, "Vowel");
     subMenuArray[3]->addItem(403, "Non-Resonant Filter");
     subMenuArray[3]->addItem(404, "Resonating Filter");
 
@@ -322,6 +458,7 @@ Instrument::GraphPage::GraphPage() {
     subMenuArray[5]->addItem(603, "Polyphony");
     subMenuArray[5]->addItem(604, "Transpose");
     subMenuArray[5]->addItem(605, "Note Velocity");
+    subMenuArray[5]->addItem(606, "Note To Freq");
 
     subMenuArray[6]->addItem(701, "Constant");
     subMenuArray[6]->addItem(702, "BPM TO MS");
@@ -345,7 +482,7 @@ Instrument::GraphPage::GraphPage() {
     instrumentClassPointer->nodeProcessingQueue.push(static_cast<GraphNode*>(Instrument::getInstance()->InputNode));
     instrumentClassPointer->nodeProcessingQueue.push(static_cast<GraphNode*>(Instrument::getInstance()->OutputNode));
 
-//    AllNodes.insert((GraphNode*)Instrument::instancePtr->InputNode);
+//    AllNodes.insert(static_cast<GraphNode*>(instrumentClassPointer->InputNode));
     AllNodes.insert(static_cast<GraphNode*>(instrumentClassPointer->OutputNode));
 
     // Adding the initial nodes.
@@ -374,12 +511,48 @@ void Instrument::GraphPage::mouseDown(const juce::MouseEvent& event) {
     }
 }
 
-void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *graphPageComponent) {
+juce::XmlElement *Instrument::GraphPage::makeXML() {
+    auto* graphData = new juce::XmlElement("GraphPage");
+
+    GraphNode* Inp = Instrument::getInstance()->InputNode;
+    juce::XmlElement* nodeData_ = Inp->makeXML();
+    nodeData_->setAttribute("ResultID", Inp->getMenuResultID());
+    nodeData_->setAttribute("Address", Inp->getAddressAsString());
+    nodeData_->setAttribute("Position", Inp->getCurrentPosition());
+    graphData->addChildElement(nodeData_);
+
+    for (auto i : AllNodes) {
+        juce::XmlElement* nodeData = i->makeXML();
+        nodeData->setAttribute("ResultID", i->getMenuResultID());
+        nodeData->setAttribute("Address", i->getAddressAsString());
+        nodeData->setAttribute("Position", i->getCurrentPosition());
+        graphData->addChildElement(nodeData);
+    }
+
+    return graphData;
+}
+
+
+std::pair<int, int> parseXYFromString(juce::String s) {
+    int commaPos = s.indexOf(",");
+
+    if (commaPos != -1) {
+        juce::String xString = s.substring(0, commaPos);
+        juce::String yString = s.substring(commaPos + 1);
+
+        int x = xString.getIntValue();
+        int y = yString.getIntValue();
+
+        return std::make_pair(x, y);
+    } else {
+        std::cerr << "Error: Comma not found in the string." << std::endl;
+        return std::make_pair(0, 0);
+    }
+}
+
+GraphNode* createAndReturnPointer(int pos_x, int pos_y, int result) {
 
     GraphNode* temp;
-
-    int pos_x = graphPageComponent->lastMouseDownPosition.getX();
-    int pos_y = graphPageComponent->lastMouseDownPosition.getY();
 
     if (result == 101) {
         temp = new Utility(pos_x, pos_y);
@@ -391,8 +564,6 @@ void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *g
         temp = new ADSR(pos_x, pos_y);
     } else if (result == 105) {
         temp = new Envelope(pos_x, pos_y);
-    } else if (result == 106) {
-        temp = new Feedback(pos_x, pos_y);
     } else if (result == 201) {
         temp = new Oscillator(pos_x, pos_y);
     } else if (result == 204) {
@@ -431,16 +602,121 @@ void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *g
         temp = new Transpose(pos_x, pos_y);
     } else if (result == 605) {
         temp = new Velocity(pos_x, pos_y);
+    } else if (result == 606) {
+        temp = new MidiToFreq(pos_x, pos_y);
+    } else if (result == 701) {
+        temp = new FloatingConstant(pos_x, pos_y);
     } else if (result == 702) {
         temp = new BpmDivToMs(pos_x, pos_y);
     } else if (result == 0) {
         /* DO NOTHING */
-        return;
+        return nullptr;
     } else {
-        std::cout << "Returned option from Graph page menu is not handled in the AddNodeCallBack, Option : " << result
+        std::cout << "Returned option from Graph page menu is not handled in the createAndReturnPointer, Option : " << result
                   << "\n";
+        return nullptr;
+    }
+
+    return temp;
+
+}
+
+void Instrument::GraphPage::parseXMLChildren(juce::XmlElement* x) {
+    if (!x) {
+        std::cout << "GraphPage Information not found in the file" << "\n";
         return;
     }
+
+    Profiler("GraphPage");
+
+    for (GraphNode* i : AllNodes) {
+        if (i->getMenuResultID() == 9999 || i->getMenuResultID() == 6666) continue;
+        else delete i;
+    }
+
+    // create all the nodes first
+    // keep track of the ID's to Node addresses.
+
+    // (basically unique num(pointer value when saved previous time) to address node stuff)
+    std::unordered_map<juce::String, GraphNode*> uniqueToPresentAddress;
+
+    // create each node and put it at that position it was saved at.
+    for (auto* Child = x->getFirstChildElement(); Child; Child = Child->getNextElement()) {
+        if (Child->hasTagName("GraphNode")) {
+
+            int ID = Child->getIntAttribute("ResultID");
+
+            if (ID == 6666 || ID == 9999) {
+                // these are Input and output nodes, they are already present in the Graph Editor so give their address directly.
+                // these nodes do not have anything important other than connections
+                // which will be set in the next loop, so not calling parseXMLChildren on them.
+                if (ID == 9999) {
+                    uniqueToPresentAddress[Child->getStringAttribute("Address")] = Instrument::getInstance()->InputNode;
+                } else {
+                    uniqueToPresentAddress[Child->getStringAttribute("Address")] = Instrument::getInstance()->OutputNode;
+                }
+
+            } else {
+                // we need to create the respective node and put it there.
+                std::pair<int, int> position = parseXYFromString(Child->getStringAttribute("Position"));
+
+                GraphNode* temp_ = createAndReturnPointer(position.first, position.second, ID);
+
+                if (!temp_) {
+                    std::cout << "ERROR , Unknown Node Encountered!!! ID : " << ID << "\n";
+                    return;
+                }
+
+                temp_->setMenuResultID(ID);
+
+                temp_->parseXMLChildren(Child);
+
+                Instrument::getInstance()->nodeProcessingQueue.pushBlunt(temp_);
+                AllNodes.insert(temp_);
+                addAndMakeVisible(temp_);
+
+                uniqueToPresentAddress[Child->getStringAttribute("Address")] = temp_;
+
+            }
+        } else {
+            std::cout << "ERROR, Corrupt file" << "\n";
+            return;
+        }
+    }
+
+    // create the connections.
+    for (auto* Child = x->getFirstChildElement(); Child; Child = Child->getNextElement()) {
+        if (Child->hasTagName("GraphNode")) {
+            juce::String uniqueNum = Child->getStringAttribute("Address");
+            uniqueToPresentAddress[uniqueNum]->XMLParseHelper(Child, uniqueToPresentAddress);
+        } else {
+            std::cout << "ERROR, Corrupt file" << "\n";
+            return;
+        }
+    }
+
+    Instrument::getInstance()->nodeProcessingQueue.sort();
+
+    repaint(instrumentClassPointer->getPartToRepaintInViewPort());
+}
+
+
+
+void Instrument::GraphPage::AddNodeCallback(int result, Instrument::GraphPage *graphPageComponent) {
+
+    // uninitialised value will never get read.
+    GraphNode* temp = nullptr;
+
+    int pos_x = graphPageComponent->lastMouseDownPosition.getX();
+    int pos_y = graphPageComponent->lastMouseDownPosition.getY();
+
+    temp = createAndReturnPointer(pos_x, pos_y, result);
+
+    if (!temp) {
+        return;
+    }
+
+    temp->setMenuResultID(result);
 
     Instrument::getInstance()->nodeAdded(temp);
     graphPageComponent->addAndMakeVisible(temp);
@@ -561,6 +837,8 @@ void drawBezierCurve(juce::Graphics& g, juce::Point<float> endPoint, juce::Point
 
 void Instrument::GraphPage::drawConnections(juce::Graphics &g) {
 
+    if (Instrument::getInstance()->isBeingDestructed) return;
+
     g.setColour(GraphNodeConnectionColourID);
 
     if (temp) {
@@ -572,7 +850,7 @@ void Instrument::GraphPage::drawConnections(juce::Graphics &g) {
     }
 }
 
-void Instrument::GraphPage::connectionAdded(Connection *newConnection) {
+void Instrument::GraphPage::connectionAdded(Connection *newConnection, bool flag) {
     temp = nullptr;
 
     AllConnections.insert(newConnection);
@@ -584,7 +862,7 @@ void Instrument::GraphPage::connectionAdded(Connection *newConnection) {
     auto* f = static_cast<GraphNode*>(newConnection->fromNode);
     auto* t = static_cast<GraphNode*>(newConnection->toNode);
 
-	instrumentClassPointer->nodeProcessingQueue.newConnection(f, t);
+	if (flag) instrumentClassPointer->nodeProcessingQueue.newConnection(f, t);
 
     repaint(instrumentClassPointer->getPartToRepaintInViewPort());
 }
@@ -614,6 +892,19 @@ void Instrument::PlayPage::resized() {
               1,
               parent->getWidth() - 29,
               parent->getHeight() - 2);
+}
+
+juce::XmlElement *Instrument::PlayPage::makeXML() {
+    auto* playData = new juce::XmlElement("PlayPage");
+
+    return playData;
+}
+
+void Instrument::PlayPage::parseXMLChildren(juce::XmlElement* x) {
+    if (!x) {
+        std::cout << "EditPage Information not found in the file" << "\n";
+        return;
+    }
 }
 
 void Instrument::PlayPage::paint(juce::Graphics &g) {

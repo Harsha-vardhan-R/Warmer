@@ -39,7 +39,7 @@ public:
 
         InputSockets.add(new GraphNode::Socket(juce::String("Amplitude"), direction::IN, false));
         InputSockets[3]->acceptType(SocketDataType::Floating);
-        InputSockets[3]->addSliderParameterControl(0.0, 1.0, 0.4);
+        InputSockets[3]->addSliderParameterControl(0.0, 15.0, 0.4);
 
         makeAllSocketsVisible();
 

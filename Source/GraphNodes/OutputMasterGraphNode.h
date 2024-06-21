@@ -26,6 +26,8 @@ public:
 
         canBeDeleted = false;
 
+        setMenuResultID(6666);
+
         makeAllSocketsVisible();
 
         resized();
@@ -56,7 +58,7 @@ public:
         if (displayBuff) delete displayBuff;
     };
 
-    bool allGood() { return (InputSockets[0]->isThisConnected()); }
+    bool allGood() override { return (InputSockets[0]->isThisConnected()); }
 
     const juce::AudioBuffer<float>& getBufferToDisplay() {
         return *displayBuff;

@@ -25,6 +25,8 @@ enum class SocketDataType {
     NULLType, // when you cannot modulate with any other output.
 };
 
+std::ostream& operator<<(std::ostream& os, SocketDataType e);
+
 enum class direction {
     IN,
     OUT

@@ -18,10 +18,15 @@
 class DigitalFilter : public GraphNode {
 public:
 
-    DigitalFilter(int posX, int posY) : GraphNode(juce::String("simple filter"), posX, posY), forwardFFT(10),
-                                                                inverseFFT(10), fftOrder(10), fftSize(1024),
-                                                                filterCoefficients(fftSize, 0.0f),
-                                                                partStoreBufferIN(2, 256), partStoreBufferOUT(2, 256) {
+DigitalFilter(int posX, int posY) : GraphNode(juce::String("simple filter"), posX, posY),
+                                              forwardFFT(10),
+                                              inverseFFT(10),
+                                              fftOrder(10),
+                                              fftSize(1024),
+                                              filterCoefficients(fftSize+2, 0.0f),
+                                              partStoreBufferIN(2, 256),
+                                              partStoreBufferOUT(2, 256),
+                                              modulationPartIN(2, 256) {
 
         // generate and store the window coefficients.
         windowCoefficients.resize(fftSize);
@@ -47,6 +52,7 @@ public:
 
         InputSockets.add(new GraphNode::Socket(juce::String("Cutoff"), direction::IN, false));
         InputSockets[1]->acceptType(SocketDataType::Floating);
+        InputSockets[1]->acceptType(SocketDataType::AudioBufferFloat);
         InputSockets[1]->addSliderParameterControl(20.0, 20000.0, 440.0f);
 
         InputSockets.add(new GraphNode::Socket(juce::String("Mode"), direction::IN, false));
@@ -57,14 +63,14 @@ public:
         InputSockets[3]->acceptType(SocketDataType::Floating);
         InputSockets[3]->addSliderParameterControl(0.0, 1.0, 0.0);
 
-        InputSockets[1]->setSilderCallbackWanted();
-        InputSockets[2]->setSilderCallbackWanted();
-        InputSockets[3]->setSilderCallbackWanted();
+    InputSockets[1]->setSliderCallbackWanted();
+    InputSockets[2]->setSliderCallbackWanted();
+    InputSockets[3]->setSliderCallbackWanted();
 
-        InputSockets.add(new GraphNode::Socket(juce::String("Transfer Function"), direction::IN, false));
-        InputSockets[4]->addFilterDisplayControl();
-
-        displayPointer = (filterTransferFunctionDisp*)InputSockets[4]->getPointerToPresentParameterCtrlController();
+//        InputSockets.add(new GraphNode::Socket(juce::String("Transfer Function"), direction::IN, false));
+//        InputSockets[4]->addFilterDisplayControl();
+//
+//        displayPointer = (filterTransferFunctionDisp*)InputSockets[4]->getPointerToPresentParameterCtrlController();
 
         needsReloading.store(true);
 
@@ -159,7 +165,7 @@ public:
     void processPartBuffer() {
         float cutoff = InputSockets[1]->getValue() / 19980.0f;
         if (cutoff != prevCutoff) {
-            updateFilterCoefficients(cutoff);
+            updateFilterCoefficients(cutoff, true);
             prevCutoff = cutoff;
         }
 
@@ -228,6 +234,145 @@ public:
         overlapStore[2] = temp;
     }
 
+    const int updateInterval = 16;
+
+    void BExpWithModulation() {
+        globalSampleIndex[0] = 0;
+        globalSampleIndex[1] = 0;
+
+        const int numSamples = bufferToWritePointer->getNumSamples();
+        int sampleIndex = 0;
+        int sampleIndexRead = 0;
+        juce::AudioBuffer<float>* modulationBuffer = InputSockets[1]->getBufferPointer();
+
+        float* write_right_ch_data = bufferToWritePointer->getWritePointer(1);
+        float* write_left_ch_data = bufferToWritePointer->getWritePointer(0);
+
+        float* part_out_right = partStoreBufferOUT.getWritePointer(1);
+        float* part_out_left = partStoreBufferOUT.getWritePointer(0);
+
+        float* part_in_right = partStoreBufferIN.getWritePointer(1);
+        float* part_in_left = partStoreBufferIN.getWritePointer(0);
+
+        float* mod_part_in_right = modulationPartIN.getWritePointer(1);
+        float* mod_part_in_left = modulationPartIN.getWritePointer(0);
+
+        const float* read_right = readBuff->getReadPointer(1);
+        const float* read_left = readBuff->getReadPointer(0);
+
+        const float* mod_read_right = modulationBuffer->getReadPointer(1);
+        const float* mod_read_left = modulationBuffer->getReadPointer(0);
+
+        // Handle leftover samples first
+        while (leftOverSamples > 0 && sampleIndex < numSamples) {
+            write_right_ch_data[sampleIndex] = part_out_right[partBufferConsumeIndex];
+            write_left_ch_data[sampleIndex] = part_out_left[partBufferConsumeIndex];
+
+            sampleIndex++;
+            partBufferConsumeIndex++;
+            leftOverSamples--;
+        }
+
+        while (sampleIndexRead < numSamples) {
+            int remainingSamples = numSamples - sampleIndexRead;
+
+            if (partBufferFillIndex + remainingSamples >= maxAccumulation) {
+                int samplesToFill = maxAccumulation - partBufferFillIndex;
+
+                for (int i = 0; i < samplesToFill; ++i, ++sampleIndexRead, ++partBufferFillIndex) {
+                    part_in_left[partBufferFillIndex] = read_left[sampleIndexRead];
+                    part_in_right[partBufferFillIndex] = read_right[sampleIndexRead];
+
+                    mod_part_in_left[partBufferFillIndex] = mod_read_left[sampleIndexRead];
+                    mod_part_in_right[partBufferFillIndex] = mod_read_right[sampleIndexRead];
+                }
+
+                processPartBufferWithModulation(modulationBuffer);
+
+                partBufferFillIndex = 0;
+                leftOverSamples = maxAccumulation;
+                partBufferConsumeIndex = 0;
+
+                for (; partBufferConsumeIndex < maxAccumulation && sampleIndex < numSamples; ++sampleIndex, ++partBufferConsumeIndex, --leftOverSamples) {
+                    write_right_ch_data[sampleIndex] = part_out_right[partBufferConsumeIndex];
+                    write_left_ch_data[sampleIndex] = part_out_left[partBufferConsumeIndex];
+                }
+            } else {
+                for (int i = 0; i < remainingSamples; ++i, ++sampleIndexRead, ++partBufferFillIndex) {
+                    part_in_left[partBufferFillIndex] = read_left[sampleIndexRead];
+                    part_in_right[partBufferFillIndex] = read_right[sampleIndexRead];
+
+                    mod_part_in_left[partBufferFillIndex] = mod_read_left[sampleIndexRead];
+                    mod_part_in_right[partBufferFillIndex] = mod_read_right[sampleIndexRead];
+                }
+            }
+        }
+    }
+
+    void processPartBufferWithModulation(juce::AudioBuffer<float>* modulationData) {
+        for (int channel = 0; channel < 2; ++channel) {
+            int ModPartBufferIndex = -1;
+
+            float* channelData = partStoreBufferOUT.getWritePointer(channel);
+            const float* rawData = partStoreBufferIN.getReadPointer(channel);
+            float* fftDataChannel = fftData[channel].data();
+            float* tempDataChannel = tempData[channel].data();
+
+            float* overlapBuffer1 = overlapStore[0]->getWritePointer(channel);
+            const float* overlapBuffer2 = overlapStore[1]->getReadPointer(channel);
+            const float* overlapBuffer3 = overlapStore[2]->getReadPointer(channel);
+
+            const float* cutoffModulation = modulationPartIN.getReadPointer(channel);
+
+            for (int i = 0; i < fftSize - maxAccumulation; ++i) {
+                fftDataChannel[i] = fftDataChannel[i + maxAccumulation];
+            }
+
+            for (int i = 0; i < maxAccumulation; ++i) {
+                fftDataChannel[fftSize - maxAccumulation + i] = rawData[i];
+            }
+
+            for (int i = 0; i < fftSize; ++i) {
+                tempDataChannel[i] = fftDataChannel[i] * windowCoefficients[i];
+            }
+
+            forwardFFT.performRealOnlyForwardTransform(tempDataChannel);
+
+            int half_plus_one = fftSize / 2 + 1;
+            for (int i = 0; i < half_plus_one; ++i) {
+                if (i % 2 == 0) {
+                    ++ModPartBufferIndex;
+                    if (i % 17 == 0) updateFilterCoefficients(cutoffModulation[ModPartBufferIndex], false);
+                }
+                float val = filterCoefficients[i];
+                tempDataChannel[2 * i] *= val;
+                tempDataChannel[2 * i + 1] *= val;
+            }
+
+            inverseFFT.performRealOnlyInverseTransform(tempDataChannel);
+
+            for (int i = 0; i < fftSize; ++i) {
+                tempDataChannel[i] = tempDataChannel[i] * windowCoefficients[i];
+            }
+
+            for (int i = 0; i < maxAccumulation; ++i) {
+                channelData[i] = (tempDataChannel[i] +
+                                  overlapBuffer3[i + maxAccumulation] +
+                                  overlapBuffer2[i + 2 * maxAccumulation] +
+                                  overlapBuffer1[i + 3 * maxAccumulation]) * 0.25f;
+            }
+
+            std::copy(tempDataChannel, tempDataChannel + fftSize, overlapBuffer1);
+        }
+
+        juce::AudioBuffer<float>* temp = overlapStore[0];
+        overlapStore[0] = overlapStore[1];
+        overlapStore[1] = overlapStore[2];
+        overlapStore[2] = temp;
+    }
+
+
+
     // while processing we calculate the fft for 1024 samples
     // at a time, and we process for every 256 samples.
     //
@@ -236,14 +381,12 @@ public:
     // and for 64 samples we wait till they get accumulated till
     // 256 samples.
     void processGraphNode() override {
-        BExp();
+        (this->*callback_pointer)();
     }
 
-    void updateFilterCoefficients(float cutoff) {
+    void updateFilterCoefficients(float cutoff, bool update) {
         float mode = InputSockets[2]->getValue();
         float mix = InputSockets[3]->getValue();
-
-        displayPointer->setValues(cutoff, mode, mix);
 
         float cutoffFrequency = std::clamp(cutoff * 19980.0f, 20.0f, 20000.0f);
 
@@ -263,7 +406,7 @@ public:
             // phase delay is causing interesting sounds but causing
             // too much variation.
             filterCoefficients[i] = val;
-            filterCoefficients[half_plus_one + i] = val;
+//            filterCoefficients[half_plus_one + i] = val;
 
         }
 
@@ -291,10 +434,21 @@ public:
 
         partStoreBufferOUT.setNotClear();
         partStoreBufferOUT.clear();
+
+        if (InputSockets[1]->getConnectionType() == SocketDataType::AudioBufferFloat) {
+            modulationPartIN.clear();
+            callback_pointer = &DigitalFilter::BExpWithModulation;
+        } else {
+            callback_pointer = &DigitalFilter::BExp;
+        }
     }
 
     void mini_reset() override {
-        updateFilterCoefficients(InputSockets[1]->getValue() / 20000.0f);
+        updateFilterCoefficients(InputSockets[1]->getValue() / 20000.0f, true);
+    }
+
+    ~DigitalFilter() override {
+        for (auto i : overlapStore) delete i;
     }
 
 private:
@@ -317,9 +471,10 @@ private:
     // This is going to have the size of 1026 as we need to have both real and
     // imaginary values for the H(s). and we need value only for 0->512 indexes,
     // the remaining are just the conjugates.
-    juce::AudioBuffer<float> *readBuff = nullptr, partStoreBufferIN, partStoreBufferOUT;
+    juce::AudioBuffer<float> *readBuff = nullptr, partStoreBufferIN, partStoreBufferOUT, modulationPartIN;
     int partBufferFillIndex = 0, partBufferConsumeIndex = 0;
     int leftOverSamples = 256;
+    int globalSampleIndex[2] = { 0, 0 };
 
     int accumulation = 0;
 

@@ -154,7 +154,7 @@ public:
     // even when the combobox sets the value for the first time,
     // but at that time the parent is still not known(always) to parameter ctrl,
     // so this will not get called.
-    void mini_reset() {
+    void mini_reset() override {
 
         if (!init_phase_done) {
             int voices = InputSockets[0]->getValue()-1;

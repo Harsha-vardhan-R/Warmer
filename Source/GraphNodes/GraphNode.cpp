@@ -16,6 +16,155 @@
 Instrument* instrument_ptr = nullptr;
 
 
+juce::String setOfNodesToString(const std::set<GraphNode::Socket*>& set_) {
+    int i = 0;
+
+    juce::String t;
+
+    t += juce::String("(");
+
+    for (GraphNode::Socket* a : set_) {
+        if (i) t += juce::String(",");
+        t += juce::String("(");
+        t += juce::String(juce::String(reinterpret_cast<uint64_t>(a->getParent())));
+        t += juce::String(",");
+        t += juce::String(juce::String(a->getSocketsIndexInParent()));
+        t += juce::String(")");
+        i++;
+    }
+
+    t += juce::String(")");
+
+    return t;
+
+}
+
+juce::XmlElement *GraphNode::makeXML() {
+    auto* node = new juce::XmlElement("GraphNode");
+    node->setAttribute("Name" , name);
+    mini_makeXML(node);
+
+    for (auto i : OutputSockets) {
+        auto* soc = new juce::XmlElement("Socket");
+        soc->setAttribute("Direction", "OUT");
+        soc->setAttribute("Connections", setOfNodesToString(i->to));
+        soc->addChildElement(i->makeXML());
+        node->addChildElement(soc);
+    }
+
+    for (auto i : InputSockets) {
+        auto* soc = new juce::XmlElement("Socket");
+        soc->setAttribute("Direction", "IN");
+        soc->addChildElement(i->makeXML());
+        node->addChildElement(soc);
+    }
+
+    return node;
+}
+
+void GraphNode::parseXMLChildren(juce::XmlElement* x) {
+    Profiler("Graph Node");
+
+    mini_parseXMLChildren(x);
+
+    int a = 0;
+    for (auto* Child = x->getFirstChildElement(); Child; Child = Child->getNextElement()) {
+        if (Child->hasTagName("Socket")) {
+            if (Child->compareAttribute("Direction", "OUT", true)) continue;
+            // for the input Socket Initialise the parameters, so call
+            // parse XML on the Sockets.
+            // The Sockets will be in the same order as they are saved as order.
+            InputSockets[a]->parseXMLChildren(Child);
+            a++;
+        } else {
+            std::cout << "ERROR, Corrupt file" << "\n";
+            return;
+        }
+    }
+
+}
+
+void makeConnections(GraphNode::Socket* s, juce::String str, const std::unordered_map<juce::String, GraphNode*>& map_) {
+    juce::String trimmedStr = str.substring(1, str.length() - 1);
+
+    // No Connections.
+    if (trimmedStr.isEmpty()) return;
+
+    juce::StringArray nodesArray;
+    int startIndex = 0;
+
+    while (startIndex < trimmedStr.length()) {
+        int endIndex = trimmedStr.indexOf(startIndex, ")");
+        if (endIndex == -1) {
+            break;
+        }
+        juce::String nodeStr = trimmedStr.substring(startIndex, endIndex + 1);
+        nodesArray.add(nodeStr);
+        startIndex = endIndex + 2; // Skip the comma after ')'
+    }
+
+    for (const juce::String& nodeStr : nodesArray) {
+        if (nodeStr[0] != '(' || nodeStr[nodeStr.length() - 1] != ')') {
+            std::cerr << "Invalid Connections format" << std::endl;
+            continue;
+        }
+
+        // Remove node parentheses
+        juce::String nodeContent = nodeStr.substring(1, nodeStr.length() - 1);
+
+        // Split by comma to get parent unique number and socket index.
+        juce::StringArray nodeParts = juce::StringArray::fromTokens(nodeContent, ",", "");
+        if (nodeParts.size() != 2) {
+            std::cerr << "Invalid node parts" << std::endl;
+            continue;
+        }
+
+        const juce::String& parentAddress = nodeParts[0];
+        int socketIndex = nodeParts[1].getIntValue();
+
+        auto it = map_.find(parentAddress);
+        if (it != map_.end()) {
+            GraphNode* toNode = it->second;
+            GraphNode::Socket* toSocket = toNode->getInputSocketAtIndex(socketIndex);
+
+            // Create the connection
+            auto* newConnection = new Connection();
+
+            newConnection->confirmConnection(static_cast<void*>(s->getParentComponent()),
+                                             static_cast<void*>(s),
+                                             static_cast<void*>(toNode),
+                                             static_cast<void*>(toSocket));
+
+            // This with that, that with this.
+            s->connected(toSocket, newConnection, false);
+            toSocket->connected(s, newConnection, false);
+        } else {
+            std::cerr << "Parent address not found in the map" << std::endl;
+        }
+    }
+}
+
+
+
+
+void GraphNode::XMLParseHelper(juce::XmlElement* xmlEle, const std::unordered_map<juce::String, GraphNode*>& map_) {
+
+    int b = 0;
+    for (auto* Child = xmlEle->getFirstChildElement(); Child; Child = Child->getNextElement()) {
+        if (Child->hasTagName("Socket")) {
+            if (!Child->compareAttribute("Direction", "OUT", true)) break;
+            // for the output Sockets create the connections.
+            juce::String s = Child->getStringAttribute("Connections");
+            makeConnections(OutputSockets[b], s, map_);
+            b++;
+        } else {
+            std::cout << "ERROR, Corrupt file" << "\n";
+            return;
+        }
+    }
+
+}
+
 std::vector<GraphNode*> GraphNode::getDependencies() {
     std::vector<GraphNode*> output;
 
@@ -127,6 +276,7 @@ void GraphNode::repaintAllInputConnectionsToNode() {
 void GraphNode::mouseDrag(const juce::MouseEvent& event) {
     juce::Point<int> delta = event.getPosition() - lastMouseDownPosition;
     auto newBounds = getBounds().translated(delta.getX(), delta.getY());
+//    std::cout << newBounds.getX() << " " << newBounds.getY() << " " << newBounds.getWidth() << " " << newBounds.getHeight() << "\n";
     setBounds(newBounds);
 
     // mouse drag triggers the repainting of connections to the node.
@@ -184,16 +334,22 @@ void GraphNode::paintBasic(juce::Graphics& g) {
 void GraphNode::makeAllSocketsVisible() {
     resized(); // set the bounds.
 
+    int lll = 0;
+
     // draw the sockets.
     for (Socket* i : InputSockets) {
         addAndMakeVisible(i);
         i->update();
         i->setParent(this);
+        i->thisSocketsIndexIs(lll);
+        lll++;
     }
+
     for (Socket* i : OutputSockets) {
         addAndMakeVisible(i);
         i->update();
     }
+
 }
 
 void GraphNode::paint(juce::Graphics& g) {
@@ -234,6 +390,7 @@ GraphNode::~GraphNode() {
 }
 
 
+
 //////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
 ////////// Function definition of the Socket /////////////
@@ -258,7 +415,7 @@ void GraphNode::Socket::paint(juce::Graphics &g)  {
 
     // one for input socket and other for output socket check.
     if (dir == direction::IN) {
-        if (TypesAccepted.size()) g.fillRect(0, 5, 5, 5);
+        if (!TypesAccepted.empty()) g.fillRect(0, 5, 5, 5);
 
         int a = TypesAccepted.count(SocketDataType::AudioBufferFloat);
         int b = TypesAccepted.count(SocketDataType::MIDI);
@@ -483,7 +640,7 @@ void GraphNode::Socket::mouseDrag(const juce::MouseEvent &event) {
 
 }
 
-void GraphNode::Socket::connected(Socket *otherPointer, Connection* connection) {
+void GraphNode::Socket::connected(Socket *otherPointer, Connection* connection, bool flag) {
     isConnected = true;
     connectionPointer = connection;
 
@@ -499,7 +656,7 @@ void GraphNode::Socket::connected(Socket *otherPointer, Connection* connection) 
         resized();
 
         // this is the last function call that happens after a connection is confirmed in this class.
-        Instrument::getInstance()->connectionAdded(connection);
+        if (flag) Instrument::getInstance()->connectionAdded(connection);
 
         if (parentNodePointer) parentNodePointer->repaintAllInputConnectionsToNode();
 

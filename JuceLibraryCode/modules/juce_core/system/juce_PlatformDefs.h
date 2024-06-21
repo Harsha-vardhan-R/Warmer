@@ -21,6 +21,7 @@
 */
 
 #pragma once
+#include <bits/stdc++.h>
 
 namespace juce
 {

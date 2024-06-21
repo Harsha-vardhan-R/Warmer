@@ -13,3 +13,8 @@ Warmer.jucer
 /Testing
 /.cmake
 /cmake-build-release/
+./Testing/
+/.cache
+./compile_commands.json
+
+

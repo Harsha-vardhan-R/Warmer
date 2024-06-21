@@ -11,6 +11,7 @@
 #include "MIDIPianoComponent.h"
 #include "Piano.h"
 #include "Instrument.h"
+#include <atomic>
 
 // This is always going to be of the same height
 // The offset is to tell how low it should start.

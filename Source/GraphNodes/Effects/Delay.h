@@ -98,6 +98,7 @@ private:
 
     std::vector<float> delayBuffer[2];
 
+    
     int prev_SampleRate = 0;
 
     int max_index = 0;

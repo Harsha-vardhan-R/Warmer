@@ -18,11 +18,12 @@
 
     A dynamic topo sorting data-structure,
 
-    if a new node is added or deleted it will be set in the correct position
+    if a new node is added or deleted it will be rearranged to the correct position
     without going through all the nodes every time a node gets added or deleted,
 
     but `isGood` will be called on all nodes and if any one returned false we are going to
-    stop processing the queue and, we still do not support free nodes isolated.
+    stop processing the queue and, we still do not support free nodes isolated(this is also true for saving
+    the configuration).
 
     calling push will insert the node and stop the processing,
 
@@ -65,7 +66,6 @@ public:
     // thread.
     std::atomic<bool> insideCallback;
 
-
     void processingStart() {
         play.store(1);
     }
@@ -91,7 +91,7 @@ public:
         insideCallback.store(false);
     }
 
-    ~TopoSorter() {
+    ~TopoSorter() override {
         insideCallback.store(false);
 
         processingStop();
@@ -264,14 +264,8 @@ public:
     // we should not pop in both cases.
     // to check for all nodes popped, use `done()` method.
     //O(1)
-    bool isEmpty() const {
+    [[nodiscard]] bool isEmpty() const {
         return (sortedNodes.empty());
-    }
-
-    // Returns true if the nodes are popped.
-    //O(1)
-    bool done() const {
-        return (totalNodesToProcess == 0);
     }
 
     // checks if every node in the bunch of nodes has isMust sockets connected.
@@ -295,87 +289,91 @@ public:
     bool newConnection(GraphNode *from, GraphNode *to) {
         processingStop();
 
+        std::set<GraphNode*> visitedSet;
+
 		// here we need to make sure that the `from` node is before the `to` node.
 		// we can put the `from` just before node and the order will still be valid.
-        recrSortChildren(from, to);
+        bool connectionValid = recrSortChildren(from, to, visitedSet);
 
         setBuffersToNodes();
         resetAll();
-        if (checkAllGood()) processingStart();
+        if (connectionValid && checkAllGood()) processingStart();
+
+        debugDump();
 
         return true;
     }
 
-    void recrSortChildren(GraphNode* from, GraphNode* to) {
+    bool recrSortChildren(GraphNode* from, GraphNode* to, std::set<GraphNode*>& visitedNodes) {
 
         if (!from || !to) {
             std::cout << "Null pointers passed as arguments in TopoSorter::newConnection, ERROR" << "\n";
-            return;
+            return false;
         }
 
-        // This condition is for the `feedback`,
-        // any connection from or to them does not change the
-        // sorted order. (when these nodes are added they are added to the
-        // back of the list, they will be processed after all the nodes, and store the buffers
-        // that will be used for the next callback)
-        if (from->needsRearrangementFromNode()) {
-            // start checking for the first node.
-            linkedNode *current = head;
-            linkedNode *prev = nullptr;
+        bool flag = true;
 
-            while (current) {
+        if (visitedNodes.find(to) != visitedNodes.end()) {
+            std::cout << "Loop Detected in the configuration please remove it, loop part of the loop : "
+                      << from->name << "->" << to->name << "\n";
+            processingStop();
+            flag = false;
+        }
 
-                // if the `from` node is found first.
-                if (current->nodePointer == from) break;
+        // start checking for the first node.
+        linkedNode *current = head;
+        linkedNode *prev = nullptr;
 
-                // if the `to` node is found first, we are going to set the `from` node,
-                // just after the `from` node.
-                if (current->nodePointer == to) {
+        while (current) {
 
-                    // store the pointer to the `to` node.
-                    linkedNode *temp = current;
+            // if the `from` node is found first.
+            if (current->nodePointer == from) break;
 
-                    if (prev) prev->nextNode = current->nextNode;
-                    else head = current->nextNode;
+            // if the `to` node is found first, we are going to set the `from` node,
+            // just after the `from` node.
+            if (current->nodePointer == to) {
 
-                    // now search for the `from` node which will be present at some point after the
-                    // `to` node, if from is found the current will be set to the linkedNode containing `from`.
+                // store the pointer to the `to` node.
+                linkedNode *temp = current;
+
+                if (prev) prev->nextNode = current->nextNode;
+                else head = current->nextNode;
+
+                // now search for the `from` node which will be present at some point after the
+                // `to` node, if from is found the current will be set to the linkedNode containing `from`.
+                current = current->nextNode;
+                while (current && current->nodePointer != from) {
                     current = current->nextNode;
-                    while (current && current->nodePointer != from) {
-                        current = current->nextNode;
-                    }
-
-                    // we found `from`
-                    if (current) {
-                        // now the current is set to the `from` node.
-                        // we set the `temp`(to) to be immediate next node after the `from`.
-                        temp->nextNode = current->nextNode;
-                        current->nextNode = temp;
-                    } else {
-                        std::cout << "From node not found in TopoSorter::newConnection, this should not happen"
-                                  << "\n";
-                    }
-
-                    // edge case if the `from` node is at the tail.
-                    // this should not happen(AUDIO OUT is always the last), but in case.
-                    if (!temp->nextNode) tail = temp;
-
-                    break;
                 }
 
-                prev = current;
-                current = current->nextNode;
+                // we found `from`
+                if (current) {
+                    // now the current is set to the `from` node.
+                    // we set the `temp`(to) to be immediate next node after the `from`.
+                    temp->nextNode = current->nextNode;
+                    current->nextNode = temp;
+                } else {
+                    std::cout << "From node not found in TopoSorter::newConnection, this should not happen, ERROR"
+                              << "\n";
+                }
+
+                // edge case if the `from` node is at the tail.
+                // this should not happen(AUDIO OUT is always the last), but in case.
+                if (!temp->nextNode) tail = temp;
+
+                break;
             }
 
-
-            // recursively sort the nodes that are connected to this.
-            for (auto i : to->getDependents()) recrSortChildren(to, i);
-
-        } else {
-            nodesToRestTwice.insert(to);
-            nodesToRestTwice.insert(from);
+            prev = current;
+            current = current->nextNode;
         }
 
+        visitedNodes.insert(from);
+
+        // recursively sort the nodes that are connected to this.
+        for (auto i : to->getDependents()) flag = flag && recrSortChildren(to, i, visitedNodes);
+
+        return flag;
 
     }
 
@@ -394,11 +392,7 @@ public:
 
         if (WaveShapeDisp::this_instance) WaveShapeDisp::this_instance->changeBufferSize((int)sampleSize);
 
-        // reset the nodes that need to be reset again because of the
-        // feedback connections.
-        for (auto i : nodesToRestTwice) {
-            if (bunchOfNodes.find(i) != bunchOfNodes.end()) i->reset();
-        }
+        (static_cast<OutputMasterGraphNode*>(AUDIO_OUT))->reset();
 
     }
 
@@ -452,9 +446,6 @@ public:
         std::queue<juce::AudioBuffer<float>*> dependencyFreedBuffers;
         std::unordered_map<GraphNode*, std::set<juce::AudioBuffer<float>*>> nodeToDependentBufferMap;
 
-        std::queue<juce::AudioBuffer<float>*> dependencyFreedBuffersNonRecyclable;
-        for (auto* i : bunchOfBuffersForFeedbacks) dependencyFreedBuffersNonRecyclable.push(i);
-
         // if there are any left-over buffers.
         // we never delete the buffers in between (exception : changing the number of samples in each block)
         // execution so for an instance the maximum number of buffers will be
@@ -475,38 +466,6 @@ public:
             GraphNode* currentNode = current->nodePointer;
 
             if (currentNode->needAudioBuffer) {
-
-                // if the node's buffer cannot be recycled
-                // we do not even tell any other node that
-                // this buffer exists we use from a different set of
-                // buffers that are created reserved to only one node.
-                if (!currentNode->getCanBeRecycled()) {
-                    if (dependencyFreedBuffersNonRecyclable.empty()) {
-                        auto* t = new juce::AudioBuffer<float>(2, (int)std::ceil(sampleSize));
-                        dependencyFreedBuffersNonRecyclable.push(t);
-                        bunchOfBuffersForFeedbacks.insert(t);
-                    }
-
-                    juce::AudioBuffer<float>* temp = dependencyFreedBuffersNonRecyclable.front();
-                    dependencyFreedBuffersNonRecyclable.pop();
-//                    totSetHere.insert(temp);
-
-                    // we give this buffer that we just popped to the GraphNode.
-                    currentNode->setToWriteAudioBuffer(temp);
-
-                    // if this is not set the buffer that this node is reading from never gets freed,
-                    // as the reference will have a minimum value of one or more.
-                    for (auto i : nodeToDependentBufferMap[currentNode]) {
-                        dependentCountMap[i]--;
-
-                        // this node can be used, all it's dependencies are processed.
-                        // if the node's buffer cannot be reused then we are not going to
-                        // free it.
-                        if (dependentCountMap[i] == 0) dependencyFreedBuffers.push(i);
-                    }
-                    current = current->nextNode;
-                    continue;
-                }
 
                 // if there are no free buffers we create one.
                 if (dependencyFreedBuffers.empty()) {
@@ -563,22 +522,31 @@ public:
 
     }
 
+    void clearAll() {
+        if (head) recr_delete(head);
+        bunchOfNodes.clear();
+        bunchOfNodes.insert(MIDI_IN);
+        bunchOfNodes.insert(AUDIO_OUT);
+    }
+
     // this is used while loading a configuration,
     // as loading an instrument will be really slow if
     bool sort() {
         processingStop();
 
-        if (MIDI_IN == nullptr) return false;
+        if (head) recr_delete(head);
+
+        if (!MIDI_IN || !AUDIO_OUT) {
+            std::cout << "FATAL! MIDI IN OR AUDIO OUT ARE NOT PRESENT IN THE NODE SET" << "\n";
+            return false;
+        }
+
+        bunchOfNodes.insert(MIDI_IN);
+        bunchOfNodes.insert(AUDIO_OUT);
 
         std::unordered_map<GraphNode*, std::set<GraphNode*>> AdjList;
         std::unordered_map<GraphNode*, int> indegree;  // In-degree counter for each node
         std::queue<GraphNode*> zeroDependencyQueue;    // Queue for nodes with zero dependencies
-
-
-        for (auto a : bunchOfBuffers) delete a;
-        for (auto a : bunchOfBuffersForFeedbacks) delete a;
-        bunchOfBuffers.clear();
-        bunchOfBuffersForFeedbacks.clear();
 
         if (!checkAllGood()) return false;
 
@@ -605,14 +573,7 @@ public:
             }
         }
 
-        // because this is not in the AdjList, we have to do this manually.
-        sortedNodes.push_back(MIDI_IN);
-        for (auto i : (MIDI_IN)->getDependents()) {
-            indegree[i]--;
-            if (indegree[i] == 0) {
-                zeroDependencyQueue.push(i);
-            }
-        }
+
 
         // Topological sort
         while (!zeroDependencyQueue.empty()) {
@@ -621,7 +582,7 @@ public:
             sortedNodes.push_back(currentNode);  // Add current node to sorted list
 
             // Reduce the in-degree of adjacent nodes by 1.
-            for (auto dependent : AdjList[currentNode]) {
+            for (auto dependent: AdjList[currentNode]) {
                 indegree[dependent]--;
                 if (indegree[dependent] == 0) {
                     zeroDependencyQueue.push(dependent);
@@ -629,16 +590,31 @@ public:
             }
         }
 
-        if (sortedNodes.size() != bunchOfNodes.size()+1) {
-            sortedNodes.clear();
-            return false;
+        if (sortedNodes.size() != bunchOfNodes.size()) {
+            std::cout << "Not all nodes satisfied in sort in TopoSorter, probably a Loop is present" <<"\n";
         }
 
+        auto found = std::find(sortedNodes.begin(), sortedNodes.end(),MIDI_IN);
 
-        linkedNode *current = new linkedNode(MIDI_IN);
+        if (found == sortedNodes.end()) {
+            std::cout << "ERROR!, MIDI_IN not found in SortedNodes after sorting" << "\n";
+            return false;
+        } else {
+            sortedNodes.erase(found);
+        }
+
+        auto found1 = std::find(sortedNodes.begin(), sortedNodes.end(), AUDIO_OUT);
+
+        if (found1 == sortedNodes.end()) {
+            std::cout << "ERROR!, AUDIO_OUT not found in SortedNodes after sorting" << "\n";
+            return false;
+        } else {
+            sortedNodes.erase(found1);
+        }
+
+        auto *current = new linkedNode(MIDI_IN);
         head = current;
-        // starting from 1 because at zero we will always have MIDI_IN, that we already inserted.
-        for (int i = 1; i < sortedNodes.size(); ++i, current = current->nextNode) {
+        for (int i = 0; i < sortedNodes.size(); ++i, current = current->nextNode) {
             current->nextNode = new linkedNode(sortedNodes[i]);
             tail = current->nextNode;
         }
@@ -647,11 +623,11 @@ public:
 
         resetAll();
 
-        processingStart();
+        if (checkAllGood()) processingStart();
 
         debugDump();
 
-        return true;  // No cycle
+        return true;
     }
 
 

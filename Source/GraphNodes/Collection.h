@@ -45,5 +45,6 @@
 
 #include "MIDI/MIDI_Polyphony.h"
 #include "MIDI/MIDI_Transpose.h"
+#include "MIDI/MIDI_NoteToFreq.h"
 
 #include "Filters/Digital.h"

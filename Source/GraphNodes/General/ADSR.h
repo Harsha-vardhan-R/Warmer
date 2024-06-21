@@ -170,8 +170,6 @@ public:
 
     }
 
-    void mini_reset() {}
-
     ~ADSR() {};
 
 private:

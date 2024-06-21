@@ -1,8 +1,12 @@
 cmake_minimum_required(VERSION 3.15)
 project(Warmer VERSION 0.1.0)
 
+set(CMAKE_C_COMPILER clang)
+set(CMAKE_CXX_COMPILER clang++)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Set build type to Release by default
 if(NOT CMAKE_BUILD_TYPE)
@@ -48,11 +52,14 @@ add_compile_definitions(
         JucePlugin_Build_Standalone=0
         JucePlugin_Build_Unity=0
         JucePlugin_Build_LV2=0
+        JUCE_ENABLE_REPAINT_DEBUGGING=0
+        JUCE_MODAL_LOOPS_PERMITTED=1
+        JUCE_DEBUG=1
 )
 
 # Compiler flags for debug and release builds
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O2 -ggdb -pthread")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -flto -Wall -Wcast-align -Wfloat-equal -Wno-ignored-qualifiers -Wsign-compare -Wsign-conversion -Wstrict-aliasing -Wswitch-enum -Wuninitialized -Wunreachable-code -Wunused-parameter -Wmissing-field-initializers -Wextra -Wsign-compare -Wno-implicit-fallthrough -Wno-maybe-uninitialized -Wredundant-decls -Wno-strict-overflow -Wshadow -Woverloaded-virtual -Wreorder -Wzero-as-null-pointer-constant -s")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -flto -Wall")
 
 # Add source files
 set(SOURCES
@@ -66,6 +73,7 @@ set(SOURCES
         ./Source/MIDIPianoComponent.cpp
         ./Source/GraphNodes/GraphNode.cpp
         ./Source/GraphNodes/Connection.cpp
+        ./Source/GraphNodes/InputOutputTypesForSocket.cpp
         ./Source/MasterComponent.cpp
         ./Source/Main.cpp
         ./Source/MenuComponent.cpp
@@ -88,6 +96,8 @@ set(SOURCES
 )
 
 add_executable(Warmer ${SOURCES})
+
+
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(ALSA REQUIRED alsa)

@@ -87,8 +87,6 @@ public:
         readBuff = InputSockets[0]->getBufferPointer();
     }
 
-    void mini_reset() {}
-
     ~Convolution() {};
 
 private:

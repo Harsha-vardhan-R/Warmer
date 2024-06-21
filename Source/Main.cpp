@@ -1,7 +1,8 @@
-//#define JUCE_ENABLE_REPAINT_DEBUGGING 1
+
 #include <JuceHeader.h>
 #include "MainComponent.h"
 #include "Instrument.h"
+
 
 //==============================================================================
 class WarmerApplication  : public juce::JUCEApplication

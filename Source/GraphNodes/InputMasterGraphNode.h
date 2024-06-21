@@ -31,6 +31,9 @@ public:
         OutputSockets[2]->setOutputType(SocketDataType::Floating);
 
         canBeDeleted = false;
+
+        setMenuResultID(9999);
+
         makeAllSocketsVisible();
         resized();
     };

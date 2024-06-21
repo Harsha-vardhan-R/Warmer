@@ -228,8 +228,10 @@ public:
 
                 }
 
+                int numSamples = bufferToWritePointer->getNumSamples();
+
                 // Fill remaining samples in `freqAtSamplePoint_from_MIDI`
-                for (; currentIndexPosition < bufferToWritePointer->getNumSamples(); ++currentIndexPosition) {
+                for (; currentIndexPosition < numSamples; ++currentIndexPosition) {
                     freqAtSamplePoint_from_MIDI[currentIndexPosition] = presMIDI_freq;
                 }
 
@@ -479,6 +481,11 @@ public:
 
         setCallBackHell();
 
+        DBG(InputSockets[0]->getValue());
+        std::cout << InputSockets[1]->getConnectionType() << "\n";
+        std::cout << InputSockets[2]->getConnectionType() << "\n";
+        std::cout << InputSockets[3]->getConnectionType() << "\n";
+
     }
 
     void mini_reset() override {
@@ -486,8 +493,7 @@ public:
     }
 
     void setCallBackHell() {
-        // I had the dumbest idea to make freqInputType even after having SocketDataType,
-        // now here is my punishment.
+
         if (InputSockets[1]->getConnectionType() == SocketDataType::MIDI) {
             // select the amplitude type
             if (InputSockets[2]->getConnectionType() == SocketDataType::AudioBufferFloat) {

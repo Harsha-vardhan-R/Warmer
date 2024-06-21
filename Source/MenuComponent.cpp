@@ -66,6 +66,12 @@ void MenuComponent::menuItemSelected(int menuItemID, int topLevelMenuIndex) {
         case 1:
             instrument->Initialize();
             break;
+        case 2:
+            instrument->parseXMLChildren(nullptr);
+            break;
+        case 3:
+            instrument->createRootTag();
+            break;
         case 5:
             std::cout << "Exiting Warmer..." << std::endl;
             juce::JUCEApplication::getInstance()->systemRequestedQuit();
@@ -82,8 +88,7 @@ void MenuComponent::menuItemSelected(int menuItemID, int topLevelMenuIndex) {
     }
 }
 
-void
-MenuComponent::drawMenuBarBackground(juce::Graphics &g, int width, int height, bool, juce::MenuBarComponent &menuBar) {
+void MenuComponent::drawMenuBarBackground(juce::Graphics &g, int width, int height, bool, juce::MenuBarComponent &menuBar) {
     g.fillAll(juce::Colours::white);
 }
 

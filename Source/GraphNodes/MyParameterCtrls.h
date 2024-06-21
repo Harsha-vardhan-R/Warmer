@@ -154,7 +154,11 @@ public:
     void removeListener(Listener* listener) { listeners.remove(listener); }
 
 
-    struct Point { float x, y; };
+    struct Point {
+    public:
+
+        float x, y;
+    };
 
 
     void copyData(std::vector<Point>& points_, std::vector<float>& controlLevels_) {
@@ -165,6 +169,13 @@ public:
             points_[i] = {points[i].x, 1.0f - points[i].y};
         }
         controlLevels_ = controlLevels;
+    }
+
+    void setData(std::vector<Point>& points_, std::vector<float>& controlLevels_) {
+        lockMutex();
+
+        points = points_;
+        controlLevels = controlLevels_;
     }
 
     void lockMutex() {
@@ -302,7 +313,7 @@ public:
         a = k;
         b = l;
         c = m;
-        repaint();
+//        repaint();
     }
 
     void setValues (float k, float l, float m, float o, float p) {

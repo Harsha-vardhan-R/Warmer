@@ -89,7 +89,7 @@
 */
 #ifndef JUCE_LOG_ASSERTIONS
  #if JUCE_ANDROID
-  #define JUCE_LOG_ASSERTIONS 1
+#define JUCE_LOG_ASSERTIONS 1
  #else
   #define JUCE_LOG_ASSERTIONS 0
  #endif
