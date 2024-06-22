@@ -4,6 +4,7 @@
 
 #pragma once
 #include <JuceHeader.h>
+#include <memory>
 
 class envParamCtrl : public juce::Component {
 public:
@@ -156,7 +157,7 @@ public:
 
     struct Point {
     public:
-
+        
         float x, y;
     };
 
@@ -176,6 +177,8 @@ public:
 
         points = points_;
         controlLevels = controlLevels_;
+
+        repaint();
     }
 
     void lockMutex() {

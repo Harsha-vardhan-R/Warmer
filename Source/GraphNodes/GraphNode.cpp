@@ -63,8 +63,11 @@ juce::XmlElement *GraphNode::makeXML() {
 }
 
 void GraphNode::parseXMLChildren(juce::XmlElement* x) {
-    Profiler("Graph Node");
-
+    //Profiler("Graph Node");
+    
+    // Parse any saved state the child is in before doing this,
+    // please make sure that the number of sockets when saved should be 
+    // equal to the the number of sockets after this function returnes.
     mini_parseXMLChildren(x);
 
     int a = 0;

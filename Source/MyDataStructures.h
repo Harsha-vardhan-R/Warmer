@@ -299,7 +299,7 @@ public:
         resetAll();
         if (connectionValid && checkAllGood()) processingStart();
 
-        debugDump();
+        // debugDump();
 
         return true;
     }
@@ -345,7 +345,7 @@ public:
                 while (current && current->nodePointer != from) {
                     current = current->nextNode;
                 }
-
+                
                 // we found `from`
                 if (current) {
                     // now the current is set to the `from` node.
@@ -533,13 +533,14 @@ public:
     // as loading an instrument will be really slow if
     bool sort() {
         processingStop();
-
+        prepare();
         if (head) recr_delete(head);
 
         if (!MIDI_IN || !AUDIO_OUT) {
             std::cout << "FATAL! MIDI IN OR AUDIO OUT ARE NOT PRESENT IN THE NODE SET" << "\n";
             return false;
         }
+
 
         bunchOfNodes.insert(MIDI_IN);
         bunchOfNodes.insert(AUDIO_OUT);
@@ -625,8 +626,11 @@ public:
 
         if (checkAllGood()) processingStart();
 
-        debugDump();
-
+        // If we are in juce debug, print the debug dump.
+        #if JUCE_DEBUG 
+            debugDump();
+        #endif
+        
         return true;
     }
 

@@ -195,13 +195,14 @@ void Instrument::createRootTag() {
         else {
             juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "Error", "Could not create output stream to the selected file.");
         }
+
+        delete hereNotForLong;
     }
 
 }
 
 juce::XmlElement *Instrument::makeXML() {
-
-
+    
     nodeProcessingQueue.processingStop();
 
     auto* root = new juce::XmlElement("Instrument");
@@ -256,6 +257,7 @@ void Instrument::parseXMLChildren(juce::XmlElement* x) {
                     // happen before this goes out of scope,
                     // It will live long enough.
                     juce::XmlDocument xmlDoc(fileContents);
+                    // Memory managed by the unique pointer.
                     std::unique_ptr<juce::XmlElement> xmlElementRoot(xmlDoc.getDocumentElement());
 
                     if (xmlElementRoot != nullptr) {
@@ -647,13 +649,17 @@ void Instrument::GraphPage::parseXMLChildren(juce::XmlElement* x) {
             int ID = Child->getIntAttribute("ResultID");
 
             if (ID == 6666 || ID == 9999) {
+                std::pair<int, int> position = parseXYFromString(Child->getStringAttribute("Position"));
+
                 // these are Input and output nodes, they are already present in the Graph Editor so give their address directly.
                 // these nodes do not have anything important other than connections
                 // which will be set in the next loop, so not calling parseXMLChildren on them.
                 if (ID == 9999) {
                     uniqueToPresentAddress[Child->getStringAttribute("Address")] = Instrument::getInstance()->InputNode;
+                    Instrument::getInstance()->InputNode->setTopLeftPosition(position.first, position.second);              
                 } else {
                     uniqueToPresentAddress[Child->getStringAttribute("Address")] = Instrument::getInstance()->OutputNode;
+                    Instrument::getInstance()->OutputNode->setTopLeftPosition(position.first, position.second);              
                 }
 
             } else {

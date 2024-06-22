@@ -12,12 +12,14 @@
 #pragma once
 #include <JuceHeader.h>
 
+#include <iostream>
 #include <memory>
 #include "../ColourPalette.h"
 #include "InputOutputTypesForSokets.h"
 #include "Connection.h"
 #include "MyParameterCtrls.h"
 #include "../XML_Handling.h"
+#include "juce_core/juce_core.h"
 
 
 #define PI 3.141592653589793238462643f
@@ -265,6 +267,12 @@ public :
         void addFilterDisplayControl();
 
 
+        // set the slider value.
+        void setParamValue(float val) {
+            parameterController.setParamValue(val);    
+        }
+
+
         // if this is called you will have a mini_reset callback from a slider value
         // change.
         void setSliderCallbackWanted() { parameterController.setSilderWantedCallback(); }
@@ -463,11 +471,11 @@ public :
                 int flag = 0;
 
                 for (auto i : vec) {
-                    if (flag) new_ += juce::String(",");
+                    if (flag) new_ += juce::String(":");
                     new_ += juce::String("(");
                     new_ += juce::String(i.x);
                     new_ += juce::String(",");
-                    new_ += juce::String(i.y);
+                    new_ += juce::String(1.0f-i.y);
                     new_ += juce::String(")");
                     flag = 1;
                 }
@@ -475,27 +483,6 @@ public :
                 return new_;
             }
 
-            static std::vector<envParamCtrl::Point> delimitedStringToPointArray(const juce::String& str) {
-                std::vector<envParamCtrl::Point> vec;
-                juce::String currentPoint;
-                juce::String strCopy = str;
-
-                for (char c : strCopy) {
-                    if (c == '(') {
-                        currentPoint = "(";
-                    } else if (c == ')') {
-                        int commaIndex = currentPoint.indexOf(0, ",");
-                        float x = currentPoint.substring(1, commaIndex - 1).getFloatValue();
-                        float y = currentPoint.substring(commaIndex + 1, currentPoint.length() - commaIndex - 2).getFloatValue();
-                        vec.push_back({x , y});
-                        currentPoint = "";
-                    } else {
-                        currentPoint += c;
-                    }
-                }
-
-                return vec;
-            }
 
             juce::XmlElement* makeXML() override {
                 auto* parameterValue = new juce::XmlElement("Parameter");
@@ -526,12 +513,12 @@ public :
 
             void parseXMLChildren(juce::XmlElement* x) override {
 
-                std::cout << x->toString() << "\n";
+                // std::cout << x->toString() << "\n";
 
                 if (parameterType == -1) return;
                 juce::XmlElement* child = x->getFirstChildElement();
 
-                std::cout << child->toString() << "\n";
+                // std::cout << child->toString() << "\n";
 
                 if (parameterType == 1) {
                     // list.
@@ -547,10 +534,25 @@ public :
                 } else if (parameterType == 3) {
                     std::vector<float> controls;
 
-                    for (juce::String& i : juce::StringArray::fromTokens(child->getStringAttribute("Controls"), ",", ""))
+                    std::cout << "COntrolString : " << child->getStringAttribute("Controls") << "\n";
+                    for (juce::String& i : juce::StringArray::fromTokens(child->getStringAttribute("Controls"), ",", "")) {
                         controls.push_back(i.juce::String::getFloatValue());
+                        std::cout << "ctrl : " << i << "\n";
+                    }
 
-                    std::vector<envParamCtrl::Point> points = delimitedStringToPointArray(child->getStringAttribute("Points"));
+                    std::vector<envParamCtrl::Point> points;
+
+                    juce::StringArray pointStrs = juce::StringArray::fromTokens(child->getStringAttribute("Points"), ":", "");
+                    for (auto i : pointStrs) {
+                        std::cout << "pntStr : " << i << "\n";
+                        // Populate the vector with points from this(substring to remove the bracketts).
+                        juce::StringArray detailed = juce::StringArray::fromTokens(i.substring(1, i.length()-1), ",", "");
+                        if (detailed.size() != 2) {
+                            std::cout << "ERROR! There are more or less than 2 points for a 2d coordinate" << "\n";
+                        }
+                        
+                        points.push_back({detailed[0].getFloatValue(), detailed[1].getFloatValue()});
+                    }
 
                     if (envelopeCtrl) {
                         envelopeCtrl->setData(points, controls);
@@ -588,6 +590,18 @@ public :
                 if (parameterType == -1) return 0;
                 else if (parameterType == 3 || parameterType == 4) return 80;
                 else return 30;
+            }
+
+            // Updates the parameters on the given type.
+            void setParamValue(float val) {
+                    valueAtomic.store(val);
+                    if (sliderFloat) {
+                        sliderFloat->setValue(val);
+                        triggerParent();
+                    } else if (menuList) {
+                        menuList->setSelectedItemIndex((int)val);
+                        triggerParent();
+                    }
             }
 
             void createNewMenu() {

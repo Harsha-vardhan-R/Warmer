@@ -10,6 +10,7 @@
 
 #pragma once
 #include "../GraphNode.h"
+#include <iostream>
 
 class Mixer : public GraphNode {
 public:
@@ -30,7 +31,6 @@ public:
             float* channelData = bufferToWritePointer->getWritePointer(channel);
 
             for (int i = 0; i < bufferToWritePointer->getNumSamples(); ++i) channelData[i] = 0.0f;
-
             for (int voice = 0; voice < voices; ++voice) {
                 float mixAmount = InputSockets[voice]->getValue();
                 const float* inputChannel = audioBufferPointerArray[voice]->getReadPointer(channel);
@@ -59,6 +59,8 @@ public:
         if (!init_phase_done) {
             int voices = InputSockets[0]->getValue()-1;
 
+            // std::cout << "Called the mini-reset here" << "\n";
+
             InputSockets.clear();
             OutputSockets.clear();
 
@@ -83,6 +85,19 @@ public:
 
         }
 
+    }
+
+    void mini_makeXML(juce::XmlElement *x) override {
+            // This cannot be -1 as we cannot save 
+            // if all the nodes are not connected and 
+            x->setAttribute("meta", voices);
+    }
+
+    void mini_parseXMLChildren(juce::XmlElement *x) override {
+        int vo = x->getIntAttribute("meta");
+        // Now set that many voices.
+        InputSockets[0]->setParamValue(vo+1.0f);
+        // std::cout << "Called the parseChildren" << "\n";
     }
 
     ~Mixer() {};
