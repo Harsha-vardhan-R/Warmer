@@ -13,6 +13,8 @@
 
 
 
+#include "GraphNodes/Effects/Reverb.h"
+#include "juce_core/juce_core.h"
 #define CURRENT_WARMER_VERSION "0.6.0"
 
 
@@ -199,6 +201,19 @@ void Instrument::createRootTag() {
         delete hereNotForLong;
     }
 
+}
+
+bool Instrument::tryToCreateWarmerDirInDocuments() {
+    juce::File docDir = juce::File::getSpecialLocation(juce::File::userDocumentsDirectory);
+
+    juce::Result res = docDir.juce::File::createDirectory();
+
+    // If the file was successfully created.
+    if (res.wasOk()) {
+        return true;
+    }
+
+    return false;
 }
 
 juce::XmlElement *Instrument::makeXML() {
@@ -580,12 +595,16 @@ GraphNode* createAndReturnPointer(int pos_x, int pos_y, int result) {
         temp = new Noise(pos_x, pos_y);
     } else if (result == 205) {
         temp = new RandomOscillator(pos_x, pos_y);
+    } else if (result == 301) {
+        temp = new Reverb(pos_x, pos_y);
     } else if (result == 302) {
         temp = new Delay(pos_x, pos_y);
     } else if (result == 303) {
         temp = new Distort(pos_x, pos_y);
     } else if (result == 403) {
         temp = new DigitalFilter(pos_x, pos_y);
+    } else if (result == 404) {
+        temp = new DigitalFilterResonant(pos_x, pos_y);
     } else if (result == 501) {
         temp = new AddAndMul(pos_x, pos_y);
     } else if (result == 502) {

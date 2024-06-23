@@ -21,6 +21,7 @@
 #include "GraphNodes/Collection.h"
 #include "MyDataStructures.h"
 #include "XML_Handling.h"
+#include "juce_core/juce_core.h"
 
 
 
@@ -89,6 +90,18 @@ public:
 
     // top of the recursive calls that
     void createRootTag();
+
+    // Keeps track of present opened file,
+    // so if a new file is opened we remember it.
+    // unless this is null or not the user presses 
+    // `Save as`, anytime asked for save it saves to this file.
+    // Loading a new Instrument is going to replace that path to this.
+    juce::File presentWorkingfile();
+    // This basically tries to create a directory named
+    // `warmer`, in the document folder, if this failed
+    // Then saving and loading files will open the
+    // directory where the executable is present.
+    bool tryToCreateWarmerDirInDocuments();
 
     juce::XmlElement* makeXML() override;
     void parseXMLChildren(juce::XmlElement* x) override;

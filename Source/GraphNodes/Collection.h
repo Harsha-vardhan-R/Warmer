@@ -42,6 +42,7 @@
 
 #include "Effects/Delay.h"
 #include "Effects/Distortion.h"
+#include "Effects/Reverb.h"
 
 #include "MIDI/MIDI_Polyphony.h"
 #include "MIDI/MIDI_Transpose.h"
