@@ -229,12 +229,14 @@ void Instrument::parseXMLChildren(juce::XmlElement* x) {
 //    juce::FileChooser fileChooser("Load Instrument", juce::File::getSpecialLocation(juce::File::currentExecutableFile), "");
 //
 //    bool selected = fileChooser.browseForFileToOpen();
+#if JUCE_DEBUG
+    Profiler h("Instrument");
+#endif // 0
 
-    Profiler("Instrument");
-
-    juce::String defaultPath = juce::File::getSpecialLocation(juce::File::SpecialLocationType::currentExecutableFile).getFullPathName();
+    // TODO : set the folder depending on the platform. for example on linux create `~/.config/Warmer` and open it first as a way of saving or loading.
+    juce::String defaultPath = juce::File::getSpecialLocation(juce::File::SpecialLocationType::userApplicationDataDirectory).getFullPathName();
     juce::File defaultDirectory = juce::File(defaultPath);
-    _chooser = std::make_unique<juce::FileChooser>("Choose file", defaultDirectory, "");
+    _chooser = std::make_unique<juce::FileChooser>("Choose file to Load", defaultDirectory, "");
 
     int chooserFlags = juce::FileBrowserComponent::openMode
                        | juce::FileBrowserComponent::canSelectFiles;
@@ -262,6 +264,11 @@ void Instrument::parseXMLChildren(juce::XmlElement* x) {
 
                     if (xmlElementRoot != nullptr) {
 
+                        // Clean any of the configuration that is active till now.
+                        // TODO, Clean even edit and play page events.
+                        nodeProcessingQueue.processingStop();
+                        nodeProcessingQueue.clearAll();
+                        
                         // send the related information to each page to be parsed and .
                         auto* casted = (GraphPage*)graphPage.get();
                         casted->parseXMLChildren(xmlElementRoot->getChildByName("GraphPage"));
@@ -272,6 +279,7 @@ void Instrument::parseXMLChildren(juce::XmlElement* x) {
                         auto* casted2 = (PlayPage*)playPage.get();
                         casted2->parseXMLChildren(xmlElementRoot->getChildByName("PlayPage"));
 
+                        nodeProcessingQueue.sort();
                     } else {
                         juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "Error", "Failed to parse XML content.");
                     }
@@ -629,12 +637,25 @@ void Instrument::GraphPage::parseXMLChildren(juce::XmlElement* x) {
         return;
     }
 
-    Profiler("GraphPage");
+# if JUCE_DEBUG
+    Profiler h("GraphPage");
+#endif
 
+    // remove the call to TopoSorter that about the deletion,
+    // bcause there is no guarentee about the order of connectons,
+    // let alone the order of nodes.
+    removeConnectionsCall = true;
+    std::queue<GraphNode*> qq;
     for (GraphNode* i : AllNodes) {
         if (i->getMenuResultID() == 9999 || i->getMenuResultID() == 6666) continue;
         else delete i;
+        qq.push(i);
     }
+    while (!qq.empty()) {
+        AllNodes.erase(qq.front());
+        qq.pop();
+    }
+    removeConnectionsCall = false;
 
     // create all the nodes first
     // keep track of the ID's to Node addresses.
@@ -701,7 +722,6 @@ void Instrument::GraphPage::parseXMLChildren(juce::XmlElement* x) {
         }
     }
 
-    Instrument::getInstance()->nodeProcessingQueue.sort();
 
     repaint(instrumentClassPointer->getPartToRepaintInViewPort());
 }
@@ -754,12 +774,11 @@ void Instrument::GraphPage::connectionInitFail() {
 }
 
 void Instrument::GraphPage::connectionRemoved(Connection *connectionPointer) {
-    // TODO : need to find a way to adjust the bounding here.
 
     auto* f = static_cast<GraphNode*>(connectionPointer->fromNode);
     auto* t = static_cast<GraphNode*>(connectionPointer->toNode);
 
-    if (!instrumentClassPointer->isBeingDestructed) instrumentClassPointer->nodeProcessingQueue.connectionRemoved(f, t);
+    if (!instrumentClassPointer->isBeingDestructed && !removeConnectionsCall) instrumentClassPointer->nodeProcessingQueue.connectionRemoved(f, t);
 
     AllConnections.erase(connectionPointer);
     ConnectionToLineMap.erase(connectionPointer);

@@ -481,11 +481,6 @@ public:
 
         setCallBackHell();
 
-        DBG(InputSockets[0]->getValue());
-        std::cout << InputSockets[1]->getConnectionType() << "\n";
-        std::cout << InputSockets[2]->getConnectionType() << "\n";
-        std::cout << InputSockets[3]->getConnectionType() << "\n";
-
     }
 
     void mini_reset() override {

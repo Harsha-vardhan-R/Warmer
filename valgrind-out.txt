@@ -1,0 +1,37 @@
+==24794== Memcheck, a memory error detector
+==24794== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==24794== Using Valgrind-3.18.1-42b08ed5bd-20211015 and LibVEX; rerun with -h for copyright info
+==24794== Command: ./Warmer
+==24794== Parent PID: 21728
+==24794== 
+--24794-- 
+--24794-- Valgrind options:
+--24794--    --leak-check=full
+--24794--    --show-leak-kinds=all
+--24794--    --track-origins=yes
+--24794--    --verbose
+--24794--    --log-file=valgrind-out.txt
+--24794-- Contents of /proc/version:
+--24794--   Linux version 6.5.0-41-generic (buildd@lcy02-amd64-120) (x86_64-linux-gnu-gcc-12 (Ubuntu 12.3.0-1ubuntu1~22.04) 12.3.0, GNU ld (GNU Binutils for Ubuntu) 2.38) #41~22.04.2-Ubuntu SMP PREEMPT_DYNAMIC Mon Jun  3 11:32:55 UTC 2
+--24794-- 
+--24794-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-lzcnt-rdtscp-sse3-ssse3-avx-avx2-bmi-f16c-rdrand-rdseed
+--24794-- Page sizes: currently 4096, max supported 4096
+--24794-- Valgrind library directory: /usr/libexec/valgrind
+--24794-- Reading syms from /home/harshavardhan/Documents/cpp_proj/Warmer/Warmer
+### unhandled dwarf2 abbrev form code 0x25
+### unhandled dwarf2 abbrev form code 0x25
+### unhandled dwarf2 abbrev form code 0x25
+### unhandled dwarf2 abbrev form code 0x23
+### unhandled dwarf2 abbrev form code 0x25
+### unhandled dwarf2 abbrev form code 0x25
+### unhandled dwarf2 abbrev form code 0x25
+### unhandled dwarf2 abbrev form code 0x23
+==24794== Valgrind: debuginfo reader: ensure_valid failed:
+==24794== Valgrind:   during call to ML_(img_get)
+==24794== Valgrind:   request for range [93085762, +4) exceeds
+==24794== Valgrind:   valid image size of 57883976 for image:
+==24794== Valgrind:   "/home/harshavardhan/Documents/cpp_proj/Warmer/Warmer"
+==24794== 
+==24794== Valgrind: debuginfo reader: Possibly corrupted debuginfo file.
+==24794== Valgrind: I can't recover.  Giving up.  Sorry.
+==24794== 

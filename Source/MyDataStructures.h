@@ -223,7 +223,7 @@ public:
                 if (!head->nextNode) tail = head;
             }
         } else {
-            std::cout << "WARNING : The node you are trying to remove does not exist in the processing list" << "\n";
+            std::cout << "ERROR : The node you are trying to remove does not exist in the processing list" << "\n";
         }
 
         totalNodesToProcess--;
@@ -385,6 +385,7 @@ public:
 
         (static_cast<InputMasterGraphNode*>(MIDI_IN))->setInputMIDI(&midiBuffer);
 
+
         while (current) {
             current->nodePointer->reset();
             current = current->nextNode;
@@ -524,21 +525,31 @@ public:
 
     void clearAll() {
         if (head) recr_delete(head);
+        head = nullptr;
         bunchOfNodes.clear();
         bunchOfNodes.insert(MIDI_IN);
         bunchOfNodes.insert(AUDIO_OUT);
     }
 
     // this is used while loading a configuration,
-    // as loading an instrument will be really slow if
+    // as loading an instrument will be really slow if it is 
+    // dynamically topo sorted for every connection.
     bool sort() {
         processingStop();
         prepare();
+        sortedNodes.clear();
+
         if (head) recr_delete(head);
+        head = nullptr;
 
         if (!MIDI_IN || !AUDIO_OUT) {
             std::cout << "FATAL! MIDI IN OR AUDIO OUT ARE NOT PRESENT IN THE NODE SET" << "\n";
             return false;
+        }
+
+        std::cout << "All the nodes in BunchOfNodes : " << '\n';
+        for (auto i : bunchOfNodes) {
+            std::cout << i->name << "\n";
         }
 
 

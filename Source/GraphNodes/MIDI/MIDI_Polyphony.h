@@ -197,6 +197,20 @@ public:
 
     }
 
+    
+    void mini_makeXML(juce::XmlElement *x) override {
+            // This cannot be -1 as we cannot save 
+            // if all the nodes are not connected and 
+            x->setAttribute("meta", voices);
+    }
+
+    void mini_parseXMLChildren(juce::XmlElement *x) override {
+        int vo = x->getIntAttribute("meta");
+        // Now set that many voices.
+        InputSockets[0]->setParamValue(vo+1.0f);
+        // std::cout << "Called the parseChildren" << "\n";
+    }
+
     ~Polyphony() {};
 
 private:

@@ -302,12 +302,14 @@ public:
         // that shows what nodes can be added.
         static void AddNodeCallback(int result, GraphPage* graphPageComponent);
 
+        bool removeConnectionsCall = false;
 
         juce::Component* getBackground() {
             return componentBackground.get();
         }
 
     private:
+
 
         class BackGroundGraphPageCanvas : public juce::Component {
         public:
