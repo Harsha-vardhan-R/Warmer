@@ -8,12 +8,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Set build type to Release by default
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
 include_directories(
+        /usr/include/c++/11/
         ${CMAKE_HOME_DIRECTORY}/JuceLibraryCode
         ${CMAKE_HOME_DIRECTORY}/JuceLibraryCode/modules
         ${CMAKE_HOME_DIRECTORY}/Source

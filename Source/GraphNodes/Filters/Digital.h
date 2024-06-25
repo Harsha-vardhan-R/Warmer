@@ -15,6 +15,7 @@
 
 #define SQRT_TWO 1.41421356237
 
+// TODO : Extreme Amount of Duplicate code in this file, please cleanup.
 
 class DigitalFilter : public GraphNode {
 public:
@@ -64,9 +65,10 @@ DigitalFilter(int posX, int posY) : GraphNode(juce::String("Non-Res Filter"), po
         InputSockets[3]->acceptType(SocketDataType::Floating);
         InputSockets[3]->addSliderParameterControl(0.0, 1.0, 0.0);
 
-    InputSockets[1]->setSliderCallbackWanted();
-    InputSockets[2]->setSliderCallbackWanted();
-    InputSockets[3]->setSliderCallbackWanted();
+
+        InputSockets[1]->setSliderCallbackWanted();
+        InputSockets[2]->setSliderCallbackWanted();
+        InputSockets[3]->setSliderCallbackWanted();
 
 //        InputSockets.add(new GraphNode::Socket(juce::String("Transfer Function"), direction::IN, false));
 //        InputSockets[4]->addFilterDisplayControl();

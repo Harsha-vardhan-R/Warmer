@@ -14,6 +14,7 @@
 
 
 #include "GraphNodes/Effects/Reverb.h"
+#include "GraphNodes/Filters/ladder.h"
 #include "juce_core/juce_core.h"
 #define CURRENT_WARMER_VERSION "0.6.0"
 
@@ -601,6 +602,8 @@ GraphNode* createAndReturnPointer(int pos_x, int pos_y, int result) {
         temp = new Delay(pos_x, pos_y);
     } else if (result == 303) {
         temp = new Distort(pos_x, pos_y);
+    } else if (result == 401) {
+        temp = new LadderFilterWrapper(pos_x, pos_y);
     } else if (result == 403) {
         temp = new DigitalFilter(pos_x, pos_y);
     } else if (result == 404) {
