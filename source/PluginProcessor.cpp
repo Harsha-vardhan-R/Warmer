@@ -2,7 +2,8 @@
 #include "MainComponent.h"
 #include "PluginEditor.h"
 #include "Instrument.h"
-
+#define JucePlugin_IsSynth 1
+#define JucePlugin_IsMidiEffect 0
 
 //==============================================================================
 // This creates new instances of the plugin..
@@ -16,7 +17,8 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter() {
 
 //==============================================================================
 PluginProcessor::PluginProcessor()
-     : AudioProcessor (BusesProperties().withOutput ("Output", juce::AudioChannelSet::stereo(), true)) {
+     : AudioProcessor (
+             BusesProperties().withOutput("Output", juce::AudioChannelSet::stereo(), true)) {
    
          // The Main MainComponent will be created before this scope
          // in the constructor.
@@ -82,7 +84,24 @@ void PluginProcessor::releaseResources()
 }
 
 bool PluginProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const {
+   #if JucePlugin_IsMidiEffect
+    juce::ignoreUnused (layouts);
     return true;
+  #else
+    // This is the place where you check if the layout is supported.
+    // In this template code we only support mono or stereo.
+    if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
+     && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
+        return false;
+
+    // This checks if the input layout matches the output layout
+   #if ! JucePlugin_IsSynth
+    if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
+        return false;
+   #endif
+
+    return true;
+  #endif 
 }
 
 void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer,
