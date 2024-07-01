@@ -1033,7 +1033,6 @@ set(OLD_GLOB
   "juce_audio_processors/format_types/VST3_SDK/base/source/updatehandler.h"
   "juce_audio_processors/format_types/VST3_SDK/base/thread/include/flock.h"
   "juce_audio_processors/format_types/VST3_SDK/base/thread/source/flock.cpp"
-  "juce_audio_processors/format_types/VST3_SDK/helper.manifest"
   "juce_audio_processors/format_types/VST3_SDK/pluginterfaces/LICENSE.txt"
   "juce_audio_processors/format_types/VST3_SDK/pluginterfaces/README.md"
   "juce_audio_processors/format_types/VST3_SDK/pluginterfaces/base/conststringtable.cpp"
