@@ -1,0 +1,5 @@
+
+-- on linux (debian based, for others the package names will be same)
+sudo apt-get update && sudo apt-get install libasound2-dev libfreetype6-dev libasound2-dev 
+	libfreetype6-dev libgl1-mesa-dev libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev 
+	libxi-dev build-essential xorg-dev libgtk-3-dev libcurl4-openssl-dev libssl-dev libwebkit2gtk-4.0-dev

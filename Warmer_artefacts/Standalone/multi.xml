@@ -1,0 +1,1130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Instrument Version="0.6.0">
+  <PlayPage/>
+  <EditPage/>
+  <GraphPage>
+    <GraphNode Name="MIDI IN" ResultID="9999" Address="94401508744688" Position="87,1281">
+      <Socket Direction="OUT" Connections="((94401513290080,0))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="OUT" Connections="()">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="OUT" Connections="()">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="AUDIO OUT" ResultID="6666" Address="94401508764976" Position="2357,1203">
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Constant" ResultID="701" Address="94401510190048" Position="234,263">
+      <Socket Direction="OUT" Connections="((94401513222752,2),(94401513598208,2),(94401514244816,2),(94401514460912,2),(94401514663632,2),(94401514906896,2))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.5090000033378601"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="1.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Constant" ResultID="701" Address="94401510468272" Position="160,730">
+      <Socket Direction="OUT" Connections="((94401513709936,2),(94401513339424,2),(94401514121200,2))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="1.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="1.5"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Constant" ResultID="701" Address="94401512741376" Position="159,951">
+      <Socket Direction="OUT" Connections="((94401513339424,4),(94401513709936,4),(94401514121200,4))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.2000000029802322"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="8.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Constant" ResultID="701" Address="94401513096768" Position="36,950">
+      <Socket Direction="OUT" Connections="((94401513709936,3),(94401513339424,3),(94401514121200,3))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.6729999780654907"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.009999999776482582"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Reverb" ResultID="301" Address="94401513174592" Position="2016,1218">
+      <Socket Direction="OUT" Connections="((94401513308368,1))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.800000011920929"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.5090000033378601"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.9179999828338623"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="1.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Non-Res Filter" ResultID="403" Address="94401513204048"
+               Position="1825,1252">
+      <Socket Direction="OUT" Connections="((94401513174592,0))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="440.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="3.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Cross Fade" ResultID="504" Address="94401513222752" Position="1062,314">
+      <Socket Direction="OUT" Connections="((94401513890864,0))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Oscillator" ResultID="201" Address="94401513260384" Position="751,243">
+      <Socket Direction="OUT" Connections="((94401513222752,0))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="4.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="150.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.5"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.1710000038146973"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Polyphony" meta="6" ResultID="603" Address="94401513290080"
+               Position="338,1213">
+      <Socket Direction="OUT" Connections="((94401513260384,1),(94401513989872,0),(94401513709936,0))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="OUT" Connections="((94401513339424,0),(94401513388096,1),(94401513517312,0))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="OUT" Connections="((94401514121200,0),(94401514154560,1),(94401514251264,0))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="OUT" Connections="((94401514313184,0),(94401514349856,1),(94401514451040,0))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="OUT" Connections="((94401514519856,0),(94401514561536,1),(94401514669968,0))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="OUT" Connections="((94401514727632,0),(94401514771024,1),(94401514871392,0))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="1.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Cross Fade" ResultID="504" Address="94401513308368" Position="2186,1138">
+      <Socket Direction="OUT" Connections="((94401508764976,0))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="ADSR" ResultID="104" Address="94401513339424" Position="601,614">
+      <Socket Direction="OUT" Connections="((94401513388096,2),(94401513552800,2))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="60.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="120.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.75"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="240.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Oscillator" ResultID="201" Address="94401513388096" Position="757,595">
+      <Socket Direction="OUT" Connections="((94401513598208,0))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="2.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="150.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.5"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="2.055999994277954"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Transpose" ResultID="604" Address="94401513517312" Position="753,801">
+      <Socket Direction="OUT" Connections="((94401513552800,1))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="6.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Oscillator" ResultID="201" Address="94401513552800" Position="921,668">
+      <Socket Direction="OUT" Connections="((94401513598208,1))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="1.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="150.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.5"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="4.454999923706055"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Cross Fade" ResultID="504" Address="94401513598208" Position="1104,566">
+      <Socket Direction="OUT" Connections="((94401513890864,1))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Oscillator" ResultID="201" Address="94401513648816" Position="904,330">
+      <Socket Direction="OUT" Connections="((94401513222752,1))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="3.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="150.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.5"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="1.027999997138977"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="ADSR" ResultID="104" Address="94401513709936" Position="600,357">
+      <Socket Direction="OUT" Connections="((94401513260384,2),(94401513648816,2))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="60.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="120.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.75"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="240.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Mixer" meta="6" ResultID="509" Address="94401513890864"
+               Position="1389,1121">
+      <Socket Direction="OUT" Connections="((94401513308368,0),(94401514962704,0))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.1669999957084656"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.1669999957084656"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.1669999957084656"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.1669999957084656"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.1669999957084656"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.1669999957084656"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Constant" ResultID="701" Address="94401513894240" Position="30,502">
+      <Socket Direction="OUT" Connections="((94401513096768,0),(94401510468272,0),(94401513932496,0),(94401512741376,0))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="1.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="100.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Constant" ResultID="701" Address="94401513932496" Position="36,731">
+      <Socket Direction="OUT" Connections="((94401513709936,1),(94401513339424,1),(94401514121200,1))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="1.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.5"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Transpose" ResultID="604" Address="94401513989872" Position="751,455">
+      <Socket Direction="OUT" Connections="((94401513648816,1))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="6.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="ADSR" ResultID="104" Address="94401514121200" Position="619,953">
+      <Socket Direction="OUT" Connections="((94401514154560,2),(94401514210016,2))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="60.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="120.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.75"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="240.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Oscillator" ResultID="201" Address="94401514154560" Position="761,959">
+      <Socket Direction="OUT" Connections="((94401514244816,0))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="4.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="150.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.5"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="4.968999862670898"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Oscillator" ResultID="201" Address="94401514210016" Position="900,1019">
+      <Socket Direction="OUT" Connections="((94401514244816,1))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="1.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="150.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.5"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.5709999799728394"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Cross Fade" ResultID="504" Address="94401514244816" Position="1040,1085">
+      <Socket Direction="OUT" Connections="((94401513890864,2))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Transpose" ResultID="604" Address="94401514251264" Position="754,1184">
+      <Socket Direction="OUT" Connections="((94401514210016,1))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="6.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="ADSR" ResultID="104" Address="94401514313184" Position="622,1367">
+      <Socket Direction="OUT" Connections="((94401514349856,2),(94401514399568,2))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="60.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="120.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.75"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="240.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Oscillator" ResultID="201" Address="94401514349856" Position="763,1365">
+      <Socket Direction="OUT" Connections="((94401514460912,0))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="2.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="150.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.5"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="1.200000047683716"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Oscillator" ResultID="201" Address="94401514399568" Position="910,1458">
+      <Socket Direction="OUT" Connections="((94401514460912,1))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="1.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="150.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.5"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="4.741000175476074"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Transpose" ResultID="604" Address="94401514451040" Position="758,1580">
+      <Socket Direction="OUT" Connections="((94401514399568,1))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="6.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Cross Fade" ResultID="504" Address="94401514460912" Position="1069,1337">
+      <Socket Direction="OUT" Connections="((94401513890864,3))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="ADSR" ResultID="104" Address="94401514519856" Position="615,1808">
+      <Socket Direction="OUT" Connections="((94401514561536,2),(94401514610016,2))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="60.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="120.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.75"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="240.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Oscillator" ResultID="201" Address="94401514561536" Position="766,1807">
+      <Socket Direction="OUT" Connections="((94401514663632,0))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="4.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="150.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.5"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="5.140999794006348"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Oscillator" ResultID="201" Address="94401514610016" Position="927,1859">
+      <Socket Direction="OUT" Connections="((94401514663632,1))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="1.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="150.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.5"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="1.200000047683716"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Cross Fade" ResultID="504" Address="94401514663632" Position="1085,1912">
+      <Socket Direction="OUT" Connections="((94401513890864,4))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Transpose" ResultID="604" Address="94401514669968" Position="770,2017">
+      <Socket Direction="OUT" Connections="((94401514610016,1))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="6.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="ADSR" ResultID="104" Address="94401514727632" Position="632,2271">
+      <Socket Direction="OUT" Connections="((94401514771024,2),(94401514838144,2))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="60.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="120.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.75"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="240.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Oscillator" ResultID="201" Address="94401514771024" Position="776,2300">
+      <Socket Direction="OUT" Connections="((94401514906896,0))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="2.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="150.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.5"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.3429999947547913"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Oscillator" ResultID="201" Address="94401514838144" Position="927,2309">
+      <Socket Direction="OUT" Connections="((94401514906896,1))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="1.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="150.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.5"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="2.171000003814697"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Transpose" ResultID="604" Address="94401514871392" Position="781,2547">
+      <Socket Direction="OUT" Connections="((94401514838144,1))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="6.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Cross Fade" ResultID="504" Address="94401514906896" Position="1073,2349">
+      <Socket Direction="OUT" Connections="((94401513890864,5))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.0"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Delay" ResultID="302" Address="94401514962704" Position="1531,1256">
+      <Socket Direction="OUT" Connections="((94401515016144,0))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="300.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.7450000047683716"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.300000011920929"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+    <GraphNode Name="Delay" ResultID="302" Address="94401515016144" Position="1677,1254">
+      <Socket Direction="OUT" Connections="((94401513204048,0))">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="NULL">
+          <valueStore/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="700.0"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.3910000026226044"/>
+        </Parameter>
+      </Socket>
+      <Socket Direction="IN">
+        <Parameter Type="Value">
+          <valueStore Value="0.4639999866485596"/>
+        </Parameter>
+      </Socket>
+    </GraphNode>
+  </GraphPage>This File is Meant to be opened by Warmer</Instrument>

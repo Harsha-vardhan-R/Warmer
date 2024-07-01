@@ -1,0 +1,7 @@
+CMake Error at JUCE/extras/Build/CMake/JUCEUtils.cmake:1454 (message):
+  Use juce_set_vst2_sdk_path to set up the VST sdk before adding VST targets
+Call Stack (most recent call first):
+  JUCE/extras/Build/CMake/JUCEUtils.cmake:2100 (_juce_configure_plugin_targets)
+  CMakeLists.txt:69 (juce_add_plugin)
+
+

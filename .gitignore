@@ -16,5 +16,7 @@ Warmer.jucer
 ./Testing/
 /.cache
 ./compile_commands.json
-
-
+./JuceLibraryCodeStandalone
+./Pamplejuce_artefacts/
+./cmake/
+./juce_binarydata_Assets/

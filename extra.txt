@@ -1,0 +1,1041 @@
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/Main.cpp:2:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:33:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: error: use of undeclared identifier '__builtin_ia32_bsrsi'
+  return __builtin_ia32_bsrsi (__X);
+         ^
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MainComponent.cpp:1:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MainComponent.h:3:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:33:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: error: use of undeclared identifier '__builtin_ia32_bsrsi'
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:112:1: error: definition of builtin function '__rdtsc'
+__rdtsc (void)
+^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:112:1: error: definition of builtin function '__rdtsc'
+__rdtsc (void)
+^
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/Instrument.cpp:16:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/Effects/Reverb.h:12:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/Effects/../GraphNode.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:33:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: error: use of undeclared identifier '__builtin_ia32_bsrsi'
+  return __builtin_ia32_bsrsi (__X);
+         ^
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/GraphNode.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/GraphNode.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:33:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: error: use of undeclared identifier '__builtin_ia32_bsrsi'
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:112:1: error: definition of builtin function '__rdtsc'
+__rdtsc (void)
+^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:112:1: error: definition of builtin function '__rdtsc'
+__rdtsc (void)
+^
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/VolumeLevel.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/VolumeLevel.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:33:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: error: use of undeclared identifier '__builtin_ia32_bsrsi'
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:112:1: error: definition of builtin function '__rdtsc'
+__rdtsc (void)
+^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:134:10: error: use of undeclared identifier '__builtin_ia32_rolqi'; did you mean '__builtin_ia32_korqi'?
+  return __builtin_ia32_rolqi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korqi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:134:10: error: use of undeclared identifier '__builtin_ia32_rolqi'; did you mean '__builtin_ia32_korqi'?
+  return __builtin_ia32_rolqi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korqi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MenuComponent.cpp:1:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MenuComponent.h:3:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:33:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: error: use of undeclared identifier '__builtin_ia32_bsrsi'
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:112:1: error: definition of builtin function '__rdtsc'
+__rdtsc (void)
+^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:134:10: error: use of undeclared identifier '__builtin_ia32_rolqi'; did you mean '__builtin_ia32_korqi'?
+  return __builtin_ia32_rolqi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korqi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:134:10: error: use of undeclared identifier '__builtin_ia32_rolqi'; did you mean '__builtin_ia32_korqi'?
+  return __builtin_ia32_rolqi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korqi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:134:10: error: use of undeclared identifier '__builtin_ia32_rolqi'; did you mean '__builtin_ia32_korqi'?
+  return __builtin_ia32_rolqi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korqi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h::142142::1010::  error: error: use of undeclared identifier '__builtin_ia32_rolhi'; did you mean '__builtin_ia32_korhi'?use of undeclared identifier '__builtin_ia32_rolhi'; did you mean '__builtin_ia32_korhi'?
+
+  return __builtin_ia32_rolhi (__X, __C);
+  return __builtin_ia32_rolhi (__X, __C);         ^
+
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h::1041:: 10note: :'__builtin_ia32_korhi' declared here 
+note: '__builtin_ia32_korhi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:134:10: error: use of undeclared identifier '__builtin_ia32_rolqi'; did you mean '__builtin_ia32_korqi'?
+  return __builtin_ia32_rolqi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korqi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:142:10: error: use of undeclared identifier '__builtin_ia32_rolhi'; did you mean '__builtin_ia32_korhi'?
+  return __builtin_ia32_rolhi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korhi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:142:10: error: use of undeclared identifier '__builtin_ia32_rolhi'; did you mean '__builtin_ia32_korhi'?
+  return __builtin_ia32_rolhi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korhi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:142:10: error: use of undeclared identifier '__builtin_ia32_rolhi'; did you mean '__builtin_ia32_korhi'?
+  return __builtin_ia32_rolhi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korhi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MasterComponent.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MasterComponent.h:12:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:33:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: error: use of undeclared identifier '__builtin_ia32_bsrsi'
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:112:1: error: definition of builtin function '__rdtsc'
+__rdtsc (void)
+^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:159:10: error: use of undeclared identifier '__builtin_ia32_rorqi'; did you mean '__builtin_ia32_korqi'?
+  return __builtin_ia32_rorqi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korqi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:159:10: error: use of undeclared identifier '__builtin_ia32_rorqi'; did you mean '__builtin_ia32_korqi'?
+  return __builtin_ia32_rorqi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korqi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:142:10: error: use of undeclared identifier '__builtin_ia32_rolhi'; did you mean '__builtin_ia32_korhi'?
+  return __builtin_ia32_rolhi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korhi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:159:10: error: use of undeclared identifier '__builtin_ia32_rorqi'; did you mean '__builtin_ia32_korqi'?
+  return __builtin_ia32_rorqi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korqi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:159:10: error: use of undeclared identifier '__builtin_ia32_rorqi'; did you mean '__builtin_ia32_korqi'?
+  return __builtin_ia32_rorqi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korqi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:159:10: error: use of undeclared identifier '__builtin_ia32_rorqi'; did you mean '__builtin_ia32_korqi'?
+  return __builtin_ia32_rorqi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korqi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:134:10: error: use of undeclared identifier '__builtin_ia32_rolqi'; did you mean '__builtin_ia32_korqi'?
+  return __builtin_ia32_rolqi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korqi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:167:10: error: use of undeclared identifier '__builtin_ia32_rorhi'; did you mean '__builtin_ia32_korhi'?
+  return __builtin_ia32_rorhi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korhi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:167:10: error: use of undeclared identifier '__builtin_ia32_rorhi'; did you mean '__builtin_ia32_korhi'?
+  return __builtin_ia32_rorhi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korhi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:159:10: error: use of undeclared identifier '__builtin_ia32_rorqi'; did you mean '__builtin_ia32_korqi'?
+  return __builtin_ia32_rorqi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korqi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:167:10: error: use of undeclared identifier '__builtin_ia32_rorhi'; did you mean '__builtin_ia32_korhi'?
+  return __builtin_ia32_rorhi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korhi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:167:10: error: use of undeclared identifier '__builtin_ia32_rorhi'; did you mean '__builtin_ia32_korhi'?
+  return __builtin_ia32_rorhi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korhi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:167:10: error: use of undeclared identifier '__builtin_ia32_rorhi'; did you mean '__builtin_ia32_korhi'?
+  return __builtin_ia32_rorhi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korhi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:142:10: error: use of undeclared identifier '__builtin_ia32_rolhi'; did you mean '__builtin_ia32_korhi'?
+  return __builtin_ia32_rolhi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korhi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:167:10: error: use of undeclared identifier '__builtin_ia32_rorhi'; did you mean '__builtin_ia32_korhi'?
+  return __builtin_ia32_rorhi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korhi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:159:10: error: use of undeclared identifier '__builtin_ia32_rorqi'; did you mean '__builtin_ia32_korqi'?
+  return __builtin_ia32_rorqi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korqi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:201:10: error: use of undeclared identifier '__builtin_ia32_bsrdi'
+  return __builtin_ia32_bsrdi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:201:10: error: use of undeclared identifier '__builtin_ia32_bsrdi'
+  return __builtin_ia32_bsrdi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:201:10: error: use of undeclared identifier '__builtin_ia32_bsrdi'
+  return __builtin_ia32_bsrdi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:201:10: error: use of undeclared identifier '__builtin_ia32_bsrdi'
+  return __builtin_ia32_bsrdi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:201:10: error: use of undeclared identifier '__builtin_ia32_bsrdi'
+  return __builtin_ia32_bsrdi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:167:10: error: use of undeclared identifier '__builtin_ia32_rorhi'; did you mean '__builtin_ia32_korhi'?
+  return __builtin_ia32_rorhi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korhi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:201:10: error: use of undeclared identifier '__builtin_ia32_bsrdi'
+  return __builtin_ia32_bsrdi (__X);
+         ^
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MainComponent.cpp:1:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MainComponent.h:3:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:39:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:36:10: error: use of undeclared identifier '__builtin_ia32_sbb_u32'; did you mean '__builtin_ia32_subborrow_u32'?
+  return __builtin_ia32_sbb_u32 (__CF, __X, __Y, __P);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:36:10: note: '__builtin_ia32_subborrow_u32' declared here
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/Main.cpp:2:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:39:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:36:10: error: use of undeclared identifier '__builtin_ia32_sbb_u32'; did you mean '__builtin_ia32_subborrow_u32'?
+  return __builtin_ia32_sbb_u32 (__CF, __X, __Y, __P);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:36:10: note: '__builtin_ia32_subborrow_u32' declared here
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/Instrument.cpp:16:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/Effects/Reverb.h:12:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/Effects/../GraphNode.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:39:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:36:10: error: use of undeclared identifier '__builtin_ia32_sbb_u32'; did you mean '__builtin_ia32_subborrow_u32'?
+  return __builtin_ia32_sbb_u32 (__CF, __X, __Y, __P);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:36:10: note: '__builtin_ia32_subborrow_u32' declared here
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/GraphNode.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/GraphNode.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:39:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:36:10: error: use of undeclared identifier '__builtin_ia32_sbb_u32'; did you mean '__builtin_ia32_subborrow_u32'?
+  return __builtin_ia32_sbb_u32 (__CF, __X, __Y, __P);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:36:10: note: '__builtin_ia32_subborrow_u32' declared here
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/VolumeLevel.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/VolumeLevel.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:39:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:36:10: error: use of undeclared identifier '__builtin_ia32_sbb_u32'; did you mean '__builtin_ia32_subborrow_u32'?
+  return __builtin_ia32_sbb_u32 (__CF, __X, __Y, __P);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:36:10: note: '__builtin_ia32_subborrow_u32' declared here
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:201:10: error: use of undeclared identifier '__builtin_ia32_bsrdi'
+  return __builtin_ia32_bsrdi (__X);
+         ^
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MenuComponent.cpp:1:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MenuComponent.h:3:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:39:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:36:10: error: use of undeclared identifier '__builtin_ia32_sbb_u32'; did you mean '__builtin_ia32_subborrow_u32'?
+  return __builtin_ia32_sbb_u32 (__CF, __X, __Y, __P);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:36:10: note: '__builtin_ia32_subborrow_u32' declared here
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:61:10: error: use of undeclared identifier '__builtin_ia32_sbb_u64'; did you mean '__builtin_ia32_subborrow_u64'?
+  return __builtin_ia32_sbb_u64 (__CF, __X, __Y, __P);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:61:10: note: '__builtin_ia32_subborrow_u64' declared here
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:61:10: error: use of undeclared identifier '__builtin_ia32_sbb_u64'; did you mean '__builtin_ia32_subborrow_u64'?
+  return __builtin_ia32_sbb_u64 (__CF, __X, __Y, __P);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:61:10: note: '__builtin_ia32_subborrow_u64' declared here
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:61:10: error: use of undeclared identifier '__builtin_ia32_sbb_u64'; did you mean '__builtin_ia32_subborrow_u64'?
+  return __builtin_ia32_sbb_u64 (__CF, __X, __Y, __P);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:61:10: note: '__builtin_ia32_subborrow_u64' declared here
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:61:10: error: use of undeclared identifier '__builtin_ia32_sbb_u64'; did you mean '__builtin_ia32_subborrow_u64'?
+  return __builtin_ia32_sbb_u64 (__CF, __X, __Y, __P);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:61:10: note: '__builtin_ia32_subborrow_u64' declared here
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:61:10: error: use of undeclared identifier '__builtin_ia32_sbb_u64'; did you mean '__builtin_ia32_subborrow_u64'?
+  return __builtin_ia32_sbb_u64 (__CF, __X, __Y, __P);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:61:10: note: '__builtin_ia32_subborrow_u64' declared here
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MasterComponent.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MasterComponent.h:12:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:39:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:36:10: error: use of undeclared identifier '__builtin_ia32_sbb_u32'; did you mean '__builtin_ia32_subborrow_u32'?
+  return __builtin_ia32_sbb_u32 (__CF, __X, __Y, __P);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:36:10: note: '__builtin_ia32_subborrow_u32' declared here
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:61:10: error: use of undeclared identifier '__builtin_ia32_sbb_u64'; did you mean '__builtin_ia32_subborrow_u64'?
+  return __builtin_ia32_sbb_u64 (__CF, __X, __Y, __P);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:61:10: note: '__builtin_ia32_subborrow_u64' declared here
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:61:10: error: use of undeclared identifier '__builtin_ia32_sbb_u64'; did you mean '__builtin_ia32_subborrow_u64'?
+  return __builtin_ia32_sbb_u64 (__CF, __X, __Y, __P);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:61:10: note: '__builtin_ia32_subborrow_u64' declared here
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MainComponent.cpp:1:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MainComponent.h:3:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:45:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/cetintrin.h:42:33: error: too few arguments to function call, expected 1, have 0
+  return __builtin_ia32_rdsspq ();
+         ~~~~~~~~~~~~~~~~~~~~~  ^
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/Main.cpp:2:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:45:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/cetintrin.h:42:33: error: too few arguments to function call, expected 1, have 0
+  return __builtin_ia32_rdsspq ();
+         ~~~~~~~~~~~~~~~~~~~~~  ^
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MainComponent.cpp:1:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MainComponent.h:3:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:61:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:53:3: error: argument to '__builtin_ia32_lwpval32' must be a constant integer
+  __builtin_ia32_lwpval32 (__data2, __data1, __flags);
+  ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:61:3: error: argument to '__builtin_ia32_lwpval64' must be a constant integer
+  __builtin_ia32_lwpval64 (__data2, __data1, __flags);
+  ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:80:10: error: argument to '__builtin_ia32_lwpins32' must be a constant integer
+  return __builtin_ia32_lwpins32 (__data2, __data1, __flags);
+         ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:88:10: error: argument to '__builtin_ia32_lwpins64' must be a constant integer
+  return __builtin_ia32_lwpins64 (__data2, __data1, __flags);
+         ^                                          ~~~~~~~
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/Main.cpp:2:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:61:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:53:3: error: argument to '__builtin_ia32_lwpval32' must be a constant integer
+  __builtin_ia32_lwpval32 (__data2, __data1, __flags);
+  ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:61:3: error: argument to '__builtin_ia32_lwpval64' must be a constant integer
+  __builtin_ia32_lwpval64 (__data2, __data1, __flags);
+  ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:80:10: error: argument to '__builtin_ia32_lwpins32' must be a constant integer
+  return __builtin_ia32_lwpins32 (__data2, __data1, __flags);
+         ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:88:10: error: argument to '__builtin_ia32_lwpins64' must be a constant integer
+  return __builtin_ia32_lwpins64 (__data2, __data1, __flags);
+         ^                                          ~~~~~~~
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/Instrument.cpp:16:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/Effects/Reverb.h:12:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/Effects/../GraphNode.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:45:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/cetintrin.h:42:33: error: too few arguments to function call, expected 1, have 0
+  return __builtin_ia32_rdsspq ();
+         ~~~~~~~~~~~~~~~~~~~~~  ^
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/VolumeLevel.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/VolumeLevel.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:45:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/cetintrin.h:42:33: error: too few arguments to function call, expected 1, have 0
+  return __builtin_ia32_rdsspq ();
+         ~~~~~~~~~~~~~~~~~~~~~  ^
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/GraphNode.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/GraphNode.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:45:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/cetintrin.h:42:33: error: too few arguments to function call, expected 1, have 0
+  return __builtin_ia32_rdsspq ();
+         ~~~~~~~~~~~~~~~~~~~~~  ^
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/Instrument.cpp:16:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/Effects/Reverb.h:12:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/Effects/../GraphNode.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:61:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:53:3: error: argument to '__builtin_ia32_lwpval32' must be a constant integer
+  __builtin_ia32_lwpval32 (__data2, __data1, __flags);
+  ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:61:3: error: argument to '__builtin_ia32_lwpval64' must be a constant integer
+  __builtin_ia32_lwpval64 (__data2, __data1, __flags);
+  ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:80:10: error: argument to '__builtin_ia32_lwpins32' must be a constant integer
+  return __builtin_ia32_lwpins32 (__data2, __data1, __flags);
+         ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:88:10: error: argument to '__builtin_ia32_lwpins64' must be a constant integer
+  return __builtin_ia32_lwpins64 (__data2, __data1, __flags);
+         ^                                          ~~~~~~~
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/VolumeLevel.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/VolumeLevel.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:61:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:53:3: error: argument to '__builtin_ia32_lwpval32' must be a constant integer
+  __builtin_ia32_lwpval32 (__data2, __data1, __flags);
+  ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:61:3: error: argument to '__builtin_ia32_lwpval64' must be a constant integer
+  __builtin_ia32_lwpval64 (__data2, __data1, __flags);
+  ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:80:10: error: argument to '__builtin_ia32_lwpins32' must be a constant integer
+  return __builtin_ia32_lwpins32 (__data2, __data1, __flags);
+         ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:88:10: error: argument to '__builtin_ia32_lwpins64' must be a constant integer
+  return __builtin_ia32_lwpins64 (__data2, __data1, __flags);
+         ^                                          ~~~~~~~
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/GraphNode.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/GraphNode.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:61:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:53:3: error: argument to '__builtin_ia32_lwpval32' must be a constant integer
+  __builtin_ia32_lwpval32 (__data2, __data1, __flags);
+  ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:61:3: error: argument to '__builtin_ia32_lwpval64' must be a constant integer
+  __builtin_ia32_lwpval64 (__data2, __data1, __flags);
+  ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:80:10: error: argument to '__builtin_ia32_lwpins32' must be a constant integer
+  return __builtin_ia32_lwpins32 (__data2, __data1, __flags);
+         ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:88:10: error: argument to '__builtin_ia32_lwpins64' must be a constant integer
+  return __builtin_ia32_lwpins64 (__data2, __data1, __flags);
+         ^                                          ~~~~~~~
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MenuComponent.cpp:1:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MenuComponent.h:3:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:45:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/cetintrin.h:42:33: error: too few arguments to function call, expected 1, have 0
+  return __builtin_ia32_rdsspq ();
+         ~~~~~~~~~~~~~~~~~~~~~  ^
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MenuComponent.cpp:1:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MenuComponent.h:3:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:61:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:53:3: error: argument to '__builtin_ia32_lwpval32' must be a constant integer
+  __builtin_ia32_lwpval32 (__data2, __data1, __flags);
+  ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:61:3: error: argument to '__builtin_ia32_lwpval64' must be a constant integer
+  __builtin_ia32_lwpval64 (__data2, __data1, __flags);
+  ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:80:10: error: argument to '__builtin_ia32_lwpins32' must be a constant integer
+  return __builtin_ia32_lwpins32 (__data2, __data1, __flags);
+         ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:88:10: error: argument to '__builtin_ia32_lwpins64' must be a constant integer
+  return __builtin_ia32_lwpins64 (__data2, __data1, __flags);
+         ^                                          ~~~~~~~
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MainComponent.cpp:1:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MainComponent.h:3:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:63:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: error: use of undeclared identifier '__builtin_ia32_directstoreu_u32'; did you mean '__builtin_ia32_directstore_u32'?
+  __builtin_ia32_directstoreu_u32 ((unsigned int *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: note: '__builtin_ia32_directstore_u32' declared here
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/Main.cpp:2:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:63:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: error: use of undeclared identifier '__builtin_ia32_directstoreu_u32'; did you mean '__builtin_ia32_directstore_u32'?
+  __builtin_ia32_directstoreu_u32 ((unsigned int *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: note: '__builtin_ia32_directstore_u32' declared here
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/Instrument.cpp:16:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/Effects/Reverb.h:12:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/Effects/../GraphNode.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:63:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: error: use of undeclared identifier '__builtin_ia32_directstoreu_u32'; did you mean '__builtin_ia32_directstore_u32'?
+  __builtin_ia32_directstoreu_u32 ((unsigned int *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: note: '__builtin_ia32_directstore_u32' declared here
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/VolumeLevel.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/VolumeLevel.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:63:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: error: use of undeclared identifier '__builtin_ia32_directstoreu_u32'; did you mean '__builtin_ia32_directstore_u32'?
+  __builtin_ia32_directstoreu_u32 ((unsigned int *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: note: '__builtin_ia32_directstore_u32' declared here
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/GraphNode.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/GraphNode.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:63:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: error: use of undeclared identifier '__builtin_ia32_directstoreu_u32'; did you mean '__builtin_ia32_directstore_u32'?
+  __builtin_ia32_directstoreu_u32 ((unsigned int *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: note: '__builtin_ia32_directstore_u32' declared here
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MenuComponent.cpp:1:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MenuComponent.h:3:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:63:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: error: use of undeclared identifier '__builtin_ia32_directstoreu_u32'; did you mean '__builtin_ia32_directstore_u32'?
+  __builtin_ia32_directstoreu_u32 ((unsigned int *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: note: '__builtin_ia32_directstore_u32' declared here
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:48:3: error: use of undeclared identifier '__builtin_ia32_directstoreu_u64'; did you mean '__builtin_ia32_directstore_u64'?
+  __builtin_ia32_directstoreu_u64 ((unsigned long long *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: note: '__builtin_ia32_directstore_u64' declared here
+  __builtin_ia32_directstoreu_u32 ((unsigned int *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:48:36: error: cannot initialize a parameter of type 'unsigned long *' with an rvalue of type 'unsigned long long *'
+  __builtin_ia32_directstoreu_u64 ((unsigned long long *)__P, __A);
+                                   ^~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:48:3: error: use of undeclared identifier '__builtin_ia32_directstoreu_u64'; did you mean '__builtin_ia32_directstore_u64'?
+  __builtin_ia32_directstoreu_u64 ((unsigned long long *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: note: '__builtin_ia32_directstore_u64' declared here
+  __builtin_ia32_directstoreu_u32 ((unsigned int *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:48:36: error: cannot initialize a parameter of type 'unsigned long *' with an rvalue of type 'unsigned long long *'
+  __builtin_ia32_directstoreu_u64 ((unsigned long long *)__P, __A);
+                                   ^~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MasterComponent.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MasterComponent.h:12:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:45:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/cetintrin.h:42:33: error: too few arguments to function call, expected 1, have 0
+  return __builtin_ia32_rdsspq ();
+         ~~~~~~~~~~~~~~~~~~~~~  ^
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MasterComponent.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MasterComponent.h:12:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:61:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:53:3: error: argument to '__builtin_ia32_lwpval32' must be a constant integer
+  __builtin_ia32_lwpval32 (__data2, __data1, __flags);
+  ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:61:3: error: argument to '__builtin_ia32_lwpval64' must be a constant integer
+  __builtin_ia32_lwpval64 (__data2, __data1, __flags);
+  ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:80:10: error: argument to '__builtin_ia32_lwpins32' must be a constant integer
+  return __builtin_ia32_lwpins32 (__data2, __data1, __flags);
+         ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:88:10: error: argument to '__builtin_ia32_lwpins64' must be a constant integer
+  return __builtin_ia32_lwpins64 (__data2, __data1, __flags);
+         ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:48:3: error: use of undeclared identifier '__builtin_ia32_directstoreu_u64'; did you mean '__builtin_ia32_directstore_u64'?
+  __builtin_ia32_directstoreu_u64 ((unsigned long long *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: note: '__builtin_ia32_directstore_u64' declared here
+  __builtin_ia32_directstoreu_u32 ((unsigned int *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:48:36: error: cannot initialize a parameter of type 'unsigned long *' with an rvalue of type 'unsigned long long *'
+  __builtin_ia32_directstoreu_u64 ((unsigned long long *)__P, __A);
+                                   ^~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:48:3: error: use of undeclared identifier '__builtin_ia32_directstoreu_u64'; did you mean '__builtin_ia32_directstore_u64'?
+  __builtin_ia32_directstoreu_u64 ((unsigned long long *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: note: '__builtin_ia32_directstore_u64' declared here
+  __builtin_ia32_directstoreu_u32 ((unsigned int *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:48:36: error: cannot initialize a parameter of type 'unsigned long *' with an rvalue of type 'unsigned long long *'
+  __builtin_ia32_directstoreu_u64 ((unsigned long long *)__P, __A);
+                                   ^~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:48:3: error: use of undeclared identifier '__builtin_ia32_directstoreu_u64'; did you mean '__builtin_ia32_directstore_u64'?
+  __builtin_ia32_directstoreu_u64 ((unsigned long long *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: note: '__builtin_ia32_directstore_u64' declared here
+  __builtin_ia32_directstoreu_u32 ((unsigned int *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:48:36: error: cannot initialize a parameter of type 'unsigned long *' with an rvalue of type 'unsigned long long *'
+  __builtin_ia32_directstoreu_u64 ((unsigned long long *)__P, __A);
+                                   ^~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:48:3: error: use of undeclared identifier '__builtin_ia32_directstoreu_u64'; did you mean '__builtin_ia32_directstore_u64'?
+  __builtin_ia32_directstoreu_u64 ((unsigned long long *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: note: '__builtin_ia32_directstore_u64' declared here
+  __builtin_ia32_directstoreu_u32 ((unsigned int *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:48:36: error: cannot initialize a parameter of type 'unsigned long *' with an rvalue of type 'unsigned long long *'
+  __builtin_ia32_directstoreu_u64 ((unsigned long long *)__P, __A);
+                                   ^~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MainComponent.cpp:1:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MainComponent.h:3:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:75:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/rdseedintrin.h:42:10: error: use of undeclared identifier '__builtin_ia32_rdseed_hi_step'
+  return __builtin_ia32_rdseed_hi_step (__p);
+         ^
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/Main.cpp:2:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:75:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/rdseedintrin.h:42:10: error: use of undeclared identifier '__builtin_ia32_rdseed_hi_step'
+  return __builtin_ia32_rdseed_hi_step (__p);
+         ^
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MasterComponent.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MasterComponent.h:12:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:63:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: error: use of undeclared identifier '__builtin_ia32_directstoreu_u32'; did you mean '__builtin_ia32_directstore_u32'?
+  __builtin_ia32_directstoreu_u32 ((unsigned int *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: note: '__builtin_ia32_directstore_u32' declared here
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/Instrument.cpp:16:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/Effects/Reverb.h:12:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/Effects/../GraphNode.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:75:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/rdseedintrin.h:42:10: error: use of undeclared identifier '__builtin_ia32_rdseed_hi_step'
+  return __builtin_ia32_rdseed_hi_step (__p);
+         ^
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/VolumeLevel.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/VolumeLevel.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:75:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/rdseedintrin.h:42:10: error: use of undeclared identifier '__builtin_ia32_rdseed_hi_step'
+  return __builtin_ia32_rdseed_hi_step (__p);
+         ^
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/GraphNode.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/GraphNode.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:75:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/rdseedintrin.h:42:10: error: use of undeclared identifier '__builtin_ia32_rdseed_hi_step'
+  return __builtin_ia32_rdseed_hi_step (__p);
+         ^
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MenuComponent.cpp:1:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MenuComponent.h:3:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:75:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/rdseedintrin.h:42:10: error: use of undeclared identifier '__builtin_ia32_rdseed_hi_step'
+  return __builtin_ia32_rdseed_hi_step (__p);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/rdseedintrin.h:49:10: error: use of undeclared identifier '__builtin_ia32_rdseed_si_step'
+  return __builtin_ia32_rdseed_si_step (__p);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/rdseedintrin.h:49:10: error: use of undeclared identifier '__builtin_ia32_rdseed_si_step'
+  return __builtin_ia32_rdseed_si_step (__p);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:48:3: error: use of undeclared identifier '__builtin_ia32_directstoreu_u64'; did you mean '__builtin_ia32_directstore_u64'?
+  __builtin_ia32_directstoreu_u64 ((unsigned long long *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: note: '__builtin_ia32_directstore_u64' declared here
+  __builtin_ia32_directstoreu_u32 ((unsigned int *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:48:36: error: cannot initialize a parameter of type 'unsigned long *' with an rvalue of type 'unsigned long long *'
+  __builtin_ia32_directstoreu_u64 ((unsigned long long *)__P, __A);
+                                   ^~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/rdseedintrin.h:49:10: error: use of undeclared identifier '__builtin_ia32_rdseed_si_step'
+  return __builtin_ia32_rdseed_si_step (__p);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/rdseedintrin.h:49:10: error: use of undeclared identifier '__builtin_ia32_rdseed_si_step'
+  return __builtin_ia32_rdseed_si_step (__p);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/rdseedintrin.h:49:10: error: use of undeclared identifier '__builtin_ia32_rdseed_si_step'
+  return __builtin_ia32_rdseed_si_step (__p);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/rdseedintrin.h:49:10: error: use of undeclared identifier '__builtin_ia32_rdseed_si_step'
+  return __builtin_ia32_rdseed_si_step (__p);
+         ^
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MasterComponent.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MasterComponent.h:12:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:75:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/rdseedintrin.h:42:10: error: use of undeclared identifier '__builtin_ia32_rdseed_hi_step'
+  return __builtin_ia32_rdseed_hi_step (__p);
+         ^
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+/usr/lib/gcc/x86_64-linux-gnu/12/include/rdseedintrin.h:49:10: error: use of undeclared identifier '__builtin_ia32_rdseed_si_step'
+  return __builtin_ia32_rdseed_si_step (__p);
+         ^
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+20 errors generated.
+20 errors generated.
+make[2]: *** [CMakeFiles/Warmer.dir/build.make:272: CMakeFiles/Warmer.dir/Source/MainComponent.cpp.o] Error 1
+make[2]: *** Waiting for unfinished jobs....
+20 errors generated.
+20 errors generated.
+make[2]: *** [CMakeFiles/Warmer.dir/build.make:244: CMakeFiles/Warmer.dir/Source/Main.cpp.o] Error 1
+make[2]: *** [CMakeFiles/Warmer.dir/build.make:118: CMakeFiles/Warmer.dir/Source/VolumeLevel.cpp.o] Error 1
+20 errors generated.
+make[2]: *** [CMakeFiles/Warmer.dir/build.make:188: CMakeFiles/Warmer.dir/Source/GraphNodes/GraphNode.cpp.o] Error 1
+make[2]: *** [CMakeFiles/Warmer.dir/build.make:258: CMakeFiles/Warmer.dir/Source/MenuComponent.cpp.o] Error 1
+20 errors generated.
+make[2]: *** [CMakeFiles/Warmer.dir/build.make:230: CMakeFiles/Warmer.dir/Source/MasterComponent.cpp.o] Error 1
+20 errors generated.
+make[2]: *** [CMakeFiles/Warmer.dir/build.make:132: CMakeFiles/Warmer.dir/Source/Instrument.cpp.o] Error 1
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MIDIPianoComponent.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MIDIPianoComponent.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:33:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: error: use of undeclared identifier '__builtin_ia32_bsrsi'
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:112:1: error: definition of builtin function '__rdtsc'
+__rdtsc (void)
+^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:134:10: error: use of undeclared identifier '__builtin_ia32_rolqi'; did you mean '__builtin_ia32_korqi'?
+  return __builtin_ia32_rolqi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korqi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MyDataStructures.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MyDataStructures.h:12:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/Collection.h:16:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/GraphNode.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:33:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: error: use of undeclared identifier '__builtin_ia32_bsrsi'
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:112:1: error: definition of builtin function '__rdtsc'
+__rdtsc (void)
+^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:142:10: error: use of undeclared identifier '__builtin_ia32_rolhi'; did you mean '__builtin_ia32_korhi'?
+  return __builtin_ia32_rolhi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korhi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:134:10: error: use of undeclared identifier '__builtin_ia32_rolqi'; did you mean '__builtin_ia32_korqi'?
+  return __builtin_ia32_rolqi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korqi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:159:10: error: use of undeclared identifier '__builtin_ia32_rorqi'; did you mean '__builtin_ia32_korqi'?
+  return __builtin_ia32_rorqi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korqi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:142:10: error: use of undeclared identifier '__builtin_ia32_rolhi'; did you mean '__builtin_ia32_korhi'?
+  return __builtin_ia32_rolhi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korhi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:167:10: error: use of undeclared identifier '__builtin_ia32_rorhi'; did you mean '__builtin_ia32_korhi'?
+  return __builtin_ia32_rorhi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korhi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:159:10: error: use of undeclared identifier '__builtin_ia32_rorqi'; did you mean '__builtin_ia32_korqi'?
+  return __builtin_ia32_rorqi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korqi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:201:10: error: use of undeclared identifier '__builtin_ia32_bsrdi'
+  return __builtin_ia32_bsrdi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:167:10: error: use of undeclared identifier '__builtin_ia32_rorhi'; did you mean '__builtin_ia32_korhi'?
+  return __builtin_ia32_rorhi (__X, __C);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:41:10: note: '__builtin_ia32_korhi' declared here
+  return __builtin_ia32_bsrsi (__X);
+         ^
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MIDIPianoComponent.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MIDIPianoComponent.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:39:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:36:10: error: use of undeclared identifier '__builtin_ia32_sbb_u32'; did you mean '__builtin_ia32_subborrow_u32'?
+  return __builtin_ia32_sbb_u32 (__CF, __X, __Y, __P);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:36:10: note: '__builtin_ia32_subborrow_u32' declared here
+/usr/lib/gcc/x86_64-linux-gnu/12/include/ia32intrin.h:201:10: error: use of undeclared identifier '__builtin_ia32_bsrdi'
+  return __builtin_ia32_bsrdi (__X);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:61:10: error: use of undeclared identifier '__builtin_ia32_sbb_u64'; did you mean '__builtin_ia32_subborrow_u64'?
+  return __builtin_ia32_sbb_u64 (__CF, __X, __Y, __P);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:61:10: note: '__builtin_ia32_subborrow_u64' declared here
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MyDataStructures.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MyDataStructures.h:12:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/Collection.h:16:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/GraphNode.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:39:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:36:10: error: use of undeclared identifier '__builtin_ia32_sbb_u32'; did you mean '__builtin_ia32_subborrow_u32'?
+  return __builtin_ia32_sbb_u32 (__CF, __X, __Y, __P);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:36:10: note: '__builtin_ia32_subborrow_u32' declared here
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:61:10: error: use of undeclared identifier '__builtin_ia32_sbb_u64'; did you mean '__builtin_ia32_subborrow_u64'?
+  return __builtin_ia32_sbb_u64 (__CF, __X, __Y, __P);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/adxintrin.h:61:10: note: '__builtin_ia32_subborrow_u64' declared here
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MIDIPianoComponent.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MIDIPianoComponent.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:45:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/cetintrin.h:42:33: error: too few arguments to function call, expected 1, have 0
+  return __builtin_ia32_rdsspq ();
+         ~~~~~~~~~~~~~~~~~~~~~  ^
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MIDIPianoComponent.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MIDIPianoComponent.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:61:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:53:3: error: argument to '__builtin_ia32_lwpval32' must be a constant integer
+  __builtin_ia32_lwpval32 (__data2, __data1, __flags);
+  ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:61:3: error: argument to '__builtin_ia32_lwpval64' must be a constant integer
+  __builtin_ia32_lwpval64 (__data2, __data1, __flags);
+  ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:80:10: error: argument to '__builtin_ia32_lwpins32' must be a constant integer
+  return __builtin_ia32_lwpins32 (__data2, __data1, __flags);
+         ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:88:10: error: argument to '__builtin_ia32_lwpins64' must be a constant integer
+  return __builtin_ia32_lwpins64 (__data2, __data1, __flags);
+         ^                                          ~~~~~~~
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MIDIPianoComponent.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MIDIPianoComponent.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:63:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: error: use of undeclared identifier '__builtin_ia32_directstoreu_u32'; did you mean '__builtin_ia32_directstore_u32'?
+  __builtin_ia32_directstoreu_u32 ((unsigned int *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: note: '__builtin_ia32_directstore_u32' declared here
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MyDataStructures.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MyDataStructures.h:12:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/Collection.h:16:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/GraphNode.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:45:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/cetintrin.h:42:33: error: too few arguments to function call, expected 1, have 0
+  return __builtin_ia32_rdsspq ();
+         ~~~~~~~~~~~~~~~~~~~~~  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:48:3: error: use of undeclared identifier '__builtin_ia32_directstoreu_u64'; did you mean '__builtin_ia32_directstore_u64'?
+  __builtin_ia32_directstoreu_u64 ((unsigned long long *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: note: '__builtin_ia32_directstore_u64' declared here
+  __builtin_ia32_directstoreu_u32 ((unsigned int *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:48:36: error: cannot initialize a parameter of type 'unsigned long *' with an rvalue of type 'unsigned long long *'
+  __builtin_ia32_directstoreu_u64 ((unsigned long long *)__P, __A);
+                                   ^~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MyDataStructures.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MyDataStructures.h:12:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/Collection.h:16:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/GraphNode.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:61:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:53:3: error: argument to '__builtin_ia32_lwpval32' must be a constant integer
+  __builtin_ia32_lwpval32 (__data2, __data1, __flags);
+  ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:61:3: error: argument to '__builtin_ia32_lwpval64' must be a constant integer
+  __builtin_ia32_lwpval64 (__data2, __data1, __flags);
+  ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:80:10: error: argument to '__builtin_ia32_lwpins32' must be a constant integer
+  return __builtin_ia32_lwpins32 (__data2, __data1, __flags);
+         ^                                          ~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/12/include/lwpintrin.h:88:10: error: argument to '__builtin_ia32_lwpins64' must be a constant integer
+  return __builtin_ia32_lwpins64 (__data2, __data1, __flags);
+         ^                                          ~~~~~~~
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MIDIPianoComponent.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MIDIPianoComponent.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:75:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/rdseedintrin.h:42:10: error: use of undeclared identifier '__builtin_ia32_rdseed_hi_step'
+  return __builtin_ia32_rdseed_hi_step (__p);
+         ^
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MyDataStructures.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MyDataStructures.h:12:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/Collection.h:16:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/GraphNode.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:63:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: error: use of undeclared identifier '__builtin_ia32_directstoreu_u32'; did you mean '__builtin_ia32_directstore_u32'?
+  __builtin_ia32_directstoreu_u32 ((unsigned int *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: note: '__builtin_ia32_directstore_u32' declared here
+/usr/lib/gcc/x86_64-linux-gnu/12/include/rdseedintrin.h:49:10: error: use of undeclared identifier '__builtin_ia32_rdseed_si_step'
+  return __builtin_ia32_rdseed_si_step (__p);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:48:3: error: use of undeclared identifier '__builtin_ia32_directstoreu_u64'; did you mean '__builtin_ia32_directstore_u64'?
+  __builtin_ia32_directstoreu_u64 ((unsigned long long *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:41:3: note: '__builtin_ia32_directstore_u64' declared here
+  __builtin_ia32_directstoreu_u32 ((unsigned int *)__P, __A);
+  ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/movdirintrin.h:48:36: error: cannot initialize a parameter of type 'unsigned long *' with an rvalue of type 'unsigned long long *'
+  __builtin_ia32_directstoreu_u64 ((unsigned long long *)__P, __A);
+                                   ^~~~~~~~~~~~~~~~~~~~~~~~~
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MyDataStructures.cpp:11:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/MyDataStructures.h:12:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/Collection.h:16:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/Source/GraphNodes/GraphNode.h:13:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/JuceHeader.h:23:
+In file included from /home/harsha/Documents/CPP_PROJECTS/Warmer/JuceLibraryCode/modules/juce_dsp/juce_dsp.h:74:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/immintrin.h:27:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/12/include/x86gprintrin.h:75:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/rdseedintrin.h:42:10: error: use of undeclared identifier '__builtin_ia32_rdseed_hi_step'
+  return __builtin_ia32_rdseed_hi_step (__p);
+         ^
+/usr/lib/gcc/x86_64-linux-gnu/12/include/rdseedintrin.h:49:10: error: use of undeclared identifier '__builtin_ia32_rdseed_si_step'
+  return __builtin_ia32_rdseed_si_step (__p);
+         ^
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+20 errors generated.
+make[2]: *** [CMakeFiles/Warmer.dir/build.make:174: CMakeFiles/Warmer.dir/Source/MIDIPianoComponent.cpp.o] Error 1
+20 errors generated.
+make[2]: *** [CMakeFiles/Warmer.dir/build.make:76: CMakeFiles/Warmer.dir/Source/MyDataStructures.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:84: CMakeFiles/Warmer.dir/all] Error 2
+make: *** [Makefile:91: all] Error 2
